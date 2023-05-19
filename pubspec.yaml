@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   go_router: ^7.0.1
+  google_fonts: ^4.0.4
   hooks_riverpod: ^2.3.6
   http: ^0.13.6
   responsive_sizer: ^3.1.1  
