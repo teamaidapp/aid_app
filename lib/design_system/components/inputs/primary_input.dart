@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/design_system/components/typography/typography.dart';
+import 'package:team_aid/design_system/utils/colors.dart';
 
-import '../../utils/colors.dart';
-import '../typography/typography.dart';
-
+/// The TAPrimaryInput class is a stateful widget that creates a text input
+/// field with a label, placeholder, and optional password visibility toggle.
 class TAPrimaryInput extends StatefulWidget {
+  /// Constructor
   const TAPrimaryInput({
-    Key? key,
     required this.label,
     required this.placeholder,
+    super.key,
     this.textEditingController,
     this.isPassword = false,
-  }) : super(key: key);
+  });
 
+  /// The controller for the text field.
   final TextEditingController? textEditingController;
+
+  /// The placeholder text for the text field.
   final String placeholder;
+
+  /// The label text for the text field.
   final String label;
+
+  /// A boolean that is used to determine if the text field is a password field.
   final bool isPassword;
 
   @override

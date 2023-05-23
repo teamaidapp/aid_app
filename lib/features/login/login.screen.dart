@@ -3,7 +3,10 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/design_system/components/buttons/primary_button.dart';
 import 'package:team_aid/design_system/design_system.dart';
 
+/// The LoginScreen class displays a login form with email and password inputs
+/// and a login button.
 class LoginScreen extends StatelessWidget {
+  /// Constructor
   const LoginScreen({super.key});
 
   @override

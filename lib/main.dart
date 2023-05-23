@@ -11,7 +11,11 @@ void main() {
   );
 }
 
+/// The MainApp class is a ConsumerWidget that builds a MaterialApp with a
+/// router based on the current
+/// device's orientation and type.
 class MainApp extends ConsumerWidget {
+  /// Constructor
   const MainApp({super.key});
 
   @override
