@@ -4,7 +4,7 @@ import 'package:team_aid/features/home/home.screen.dart';
 import 'package:team_aid/features/login/login.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_coach.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_team.screen.dart';
-import 'package:team_aid/features/login/screens/create_account_team_player.screen.dart';
+import 'package:team_aid/features/login/screens/create_account_team_player_parents.screen.dart';
 import 'package:team_aid/features/login/screens/request_demo.screen.dart';
 
 /// This class defines the routes for a GoRouter in a Flutter app, including
