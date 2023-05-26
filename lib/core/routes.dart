@@ -4,6 +4,7 @@ import 'package:team_aid/features/home/home.screen.dart';
 import 'package:team_aid/features/login/login.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_coach.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_team.screen.dart';
+import 'package:team_aid/features/login/screens/create_account_team_player.screen.dart';
 import 'package:team_aid/features/login/screens/request_demo.screen.dart';
 
 /// This class defines the routes for a GoRouter in a Flutter app, including
@@ -22,7 +23,10 @@ class AppRoutes {
   static const String createAccountCoach = '/createAccountCoach';
 
   /// The create account team route.
-  static const String createAccountTeam = '/createAccountTeam';
+  static const String createAccountTeamForCoach = '/createAccountTeam';
+
+  /// The create account team player route.
+  static const String createAccountParents = '/createAccountParents';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -47,8 +51,12 @@ final routerProvider = Provider((ref) {
         builder: (context, state) => const CreateAccountCoachScreen(),
       ),
       GoRoute(
-        path: AppRoutes.createAccountTeam,
+        path: AppRoutes.createAccountTeamForCoach,
         builder: (context, state) => const CreateAccountTeamScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.createAccountParents,
+        builder: (context, state) => const CreateAccountParentsScreen(),
       ),
     ],
   );

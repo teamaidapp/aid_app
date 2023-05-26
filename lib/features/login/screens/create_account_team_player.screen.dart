@@ -3,13 +3,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:team_aid/core/routes.dart';
+import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
 
 /// The statelessWidget that handles the current screen
-class CreateAccountCoachScreen extends StatelessWidget {
+class CreateAccountParentsScreen extends StatelessWidget {
   /// The constructor.
-  const CreateAccountCoachScreen({super.key});
+  const CreateAccountParentsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                     ),
                     const Spacer(),
                     TATypography.h3(
-                      text: 'Coach / Admin',
+                      text: 'Parents',
                       color: TAColors.textColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -55,11 +55,10 @@ class CreateAccountCoachScreen extends StatelessWidget {
               builder: (context) {
                 final firstNameController = useTextEditingController();
                 final lastNameController = useTextEditingController();
+                final childNameController = useTextEditingController();
+                final ageGroupController = useTextEditingController();
+                final positionController = useTextEditingController();
                 final emailController = useTextEditingController();
-                final phoneNumberController = useTextEditingController();
-                final addressController = useTextEditingController();
-                final passwordController = useTextEditingController();
-                final agreeToTerms = useState(false);
                 return Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
@@ -78,40 +77,40 @@ class CreateAccountCoachScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               TAPrimaryInput(
-                                label: 'First name',
+                                label: 'First Name',
                                 textEditingController: firstNameController,
                                 placeholder: 'Enter your first name',
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
-                                label: 'Last name',
+                                label: 'Last Name',
                                 textEditingController: lastNameController,
                                 placeholder: 'Enter your last name',
+                              ),
+                              const SizedBox(height: 10),
+                              TAPrimaryInput(
+                                label: 'Child Name',
+                                textEditingController: childNameController,
+                                placeholder: 'Enter your child name',
+                              ),
+                              const SizedBox(height: 10),
+                              TADropdown(
+                                label: 'Age group',
+                                textEditingController: ageGroupController,
+                                placeholder: 'Select age group',
+                                items: const ['U-10', 'U-12', 'U-14', 'U-16', 'U-18'],
+                              ),
+                              const SizedBox(height: 10),
+                              TAPrimaryInput(
+                                label: 'Position',
+                                textEditingController: positionController,
+                                placeholder: 'Enter your position',
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
                                 label: 'E-mail',
                                 textEditingController: emailController,
                                 placeholder: 'Enter your email',
-                              ),
-                              const SizedBox(height: 10),
-                              TAPrimaryInput(
-                                label: 'Phone number',
-                                textEditingController: phoneNumberController,
-                                placeholder: 'Enter your phone number',
-                              ),
-                              const SizedBox(height: 10),
-                              TAPrimaryInput(
-                                label: 'Address',
-                                textEditingController: addressController,
-                                placeholder: 'Enter your address',
-                              ),
-                              const SizedBox(height: 10),
-                              TAPrimaryInput(
-                                label: 'Password',
-                                textEditingController: passwordController,
-                                isPassword: true,
-                                placeholder: 'Enter your password',
                               ),
                               const SizedBox(height: 20),
                             ],
@@ -123,11 +122,9 @@ class CreateAccountCoachScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               Switch.adaptive(
-                                value: agreeToTerms.value,
+                                value: true,
                                 activeColor: const Color(0xff586DF4),
-                                onChanged: (v) {
-                                  agreeToTerms.value = v;
-                                },
+                                onChanged: (v) {},
                               ),
                               const SizedBox(width: 10),
                               Expanded(
@@ -146,9 +143,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                             text: 'CREATE ACCOUNT',
                             height: 50,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            onTap: () {
-                              context.push(AppRoutes.createAccountTeamForCoach);
-                            },
+                            onTap: () {},
                           ),
                         ),
                       ],

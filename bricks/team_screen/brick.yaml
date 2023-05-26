@@ -28,7 +28,7 @@ vars:
   name:
     type: string
     description: For example, if the feature is login, type in 'login'
-    prompt: Type in the feature where the screen is located (eg. lib/features/feature1)?
+    prompt: Type in the feature name where the screen is located, eg. lib/features/feature1 would be feature1?
   screenName:
     type: string
     prompt: What's the screen name?

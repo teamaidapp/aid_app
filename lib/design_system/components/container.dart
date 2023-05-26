@@ -6,6 +6,7 @@ class TAContainer extends StatelessWidget {
   const TAContainer({
     required this.child,
     this.margin,
+    this.radius = 40,
     super.key,
   });
 
@@ -14,6 +15,9 @@ class TAContainer extends StatelessWidget {
 
   /// The margin of the container.
   final EdgeInsets? margin;
+
+  /// The radius of the container.
+  final double radius;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,7 @@ class TAContainer extends StatelessWidget {
             offset: Offset(0, 4),
           ),
         ],
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(radius),
       ),
       child: child,
     );

@@ -6,9 +6,11 @@ import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/components/buttons/primary_button.dart';
+import 'package:team_aid/design_system/components/container.dart';
 import 'package:team_aid/design_system/components/inputs/primary_input.dart';
 import 'package:team_aid/design_system/components/typography/typography.dart';
 import 'package:team_aid/design_system/utils/colors.dart';
+import 'package:team_aid/features/login/widgets/team_player.widget.dart';
 
 /// The statelessWidget that handles the current screen
 class LoginScreen extends HookWidget {
@@ -84,8 +86,8 @@ class LoginScreen extends HookWidget {
                       ),
                       // padding: const EdgeInsets.symmetric(horizontal: 34, vertical: 30),
                       padding: const EdgeInsets.only(
-                        left: 34,
-                        right: 34,
+                        left: 24,
+                        right: 24,
                         top: 30,
                         bottom: 20,
                       ),
@@ -213,72 +215,122 @@ class _LoginPage extends HookWidget {
   }
 }
 
-class _CreateAccountPage extends StatelessWidget {
+class _CreateAccountPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Column(
+    final teamPlayerSelected = useState(false);
+    return teamPlayerSelected.value
+        ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TATypography.h3(
-                text: 'Create account',
-                color: TAColors.textColor,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TATypography.h3(
+                      text: 'Team player',
+                      color: TAColors.textColor,
+                    ),
+                    const SizedBox(height: 8),
+                    TATypography.paragraph(
+                      text: 'Choose your profile',
+                      color: TAColors.color3,
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 8),
-              TATypography.paragraph(
-                text: 'Who are you?',
-                color: TAColors.color3,
+              const SizedBox(height: 20),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TeamPlayerWidget(
+                    subtitle: 'Under age',
+                    title: 'Parents',
+                    icon: Iconsax.profile_2user,
+                    description: 'School sponsored / Elementary / Middle and High School',
+                    onTap: () {
+                      context.push(AppRoutes.createAccountParents);
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TeamPlayerWidget(
+                    subtitle: 'Starting college',
+                    title: 'Team player',
+                    icon: Iconsax.people,
+                    description: 'College / Youth Leagues / Athletic Associations / Professional players',
+                    onTap: () {},
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TATypography.h3(
+                      text: 'Create account',
+                      color: TAColors.textColor,
+                    ),
+                    const SizedBox(height: 8),
+                    TATypography.paragraph(
+                      text: 'Who are you?',
+                      color: TAColors.color3,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _RegisterOptionWidget(
+                    text: 'Coach / Admin',
+                    icon: Iconsax.user,
+                    onTap: () {
+                      context.push(AppRoutes.createAccountCoach);
+                    },
+                  ),
+                  const SizedBox(width: 14),
+                  _RegisterOptionWidget(
+                    text: 'Team player',
+                    icon: Iconsax.people,
+                    onTap: () {
+                      teamPlayerSelected.value = true;
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 30),
+              TAPrimaryButton(
+                text: 'REQUEST A FREE DEMO',
+                mainAxisAlignment: MainAxisAlignment.center,
+                onTap: () {
+                  context.push(AppRoutes.requestDemo);
+                },
+              ),
+              const SizedBox(height: 4),
+              Align(
+                child: TATypography.paragraph(
+                  text: 'For your League or Club',
+                  color: TAColors.textColor,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Align(
+                child: TATypography.paragraph(
+                  text: 'Free trial for 15 days',
+                  color: TAColors.color2,
+                ),
               ),
             ],
-          ),
-        ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _RegisterOptionWidget(
-              text: 'Coach / Admin',
-              icon: Iconsax.user,
-              onTap: () {
-                context.push(AppRoutes.createAccountCoach);
-              },
-            ),
-            const SizedBox(width: 14),
-            _RegisterOptionWidget(
-              text: 'Team player',
-              icon: Iconsax.people,
-              onTap: () {},
-            ),
-          ],
-        ),
-        const SizedBox(height: 30),
-        TAPrimaryButton(
-          text: 'REQUEST A FREE DEMO',
-          mainAxisAlignment: MainAxisAlignment.center,
-          onTap: () {
-            context.push(AppRoutes.requestDemo);
-          },
-        ),
-        const SizedBox(height: 4),
-        Align(
-          child: TATypography.paragraph(
-            text: 'For your League or Club',
-            color: TAColors.textColor,
-          ),
-        ),
-        const SizedBox(height: 20),
-        Align(
-          child: TATypography.paragraph(
-            text: 'Free trial for 15 days',
-            color: TAColors.color2,
-          ),
-        ),
-      ],
-    );
+          );
   }
 }
 
