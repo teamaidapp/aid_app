@@ -14,6 +14,7 @@ class TAPrimaryButton extends StatelessWidget {
     this.height = 40,
     this.isLoading = false,
     this.color = TAColors.primary,
+    this.padding = const EdgeInsets.symmetric(horizontal: 32),
     this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
   });
 
@@ -34,6 +35,9 @@ class TAPrimaryButton extends StatelessWidget {
 
   /// The alignment of the text and icon.
   final MainAxisAlignment mainAxisAlignment;
+
+  /// The padding of the text and icon.
+  final EdgeInsets padding;
 
   /// A boolean that is used to show a loading indicator when the button
   /// is tapped.
@@ -64,7 +68,7 @@ class TAPrimaryButton extends StatelessWidget {
                 ),
               )
             : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
+                padding: padding,
                 child: Row(
                   mainAxisAlignment: mainAxisAlignment,
                   children: [

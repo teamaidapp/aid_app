@@ -6,6 +6,9 @@ class TAColors {
   /// The primary color of the app.
   static const primary = Color(0xFF1E88E5);
 
+  /// The purple color of the app.
+  static const purple = Color(0xFF496CF1);
+
   /// The color of the text.
   static const textColor = Color(0xFF0D253C);
 
