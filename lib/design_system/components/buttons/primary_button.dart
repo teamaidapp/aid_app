@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:team_aid/design_system/design_system.dart';
-import 'package:team_aid/design_system/utils/colors.dart';
 
 /// The TAPrimaryButton class is a stateless widget that displays a button
 /// with customizable text, color, and tap event handling, and can show a
