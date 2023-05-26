@@ -1,3 +1,5 @@
 bricks:
   team_feature:
     path: bricks/feature
+  team_screen:
+    path: bricks/team_screen
