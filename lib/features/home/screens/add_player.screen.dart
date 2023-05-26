@@ -56,6 +56,7 @@ class AddPlayerScreen extends HookWidget {
               SizedBox(
                 width: 120,
                 child: GestureDetector(
+                  key: const Key('add_player'),
                   onTap: () {
                     addPlayerScreen.value = true;
                   },
@@ -74,6 +75,7 @@ class AddPlayerScreen extends HookWidget {
                     child: Center(
                       child: TATypography.paragraph(
                         text: 'Add Player',
+                        key: const Key('add_player_title'),
                         color: addPlayerScreen.value
                             ? TAColors.textColor
                             : const Color(0x0D253C4D).withOpacity(0.3),
@@ -87,6 +89,7 @@ class AddPlayerScreen extends HookWidget {
               SizedBox(
                 width: 150,
                 child: GestureDetector(
+                  key: const Key('search_player'),
                   onTap: () {
                     addPlayerScreen.value = false;
                   },
