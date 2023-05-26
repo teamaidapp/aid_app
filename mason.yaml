@@ -3,3 +3,7 @@ bricks:
     path: bricks/feature
   team_screen:
     path: bricks/team_screen
+  team_widget:
+    path: bricks/team_widget
+  team_controller:
+    path: bricks/team_controller

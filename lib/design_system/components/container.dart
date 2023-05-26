@@ -7,6 +7,7 @@ class TAContainer extends StatelessWidget {
     required this.child,
     this.margin,
     this.radius = 40,
+    this.padding = const EdgeInsets.all(20),
     super.key,
   });
 
@@ -16,6 +17,9 @@ class TAContainer extends StatelessWidget {
   /// The margin of the container.
   final EdgeInsets? margin;
 
+  /// The padding of the container.
+  final EdgeInsets? padding;
+
   /// The radius of the container.
   final double radius;
 
@@ -23,13 +27,13 @@ class TAContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: margin,
-      padding: const EdgeInsets.all(20),
+      padding: padding,
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: const [
           BoxShadow(
             color: Color.fromRGBO(79, 21, 121, 0.1),
-            blurRadius: 22,
+            blurRadius: 10,
             offset: Offset(0, 4),
           ),
         ],

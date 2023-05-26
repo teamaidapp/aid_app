@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/features/home/home.screen.dart';
+import 'package:team_aid/features/home/screens/add_player.screen.dart';
 import 'package:team_aid/features/login/login.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_coach.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_team.screen.dart';
@@ -27,6 +28,9 @@ class AppRoutes {
 
   /// The create account team player route.
   static const String createAccountParents = '/createAccountParents';
+
+  /// The add player route.
+  static const String addPlayer = '/home/addPlayer';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -57,6 +61,10 @@ final routerProvider = Provider((ref) {
       GoRoute(
         path: AppRoutes.createAccountParents,
         builder: (context, state) => const CreateAccountParentsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.addPlayer,
+        builder: (context, state) => const AddPlayerScreen(),
       ),
     ],
   );
