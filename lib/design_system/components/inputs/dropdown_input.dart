@@ -1,3 +1,4 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -6,11 +7,12 @@ import 'package:team_aid/design_system/utils/colors.dart';
 
 /// The TAPrimaryInput class is a stateful widget that creates a text input
 /// field with a label, placeholder, and optional password visibility toggle.
-class TAPrimaryInput extends StatefulWidget {
+class TADropdown extends StatefulWidget {
   /// Constructor
-  const TAPrimaryInput({
+  const TADropdown({
     required this.label,
     required this.placeholder,
+    required this.items,
     super.key,
     this.textEditingController,
     this.isPassword = false,
@@ -25,14 +27,17 @@ class TAPrimaryInput extends StatefulWidget {
   /// The label text for the text field.
   final String label;
 
+  /// The list of items for the dropdown.
+  final List<String> items;
+
   /// A boolean that is used to determine if the text field is a password field.
   final bool isPassword;
 
   @override
-  State<TAPrimaryInput> createState() => _TAPrimaryInputState();
+  State<TADropdown> createState() => _TADropdownState();
 }
 
-class _TAPrimaryInputState extends State<TAPrimaryInput> {
+class _TADropdownState extends State<TADropdown> {
   late TextEditingController textEditingController = widget.textEditingController ?? TextEditingController();
   bool obscureText = true;
   bool isPassword = false;
@@ -53,43 +58,19 @@ class _TAPrimaryInputState extends State<TAPrimaryInput> {
           color: TAColors.color1,
         ),
         SizedBox(height: 0.5.h),
-        TextFormField(
-          cursorColor: TAColors.color2,
-          controller: textEditingController,
-          obscureText: obscureText,
-          decoration: InputDecoration(
-            filled: true,
-            contentPadding: EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 1.5.h),
-            fillColor: Colors.white,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: TAColors.color1.withOpacity(0.5),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            floatingLabelBehavior: FloatingLabelBehavior.never,
-            labelStyle: GoogleFonts.poppins(
-              color: TAColors.color1,
-            ),
-            labelText: widget.placeholder,
-            suffixIcon: isPassword
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obscureText = !obscureText;
-                      });
-                    },
-                    icon: Icon(
-                      obscureText ? Icons.visibility : Icons.visibility_off,
-                      color: TAColors.color1,
-                    ),
-                  )
-                : null,
+        CustomDropdown(
+          items: widget.items,
+          hintStyle: GoogleFonts.poppins(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
+            color: TAColors.color2,
           ),
+          hintText: widget.placeholder,
+          borderSide: BorderSide(
+            color: TAColors.color1.withOpacity(0.5),
+          ),
+          borderRadius: BorderRadius.circular(10),
+          controller: textEditingController,
         ),
       ],
     );
