@@ -1,10 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_aid/core/routes.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(
+    fileName: kReleaseMode ? '.env' : '.env.staging',
+  );
   runApp(
     const ProviderScope(
       child: MainApp(),
@@ -21,6 +27,16 @@ void main() {
 final httpProvider = Provider<http.Client>((ref) {
   return http.Client();
 });
+
+/// `final sharedPrefs` is a `FutureProvider` that provides a `SharedPreferences` instance to its
+/// dependents. The `FutureProvider` constructor takes a callback function that returns a `Future` of
+/// the value that the provider provides. In this case, the callback function is an async function that
+/// returns the result of calling `SharedPreferences.getInstance()`, which is a
+/// `Future<SharedPreferences>`. The `FutureProvider` will asynchronously create and provide the
+/// `SharedPreferences` instance to any dependent widgets that use `sharedPrefs` as a dependency.
+final sharedPrefs = FutureProvider<SharedPreferences>(
+  (_) async => SharedPreferences.getInstance(),
+);
 
 /// The MainApp class is a ConsumerWidget that builds a MaterialApp with a
 /// router based on the current

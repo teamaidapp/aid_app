@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/entities/team.model.dart';
+import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
 
 /// The statelessWidget that handles the current screen
 class CreateAccountTeamScreen extends StatelessWidget {
@@ -29,10 +33,10 @@ class CreateAccountTeamScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(
-                      Iconsax.arrow_left_2,
-                      color: TAColors.textColor,
-                    ),
+                    // const Icon(
+                    //   Iconsax.arrow_left_2,
+                    //   color: TAColors.textColor,
+                    // ),
                     const Spacer(),
                     TATypography.h3(
                       text: 'Create a team',
@@ -59,6 +63,9 @@ class CreateAccountTeamScreen extends StatelessWidget {
                 final genderController = useTextEditingController();
                 final organizationController = useTextEditingController();
                 final countryController = useTextEditingController();
+                final zipCodeController = useTextEditingController();
+                final stateController = useTextEditingController();
+                final levelController = useTextEditingController();
 
                 return Container(
                   width: double.infinity,
@@ -73,7 +80,11 @@ class CreateAccountTeamScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         TAContainer(
-                          margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
+                          margin: const EdgeInsets.only(
+                            left: 20,
+                            right: 20,
+                            top: 30,
+                          ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -88,9 +99,7 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                 textEditingController: sportController,
                                 placeholder: 'Select your sport',
                                 items: const [
-                                  'Football',
-                                  'Basketball',
-                                  'Volleyball',
+                                  'Cheerleading',
                                 ],
                               ),
                               const SizedBox(height: 10),
@@ -98,7 +107,11 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                 label: 'Age group',
                                 textEditingController: ageGroupController,
                                 placeholder: 'Select age group',
-                                items: const ['U-12', 'U-14', 'U-16', 'U-18'],
+                                items: const [
+                                  'Elementary',
+                                  'Middle School',
+                                  'High School'
+                                ],
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
@@ -122,31 +135,96 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                 textEditingController: countryController,
                                 placeholder: 'Enter your country',
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 10),
+                              TAPrimaryInput(
+                                label: 'Zip Code',
+                                textEditingController: zipCodeController,
+                                placeholder: 'Enter the zipcode',
+                              ),
+                              const SizedBox(height: 10),
+                              TAPrimaryInput(
+                                label: 'State',
+                                textEditingController: stateController,
+                                placeholder: 'Enter the state',
+                              ),
+                              const SizedBox(height: 10),
+                              TAPrimaryInput(
+                                label: 'Level',
+                                textEditingController: levelController,
+                                placeholder: 'Enter the level',
+                              ),
+                              const SizedBox(height: 10),
                             ],
                           ),
                         ),
                         const SizedBox(height: 20),
                         Padding(
-                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            right: 20,
+                            bottom: 40,
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Spacer(),
                               Expanded(
                                 flex: 2,
-                                child: TATypography.paragraph(
-                                  text: 'Skip',
-                                  underline: true,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    context.go(AppRoutes.home);
+                                  },
+                                  child: TATypography.paragraph(
+                                    text: 'Skip',
+                                    underline: true,
+                                  ),
                                 ),
                               ),
                               Expanded(
                                 flex: 3,
-                                child: TAPrimaryButton(
-                                  text: 'CREATE TEAM',
-                                  height: 50,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  onTap: () {},
+                                child: HookConsumer(
+                                  builder: (context, ref, child) {
+                                    final isLoading = useState(false);
+                                    return TAPrimaryButton(
+                                      text: 'CREATE TEAM',
+                                      height: 50,
+                                      isLoading: isLoading.value,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      onTap: () async {
+                                        isLoading.value = true;
+                                        final team = TeamModel(
+                                          teamName: teamNameController.text,
+                                          sport: sportController.text,
+                                          ageGroup: ageGroupController.text,
+                                          gender: genderController.text,
+                                          organization:
+                                              organizationController.text,
+                                          country: countryController.text,
+                                          zipCode: zipCodeController.text,
+                                          state: stateController.text,
+                                          level: levelController.text,
+                                        );
+                                        final res = await ref
+                                            .read(
+                                              createAccountControllerProvider
+                                                  .notifier,
+                                            )
+                                            .createTeam(team: team);
+                                        isLoading.value = false;
+                                        if (res.ok && context.mounted) {
+                                          context.go(AppRoutes.home);
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(res.message),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  },
                                 ),
                               ),
                             ],

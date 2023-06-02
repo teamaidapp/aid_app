@@ -1,11 +1,11 @@
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/features/login/services/login.service.dart';
 import 'package:team_aid/features/login/state/login.state.dart';
 
 /// A dependency injection.
-final loginControllerProvider = StateNotifierProvider.autoDispose<LoginController, LoginScreenState>((ref) {
+final loginControllerProvider =
+    StateNotifierProvider.autoDispose<LoginController, LoginScreenState>((ref) {
   return LoginController(
     const LoginScreenState(),
     ref,
@@ -24,23 +24,26 @@ class LoginController extends StateNotifier<LoginScreenState> {
 
   final LoginService _loginService;
 
-  /// This function retrieves the total earnings and returns a response indicating success or failure.
-  ///
-  /// Returns:
-  ///   A `Future` object that will eventually return a `ResponseFailureModel` object.
-  Future<ResponseFailureModel> getData() async {
-    var response = ResponseFailureModel.defaultFailureResponse();
+  /// Login
+  Future<ResponseFailureModel> login({
+    required String email,
+    required String password,
+  }) async {
     try {
-      final result = await _loginService.getData();
+      final res = await _loginService.login(
+        email: email,
+        password: password,
+      );
 
-      return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
-        (success) {          
-          return response = response.copyWith(ok: true);
-        },
+      return res.fold(
+        (l) => ResponseFailureModel(ok: false, message: l.message),
+        (r) => ResponseFailureModel(ok: true, message: r.message),
       );
     } catch (e) {
-      return response = response.copyWith(message: 'Hubo un problema al obtener los datos de LoginService');
+      return ResponseFailureModel(
+        ok: false,
+        message: 'An unexpected error occurred',
+      );
     }
   }
 }
