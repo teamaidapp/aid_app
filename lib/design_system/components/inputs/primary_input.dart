@@ -33,7 +33,8 @@ class TAPrimaryInput extends StatefulWidget {
 }
 
 class _TAPrimaryInputState extends State<TAPrimaryInput> {
-  late TextEditingController textEditingController = widget.textEditingController ?? TextEditingController();
+  late TextEditingController textEditingController =
+      widget.textEditingController ?? TextEditingController();
   bool obscureText = true;
   bool isPassword = false;
   @override
@@ -59,7 +60,8 @@ class _TAPrimaryInputState extends State<TAPrimaryInput> {
           obscureText: obscureText,
           decoration: InputDecoration(
             filled: true,
-            contentPadding: EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 1.5.h),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 1.5.h),
             fillColor: Colors.white,
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
@@ -74,6 +76,12 @@ class _TAPrimaryInputState extends State<TAPrimaryInput> {
             floatingLabelBehavior: FloatingLabelBehavior.never,
             labelStyle: GoogleFonts.poppins(
               color: TAColors.color1,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: TAColors.color1.withOpacity(0.5),
+              ),
+              borderRadius: BorderRadius.circular(10),
             ),
             labelText: widget.placeholder,
             suffixIcon: isPassword

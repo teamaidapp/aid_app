@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/entities/user.model.dart';
+import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
 
 /// The statelessWidget that handles the current screen
 class CreateAccountCoachScreen extends StatelessWidget {
@@ -73,7 +77,11 @@ class CreateAccountCoachScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         TAContainer(
-                          margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
+                          margin: const EdgeInsets.only(
+                            left: 20,
+                            right: 20,
+                            top: 30,
+                          ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -132,7 +140,8 @@ class CreateAccountCoachScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: TATypography.subparagraph(
-                                  text: 'I agree to terms of service and privacy policy',
+                                  text:
+                                      'I agree to terms of service and privacy policy',
                                   color: const Color(0xff999999),
                                 ),
                               ),
@@ -140,16 +149,50 @@ class CreateAccountCoachScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20, right: 20),
-                          child: TAPrimaryButton(
-                            text: 'CREATE ACCOUNT',
-                            height: 50,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            onTap: () {
-                              context.push(AppRoutes.createAccountTeamForCoach);
-                            },
-                          ),
+                        HookConsumer(
+                          builder: (context, ref, child) {
+                            final isLoading = useState(false);
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 20, right: 20),
+                              child: TAPrimaryButton(
+                                text: 'CREATE ACCOUNT',
+                                height: 50,
+                                isLoading: isLoading.value,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                onTap: () async {
+                                  final user = UserModel(
+                                    firstName: firstNameController.text,
+                                    lastName: lastNameController.text,
+                                    email: emailController.text.toLowerCase(),
+                                    phoneNumber: phoneNumberController.text,
+                                    address: addressController.text,
+                                    password: passwordController.text,
+                                    role: Role.coach,
+                                  );
+                                  isLoading.value = true;
+                                  final res = await ref
+                                      .read(
+                                        createAccountControllerProvider
+                                            .notifier,
+                                      )
+                                      .createAccount(user: user);
+                                  isLoading.value = false;
+                                  if (res.ok && context.mounted) {
+                                    context.go(
+                                      AppRoutes.createAccountTeamForCoach,
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(res.message),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),

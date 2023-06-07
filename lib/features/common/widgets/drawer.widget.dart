@@ -27,7 +27,7 @@ class DrawerWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TATypography.h2(text: 'Hi [name]'),
+                TATypography.h2(text: 'Hi Ancelotti'),
                 IconButton(
                   onPressed: () {
                     scaffoldKey.currentState?.closeDrawer();
@@ -91,6 +91,15 @@ class DrawerWidget extends StatelessWidget {
               icon: Iconsax.message_question,
               title: 'Help and Support',
               onTap: () {},
+            ),
+            const SizedBox(height: spaceBetweenItems),
+            _DrawerOptionWidget(
+              icon: Iconsax.logout,
+              title: 'Log out',
+              onTap: () {
+                Navigator.pop(context);
+                context.go(AppRoutes.login);
+              },
             ),
           ],
         ),

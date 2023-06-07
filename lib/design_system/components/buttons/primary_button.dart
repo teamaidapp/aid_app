@@ -62,8 +62,10 @@ class TAPrimaryButton extends StatelessWidget {
         ),
         child: isLoading
             ? const SizedBox(
+                height: 20,
+                width: 20,
                 child: CircularProgressIndicator(
-                  strokeWidth: 2,
+                  strokeWidth: 1.5,
                   color: Colors.white,
                 ),
               )

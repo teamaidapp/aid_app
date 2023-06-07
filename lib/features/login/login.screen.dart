@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/routes.dart';
@@ -9,6 +10,7 @@ import 'package:team_aid/design_system/components/buttons/primary_button.dart';
 import 'package:team_aid/design_system/components/inputs/primary_input.dart';
 import 'package:team_aid/design_system/components/typography/typography.dart';
 import 'package:team_aid/design_system/utils/colors.dart';
+import 'package:team_aid/features/login/controllers/login.controller.dart';
 import 'package:team_aid/features/login/widgets/team_player.widget.dart';
 
 /// The statelessWidget that handles the current screen
@@ -193,11 +195,32 @@ class _LoginPage extends HookWidget {
           placeholder: 'Enter your password',
         ),
         const SizedBox(height: 20),
-        TAPrimaryButton(
-          text: 'LOGIN',
-          mainAxisAlignment: MainAxisAlignment.center,
-          onTap: () {
-            context.push(AppRoutes.home);
+        HookConsumer(
+          builder: (context, ref, child) {
+            final isLoading = useState(false);
+            return TAPrimaryButton(
+              text: 'LOGIN',
+              isLoading: isLoading.value,
+              mainAxisAlignment: MainAxisAlignment.center,
+              onTap: () async {
+                isLoading.value = true;
+                final res =
+                    await ref.read(loginControllerProvider.notifier).login(
+                          email: emailController.text,
+                          password: passwordController.text,
+                        );
+                isLoading.value = false;
+                if (res.ok && context.mounted) {
+                  context.go(AppRoutes.home);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(res.message),
+                    ),
+                  );
+                }
+              },
+            );
           },
         ),
         const SizedBox(height: 8),

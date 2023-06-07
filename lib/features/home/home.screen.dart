@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const Spacer(),
                     TATypography.h3(
-                      text: 'Hi [name]',
+                      text: 'Hi Ancelotti',
                       color: TAColors.textColor,
                       fontWeight: FontWeight.w700,
                     ),

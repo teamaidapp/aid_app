@@ -14,12 +14,14 @@ final loginServiceProvider = Provider<LoginServiceImpl>((ref) {
 /// This class is responsible of the abstraction
 abstract class LoginService {
   /// Get data
-  Future<Either<Failure, Success>> getData();
+  Future<Either<Failure, Success>> login({
+    required String email,
+    required String password,
+  });
 }
 
 /// This class is responsible for implementing the LoginService
 class LoginServiceImpl implements LoginService {
-
   /// Constructor
   LoginServiceImpl(this.loginRepository);
 
@@ -27,14 +29,18 @@ class LoginServiceImpl implements LoginService {
   final LoginRepository loginRepository;
 
   @override
-  Future<Either<Failure, Success>> getData() async {
+  Future<Either<Failure, Success>> login({
+    required String email,
+    required String password,
+  }) async {
     try {
-      final result = await loginRepository.getData();
+      final result =
+          await loginRepository.login(email: email, password: password);
 
       return result.fold(Left.new, Right.new);
     } catch (e) {
       return Left(
-        Failure(          
+        Failure(
           message: 'Hubo un problema al obtener los datos de LoginServiceImpl',
         ),
       );
