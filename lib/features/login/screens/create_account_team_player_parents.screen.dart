@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
 
@@ -72,7 +73,11 @@ class CreateAccountParentsScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         TAContainer(
-                          margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
+                          margin: const EdgeInsets.only(
+                            left: 20,
+                            right: 20,
+                            top: 30,
+                          ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -98,7 +103,14 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                 label: 'Age group',
                                 textEditingController: ageGroupController,
                                 placeholder: 'Select age group',
-                                items: const ['U-10', 'U-12', 'U-14', 'U-16', 'U-18'],
+                                items: [
+                                  TADropdownModel(item: 'U-10', id: ''),
+                                  TADropdownModel(item: 'U-12', id: ''),
+                                  TADropdownModel(item: 'U-14', id: ''),
+                                  TADropdownModel(item: 'U-16', id: ''),
+                                  TADropdownModel(item: 'U-18', id: ''),
+                                ],
+                                onChange: (selectedValue) {},
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
@@ -129,7 +141,8 @@ class CreateAccountParentsScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: TATypography.subparagraph(
-                                  text: 'I agree to terms of service and privacy policy',
+                                  text:
+                                      'I agree to terms of service and privacy policy',
                                   color: const Color(0xff999999),
                                 ),
                               ),

@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
@@ -97,30 +98,24 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                 label: 'Sport',
                                 textEditingController: sportController,
                                 placeholder: 'Select your sport',
-                                items: const [
-                                  'Cheerleading',
-                                ],
+                                items: TAConstants.sportsList,
+                                onChange: (selectedValue) {},
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
                                 label: 'Age group',
                                 textEditingController: ageGroupController,
                                 placeholder: 'Select age group',
-                                items: const [
-                                  'Elementary',
-                                  'Middle School',
-                                  'High School'
-                                ],
+                                items: TAConstants.ageGroupList,
+                                onChange: (selectedValue) {},
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
                                 label: 'Select gender',
                                 textEditingController: genderController,
                                 placeholder: 'Select gender',
-                                items: const [
-                                  'Men',
-                                  'Woman',
-                                ],
+                                items: TAConstants.genderList,
+                                onChange: (selectedValue) {},
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
@@ -193,6 +188,7 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                       onTap: () async {
                                         isLoading.value = true;
                                         final team = TeamModel(
+                                          id: '',
                                           teamName: teamNameController.text,
                                           sport: sportController.text,
                                           ageGroup: ageGroupController.text,

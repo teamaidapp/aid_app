@@ -1,10 +1,11 @@
 // ignore_for_file: one_member_abstracts
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:team_aid/core/entities/failure.dart';
-import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/main.dart';
 
 /// The provider of LoginRepository
@@ -16,7 +17,7 @@ final loginProvider = Provider<LoginRepository>((ref) {
 /// This class is responsible of the abstraction
 abstract class LoginRepository {
   /// Get data
-  Future<Either<Failure, Success>> login({
+  Future<Either<Failure, Map<String, dynamic>>> login({
     required String email,
     required String password,
   });
@@ -32,7 +33,7 @@ class LoginRepositoryImpl implements LoginRepository {
 
   /// Get data from backend
   @override
-  Future<Either<Failure, Success>> login({
+  Future<Either<Failure, Map<String, dynamic>>> login({
     required String email,
     required String password,
   }) async {
@@ -56,7 +57,9 @@ class LoginRepositoryImpl implements LoginRepository {
           ),
         );
       }
-      return Right(Success(ok: true, message: 'Success'));
+      return Right(
+        (jsonDecode(res.body) as Map)['data'] as Map<String, dynamic>,
+      );
     } catch (e) {
       return Left(
         Failure(
