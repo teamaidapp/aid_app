@@ -1,13 +1,15 @@
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/features/home/services/home.service.dart';
 import 'package:team_aid/features/home/state/home.state.dart';
 
 /// A dependency injection.
-final homeControllerProvider = StateNotifierProvider.autoDispose<HomeController, HomeScreenState>((ref) {
+final homeControllerProvider =
+    StateNotifierProvider<HomeController, HomeScreenState>((ref) {
   return HomeController(
-    const HomeScreenState(),
+    const HomeScreenState(
+      userTeams: AsyncValue.loading(),
+    ),
     ref,
     ref.watch(homeServiceProvider),
   );
@@ -35,12 +37,38 @@ class HomeController extends StateNotifier<HomeScreenState> {
 
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
-        (success) {          
+        (success) {
           return response = response.copyWith(ok: true);
         },
       );
     } catch (e) {
-      return response = response.copyWith(message: 'Hubo un problema al obtener los datos de HomeService');
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de HomeService',
+      );
+    }
+  }
+
+  /// This function retrieves a user's teams and updates the state accordingly, returning a response
+  /// indicating success or failure.
+  ///
+  /// Returns:
+  ///   a `Future` that resolves to a `ResponseFailureModel`.
+  Future<ResponseFailureModel> getUserTeams() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _homeService.getUserTeams();
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (list) {
+          state = state.copyWith(userTeams: AsyncValue.data(list));
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de HomeService',
+      );
     }
   }
 }

@@ -1,8 +1,13 @@
 // ignore_for_file: one_member_abstracts
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
 import 'package:team_aid/core/entities/success.dart';
+import 'package:team_aid/core/entities/user.model.dart';
+import 'package:team_aid/core/enums/role.enum.dart';
+import 'package:team_aid/features/common/functions/global_functions.dart';
 import 'package:team_aid/features/login/repositories/login.repository.dart';
 
 /// The provider of LoginService
@@ -37,7 +42,34 @@ class LoginServiceImpl implements LoginService {
       final result =
           await loginRepository.login(email: email, password: password);
 
-      return result.fold(Left.new, Right.new);
+      return result.fold(
+        Left.new,
+        (r) async {
+          inspect(r);
+          await GlobalFunctions().saveUserSession(
+            user: UserModel(
+              email: email,
+              address: r['address'] as String? ?? '',
+              password: '',
+              firstName: r['firstName'] as String,
+              lastName: r['lastName'] as String,
+              phoneNumber: r['phoneNumber'] as String,
+              role: r['role'] as String == 'coach'
+                  ? Role.coach
+                  : r['role'] as String == 'client'
+                      ? Role.client
+                      : Role.support,
+            ),
+            token: r['accessToken'] as String,
+          );
+          return Right(
+            Success(
+              ok: true,
+              message: '',
+            ),
+          );
+        },
+      );
     } catch (e) {
       return Left(
         Failure(

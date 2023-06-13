@@ -1,24 +1,28 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/drawer.widget.dart';
+import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/home/widgets/messages.widget.dart';
 import 'package:team_aid/features/home/widgets/requests.widget.dart';
 import 'package:team_aid/features/home/widgets/upcoming_events.widget.dart';
+import 'package:team_aid/main.dart';
 
 /// The statelessWidget that handles the current screen
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   /// The constructor.
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   final requestsExpandableController =
       ExpandableController(initialExpanded: true);
   final messagesExpandableController =
@@ -27,6 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ExpandableController(initialExpanded: true);
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    ref.read(homeControllerProvider.notifier).getUserTeams();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,11 +61,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Spacer(),
-                    TATypography.h3(
-                      text: 'Hi Ancelotti',
-                      color: TAColors.textColor,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    ref.watch(sharedPrefs).when(
+                          data: (prefs) {
+                            final name = prefs.getString(TAConstants.firstName);
+                            return TATypography.h3(
+                              text: 'Hi $name',
+                              color: TAColors.textColor,
+                              fontWeight: FontWeight.w700,
+                            );
+                          },
+                          error: (error, stackTrace) => TATypography.h3(
+                            text: 'Hi',
+                            color: TAColors.textColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          loading: () {
+                            return TATypography.h3(
+                              text: 'Hi',
+                              color: TAColors.textColor,
+                              fontWeight: FontWeight.w700,
+                            );
+                          },
+                        ),
                     const Spacer(),
                     GestureDetector(
                       onTap: () {

@@ -1,9 +1,14 @@
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/design_system/components/typography/typography.dart';
 import 'package:team_aid/design_system/utils/colors.dart';
+
+/// A callback that is called when the dropdown changes.
+typedef DropdownChangeCallback = void Function(TADropdownModel? selectedValue);
 
 /// The TAPrimaryInput class is a stateful widget that creates a text input
 /// field with a label, placeholder, and optional password visibility toggle.
@@ -11,8 +16,9 @@ class TADropdown extends StatefulWidget {
   /// Constructor
   const TADropdown({
     required this.label,
-    required this.placeholder,
     required this.items,
+    required this.placeholder,
+    required this.onChange,
     super.key,
     this.textEditingController,
     this.isPassword = false,
@@ -28,17 +34,21 @@ class TADropdown extends StatefulWidget {
   final String label;
 
   /// The list of items for the dropdown.
-  final List<String> items;
+  final List<TADropdownModel> items;
 
   /// A boolean that is used to determine if the text field is a password field.
   final bool isPassword;
+
+  /// A callback that is called when the dropdown changes.
+  final DropdownChangeCallback onChange;
 
   @override
   State<TADropdown> createState() => _TADropdownState();
 }
 
 class _TADropdownState extends State<TADropdown> {
-  late TextEditingController textEditingController = widget.textEditingController ?? TextEditingController();
+  late TextEditingController textEditingController =
+      widget.textEditingController ?? TextEditingController();
   bool obscureText = true;
   bool isPassword = false;
   @override
@@ -58,19 +68,64 @@ class _TADropdownState extends State<TADropdown> {
           color: TAColors.color1,
         ),
         SizedBox(height: 0.5.h),
-        CustomDropdown(
-          items: widget.items,
-          hintStyle: GoogleFonts.poppins(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
-            color: TAColors.color2,
+        DropdownSearch<TADropdownModel>(
+          items: List.generate(
+            widget.items.length,
+            (index) => widget.items[index],
           ),
-          hintText: widget.placeholder,
-          borderSide: BorderSide(
-            color: TAColors.color1.withOpacity(0.5),
+          itemAsString: (item) => item.item,
+          onChanged: widget.onChange,
+          dropdownButtonProps: const DropdownButtonProps(
+            icon: Icon(
+              Iconsax.arrow_down_1,
+              size: 14,
+              color: Colors.black,
+            ),
           ),
-          borderRadius: BorderRadius.circular(10),
-          controller: textEditingController,
+          dropdownDecoratorProps: DropDownDecoratorProps(
+            baseStyle: GoogleFonts.poppins(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: TAColors.color2,
+            ),
+            dropdownSearchDecoration: InputDecoration(
+              hintText: widget.placeholder,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 10,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: TAColors.color1.withOpacity(0.5),
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: TAColors.color1.withOpacity(0.5),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                  color: TAColors.color1,
+                ),
+              ),
+              hintStyle: GoogleFonts.poppins(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+                color: TAColors.color2,
+              ),
+            ),
+          ),
+          popupProps: PopupProps.menu(
+            fit: FlexFit.loose,
+            constraints: const BoxConstraints.tightFor(),
+            menuProps: MenuProps(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ),
       ],
     );

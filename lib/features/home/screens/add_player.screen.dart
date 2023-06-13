@@ -1,9 +1,24 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/constants.dart';
+import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/common/widgets/failure.widget.dart';
+import 'package:team_aid/features/common/widgets/success.widget.dart';
+import 'package:team_aid/features/home/controllers/add_player.controller.dart';
+import 'package:team_aid/features/home/controllers/home.controller.dart';
 
 /// The statelessWidget that handles the current screen
 class AddPlayerScreen extends HookWidget {
@@ -142,14 +157,17 @@ class AddPlayerScreen extends HookWidget {
   }
 }
 
-class _AddPlayerWidget extends HookWidget {
+class _AddPlayerWidget extends HookConsumerWidget {
   const _AddPlayerWidget();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final teamId = useState('');
+    final makeAdmin = useState(false);
+    final isLoading = useState(false);
     final emailController = useTextEditingController();
     final phoneController = useTextEditingController();
-    final makeAdmin = useState(false);
+    final teams = ref.watch(homeControllerProvider).userTeams;
     return Column(
       children: [
         TAContainer(
@@ -158,13 +176,48 @@ class _AddPlayerWidget extends HookWidget {
             right: 20,
             top: 30,
           ),
+          padding: const EdgeInsets.only(
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: 30,
+          ),
+          child: teams.when(
+            data: (data) {
+              return TADropdown(
+                label: 'Team',
+                placeholder: 'Enter the team',
+                items: List.generate(
+                  data.length,
+                  (index) => TADropdownModel(
+                    item: data[index].teamName,
+                    id: data[index].id,
+                  ),
+                ),
+                onChange: (selectedValue) {
+                  if (selectedValue != null) {
+                    teamId.value = selectedValue.id;
+                  }
+                },
+              );
+            },
+            error: (e, s) => const SizedBox(),
+            loading: () => const SizedBox(),
+          ),
+        ),
+        TAContainer(
+          margin: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TAPrimaryInput(
                 label: 'E-mail',
                 textEditingController: emailController,
-                placeholder: 'Enter your email',
+                placeholder: 'Enter the email',
               ),
               const SizedBox(height: 10),
               TAPrimaryInput(
@@ -200,8 +253,38 @@ class _AddPlayerWidget extends HookWidget {
           child: TAPrimaryButton(
             text: 'ADD',
             height: 50,
+            isLoading: isLoading.value,
             mainAxisAlignment: MainAxisAlignment.center,
-            onTap: () {},
+            onTap: () async {
+              isLoading.value = true;
+              final res = await ref
+                  .read(addPlayerControllerProvider.notifier)
+                  .sendPlayerInvitation(
+                    email: emailController.text,
+                    phone: phoneController.text,
+                    teamId: teamId.value,
+                    isCoach: makeAdmin.value,
+                  );
+              isLoading.value = false;
+              if (res.ok && context.mounted) {
+                await SuccessWidget.build(
+                  title: 'Success',
+                  message: 'Your invitation has been sent successfully.',
+                  context: context,
+                );
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              } else {
+                unawaited(
+                  FailureWidget.build(
+                    title: 'Error',
+                    message: res.message,
+                    context: context,
+                  ),
+                );
+              }
+            },
           ),
         ),
         const SizedBox(height: 30),
@@ -225,8 +308,31 @@ class _SearchPlayerWidget extends HookWidget {
     final positionController = useTextEditingController();
     final stateController = useTextEditingController();
     final cityController = useTextEditingController();
+    final nameController = useTextEditingController();
+    final currentSelectedState = useState('');
     return Column(
       children: [
+        TAContainer(
+          margin: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 30,
+          ),
+          padding: const EdgeInsets.only(
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: 30,
+          ),
+          child: TADropdown(
+            label: 'Team',
+            placeholder: 'Enter the team',
+            items: [
+              TADropdownModel(item: 'One', id: ''),
+            ],
+            onChange: (selectedValue) {},
+          ),
+        ),
         TAContainer(
           margin: const EdgeInsets.only(
             left: 20,
@@ -236,45 +342,176 @@ class _SearchPlayerWidget extends HookWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.only(left: 6),
+                child: TATypography.paragraph(
+                  text: 'Search by any option',
+                  fontWeight: FontWeight.w600,
+                  color: TAColors.textColor,
+                ),
+              ),
+              const SizedBox(height: 10),
+              TAPrimaryInput(
+                label: 'Name',
+                placeholder: 'Search by name',
+                textEditingController: nameController,
+              ),
+              const SizedBox(height: 10),
               TADropdown(
                 label: 'Sport',
                 textEditingController: sportController,
                 placeholder: 'Select the sport',
-                items: const ['Football', 'Basketball'],
+                items: [
+                  TADropdownModel(
+                    item: 'Cheerleading',
+                    id: '',
+                  )
+                ],
+                onChange: (selectedValue) {},
               ),
               const SizedBox(height: 10),
               TADropdown(
                 label: 'Level',
                 textEditingController: levelController,
                 placeholder: 'Select a level',
-                items: const ['Elite', 'Amateur'],
+                items: [
+                  TADropdownModel(
+                    item: 'Elite',
+                    id: '',
+                  ),
+                  TADropdownModel(
+                    item: 'Amateur',
+                    id: '',
+                  )
+                ],
+                onChange: (selectedValue) {},
               ),
               const SizedBox(height: 20),
               TADropdown(
                 label: 'Position',
                 textEditingController: positionController,
                 placeholder: 'Select a position',
-                items: const [
-                  'Goalkeeper',
-                  'Defender',
-                  'Midfielder',
-                  'Forward'
+                items: [
+                  TADropdownModel(item: 'One', id: ''),
                 ],
+                onChange: (selectedValue) {},
               ),
               const SizedBox(height: 20),
               TADropdown(
                 label: 'State',
                 textEditingController: stateController,
                 placeholder: 'Select a state',
-                items: const ['Lagos', 'Abuja', 'Kano'],
+                items: List.generate(
+                  TAConstants.statesList.length,
+                  (index) => TADropdownModel(
+                    item: TAConstants.statesList[index].name,
+                    id: TAConstants.statesList[index].id,
+                  ),
+                ),
+                onChange: (selectedValue) {
+                  if (selectedValue != null) {
+                    currentSelectedState.value = selectedValue.id;
+                  }
+                },
               ),
               const SizedBox(height: 20),
-              TADropdown(
-                label: 'City',
-                textEditingController: cityController,
-                placeholder: 'Select a city',
-                items: const ['Lagos', 'Abuja', 'Kano'],
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TATypography.paragraph(
+                    text: 'City',
+                    fontWeight: FontWeight.w500,
+                    color: TAColors.color1,
+                  ),
+                  SizedBox(height: 0.5.h),
+                  DropdownSearch<TADropdownModel>(
+                    asyncItems: (filter) async {
+                      final response = await http.get(
+                        Uri.parse(
+                          '${dotenv.env['API_URL']}/cities/cities/${currentSelectedState.value}',
+                        ),
+                      );
+
+                      if (response.statusCode == 200) {
+                        final data =
+                            (jsonDecode(response.body) as Map)['data'] as List;
+                        return data.map((e) {
+                          final taDropdownModel = TADropdownModel(
+                            item: e['name'] as String,
+                            id: e['id'] as String,
+                          );
+                          return taDropdownModel;
+                        }).toList();
+                      } else {
+                        return [];
+                      }
+                    },
+                    onChanged: (value) {},
+                    itemAsString: (item) => item.item,
+                    dropdownButtonProps: const DropdownButtonProps(
+                      icon: Icon(
+                        Iconsax.arrow_down_1,
+                        size: 14,
+                        color: Colors.black,
+                      ),
+                    ),
+                    dropdownDecoratorProps: DropDownDecoratorProps(
+                      baseStyle: GoogleFonts.poppins(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: TAColors.color2,
+                      ),
+                      dropdownSearchDecoration: InputDecoration(
+                        hintText: 'Select a city',
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: TAColors.color1.withOpacity(0.5),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: TAColors.color1.withOpacity(0.5),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: TAColors.color1,
+                          ),
+                        ),
+                        hintStyle: GoogleFonts.poppins(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: TAColors.color2,
+                        ),
+                      ),
+                    ),
+                    popupProps: PopupProps.menu(
+                      fit: FlexFit.loose,
+                      constraints: const BoxConstraints.tightFor(),
+                      menuProps: MenuProps(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ],
               ),
+              // TADropdown(
+              //   label: 'City',
+              //   textEditingController: cityController,
+              //   placeholder: 'Select a city',
+              //   items: [
+              //     TADropdownModel(item: 'One', id: ''),
+              //   ],
+              //   onChange: (selectedValue) {},
+              // ),
               const SizedBox(height: 20),
             ],
           ),
