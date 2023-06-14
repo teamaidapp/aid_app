@@ -5,12 +5,15 @@ import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 
+/// The statelessWidget that handles the current screen
 class TeamCardWidget extends StatelessWidget {
+  /// The constructor.
   const TeamCardWidget({
-    super.key,
     required this.team,
+    super.key,
   });
 
+  /// The team model.
   final TeamModel team;
 
   @override

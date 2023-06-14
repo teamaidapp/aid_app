@@ -145,7 +145,10 @@ class TeamsScreen extends HookConsumerWidget {
   }
 }
 
+/// The TeamsListWidget is a Flutter widget that displays a list of teams based on data retrieved from a
+/// home controller provider.
 class TeamsListWidget extends ConsumerWidget {
+  /// The constructor.
   const TeamsListWidget({super.key});
 
   @override
@@ -187,12 +190,15 @@ class TeamsListWidget extends ConsumerWidget {
   }
 }
 
+/// The MyInvitationsWidget is a Flutter widget that displays a list of invitations based on data retrieved from a
+/// home controller provider.
 class MyInvitationsWidget extends StatelessWidget {
+  /// The constructor.
   const MyInvitationsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
         TAContainer(
           child: Text('Invitations'),

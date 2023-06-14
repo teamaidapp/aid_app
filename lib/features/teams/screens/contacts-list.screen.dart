@@ -273,7 +273,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
     );
   }
 
-  Future getContactList({required String id}) {
+  Future<void> getContactList({required String id}) {
     return ref
         .read(teamsControllerProvider.notifier)
         .getContactList(teamId: id);

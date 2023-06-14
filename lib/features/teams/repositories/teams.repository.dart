@@ -1,6 +1,5 @@
 // ignore_for_file: one_member_abstracts
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,7 +14,7 @@ import 'package:team_aid/main.dart';
 /// The provider of TeamsRepository
 final teamsProvider = Provider<TeamsRepository>((ref) {
   final http = ref.watch(httpProvider);
-  final secureStorage = const FlutterSecureStorage();
+  const secureStorage = FlutterSecureStorage();
   return TeamsRepositoryImpl(http, secureStorage);
 });
 

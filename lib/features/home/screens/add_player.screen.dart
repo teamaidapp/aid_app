@@ -445,7 +445,7 @@ class _SearchPlayerWidget extends HookConsumerWidget {
                               as Map)['data'] as List;
                           return data.map((e) {
                             final taDropdownModel = TADropdownModel(
-                              item: e['name'] as String,
+                              item: (e as Map)['name'] as String,
                               id: e['id'] as String,
                             );
                             return taDropdownModel;
@@ -586,14 +586,20 @@ class _SearchPlayerWidget extends HookConsumerWidget {
   }
 }
 
+/// The PlayerCard class is a stateless widget that displays a player's avatar, first name, and role,
+/// and can be tapped to trigger a callback function.
 class PlayerCard extends StatelessWidget {
+  /// Constructor
   const PlayerCard({
-    Key? key,
     required this.player,
     required this.onTap,
-  }) : super(key: key);
+    super.key,
+  });
 
+  /// Player model
   final PlayerModel player;
+
+  /// On tap callback
   final VoidCallback onTap;
 
   @override
@@ -614,7 +620,8 @@ class PlayerCard extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   image: NetworkImage(
-                      player.avatar ?? 'https://picsum.photos/200'),
+                    player.avatar ?? 'https://picsum.photos/200',
+                  ),
                   fit: BoxFit.cover,
                 ),
               ),
