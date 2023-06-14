@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -146,7 +145,8 @@ class AddPlayerRepositoryImpl implements AddPlayerRepository {
           ['result'] as List;
 
       for (final element in data) {
-        debugPrint('Data: $element');
+        final player = PlayerModel.fromMap(element as Map<String, dynamic>);
+        list.add(player);
       }
 
       return Right(list);

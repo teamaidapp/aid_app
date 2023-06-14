@@ -367,15 +367,10 @@ class _SearchPlayerWidget extends HookConsumerWidget {
                 TADropdown(
                   label: 'Sport',
                   placeholder: 'Select the sport',
-                  items: [
-                    TADropdownModel(
-                      item: 'Cheerleading',
-                      id: '',
-                    )
-                  ],
+                  items: TAConstants.sportsList,
                   onChange: (selectedValue) {
                     if (selectedValue != null) {
-                      sportController.value = selectedValue.item;
+                      sportController.value = selectedValue.id;
                     }
                   },
                 ),
@@ -545,14 +540,14 @@ class _SearchPlayerWidget extends HookConsumerWidget {
                           name: nameController.text,
                           level: levelController.value,
                           position: positionController.value,
-                          state: currentSelectedState.value,
+                          statePlayer: currentSelectedState.value,
                           city: cityState.value,
                           sport: sportController.value,
                           page: 1,
                         );
                     isLoading.value = false;
                     if (res.ok && context.mounted) {
-                      // showForm.value = false;
+                      showForm.value = false;
                     } else {
                       unawaited(
                         FailureWidget.build(
@@ -570,17 +565,48 @@ class _SearchPlayerWidget extends HookConsumerWidget {
         ],
       );
     } else {
-      return GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.8,
-        ),
-        itemBuilder: (context, index) {
-          return PlayerCard(
-            onTap: () {},
-            player: players.value![index],
-          );
-        },
+      return Column(
+        children: [
+          SizedBox(
+            height: 72.h,
+            child: players.when(
+              data: (data) {
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    return PlayerCard(
+                      onTap: () {},
+                      player: data[index],
+                    );
+                  },
+                );
+              },
+              error: (error, stackTrace) {
+                return const SizedBox();
+              },
+              loading: () {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: TAPrimaryButton(
+              text: 'NEW SEARCH',
+              height: 50,
+              mainAxisAlignment: MainAxisAlignment.center,
+              onTap: () {
+                showForm.value = true;
+              },
+            ),
+          ),
+        ],
       );
     }
   }
@@ -612,31 +638,28 @@ class PlayerCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 150,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-                image: DecorationImage(
-                  image: NetworkImage(
-                    player.avatar ?? 'https://picsum.photos/200',
-                  ),
-                  fit: BoxFit.cover,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(28),
+                  topRight: Radius.circular(28),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(28),
+                    child: Image.network(
+                      player.avatar.isEmpty
+                          ? 'https://placehold.co/200/png'
+                          : player.avatar,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                   TATypography.paragraph(
                     text: player.firstName,
-                    fontWeight: FontWeight.w500,
-                    color: TAColors.color1,
+                    fontWeight: FontWeight.w600,
                   ),
-                  const SizedBox(height: 5),
                   TATypography.paragraph(
                     text: player.role,
                     fontWeight: FontWeight.w500,

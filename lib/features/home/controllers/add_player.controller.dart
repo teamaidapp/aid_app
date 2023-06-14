@@ -73,7 +73,7 @@ class AddPlayerController extends StateNotifier<AddPlayerState> {
     required String name,
     required String level,
     required String position,
-    required String state,
+    required String statePlayer,
     required String city,
     required String sport,
     required int page,
@@ -84,7 +84,7 @@ class AddPlayerController extends StateNotifier<AddPlayerState> {
         name: name,
         level: level,
         position: position,
-        state: state,
+        state: statePlayer,
         city: city,
         sport: sport,
         page: page,
@@ -93,6 +93,7 @@ class AddPlayerController extends StateNotifier<AddPlayerState> {
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
         (success) {
+          state = state.copyWith(listOfPlayers: AsyncValue.data(success));
           return response = response.copyWith(ok: true);
         },
       );

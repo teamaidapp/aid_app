@@ -54,6 +54,7 @@ class MainApp extends ConsumerWidget {
           routeInformationParser: router.routeInformationParser,
           routerDelegate: router.routerDelegate,
           routeInformationProvider: router.routeInformationProvider,
+          debugShowCheckedModeBanner: false,
         );
       },
     );
