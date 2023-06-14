@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/routes.dart';
+import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
 
@@ -64,6 +66,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                 final addressController = useTextEditingController();
                 final passwordController = useTextEditingController();
                 final agreeToTerms = useState(false);
+                final sport = useState('');
                 return Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
@@ -101,6 +104,17 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                 label: 'E-mail',
                                 textEditingController: emailController,
                                 placeholder: 'Enter your email',
+                              ),
+                              const SizedBox(height: 10),
+                              TADropdown(
+                                label: 'Sports',
+                                items: TAConstants.sportsList,
+                                placeholder: 'Select your sport',
+                                onChange: (v) {
+                                  if (v != null) {
+                                    sport.value = v.id;
+                                  }
+                                },
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
@@ -168,6 +182,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                     phoneNumber: phoneNumberController.text,
                                     address: addressController.text,
                                     password: passwordController.text,
+                                    sportId: sport.value,
                                     role: Role.coach,
                                   );
                                   isLoading.value = true;

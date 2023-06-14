@@ -19,13 +19,10 @@ class TADropdown extends StatefulWidget {
     required this.items,
     required this.placeholder,
     required this.onChange,
-    super.key,
-    this.textEditingController,
     this.isPassword = false,
+    this.selectedValue,
+    super.key,
   });
-
-  /// The controller for the text field.
-  final TextEditingController? textEditingController;
 
   /// The placeholder text for the text field.
   final String placeholder;
@@ -42,13 +39,14 @@ class TADropdown extends StatefulWidget {
   /// A callback that is called when the dropdown changes.
   final DropdownChangeCallback onChange;
 
+  /// The selected value of the dropdown.
+  final TADropdownModel? selectedValue;
+
   @override
   State<TADropdown> createState() => _TADropdownState();
 }
 
 class _TADropdownState extends State<TADropdown> {
-  late TextEditingController textEditingController =
-      widget.textEditingController ?? TextEditingController();
   bool obscureText = true;
   bool isPassword = false;
   @override
@@ -73,6 +71,7 @@ class _TADropdownState extends State<TADropdown> {
             widget.items.length,
             (index) => widget.items[index],
           ),
+          selectedItem: widget.selectedValue,
           itemAsString: (item) => item.item,
           onChanged: widget.onChange,
           dropdownButtonProps: const DropdownButtonProps(

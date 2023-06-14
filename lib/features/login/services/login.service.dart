@@ -54,6 +54,7 @@ class LoginServiceImpl implements LoginService {
               firstName: r['firstName'] as String,
               lastName: r['lastName'] as String,
               phoneNumber: r['phoneNumber'] as String,
+              sportId: '',
               role: r['role'] as String == 'coach'
                   ? Role.coach
                   : r['role'] as String == 'client'

@@ -1,12 +1,17 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/features/home/services/home.service.dart';
+import 'package:team_aid/features/home/state/add_player.state.dart';
 
 /// A dependency injection.
 final addPlayerControllerProvider =
-    StateNotifierProvider.autoDispose<AddPlayerController, void>((ref) {
+    StateNotifierProvider.autoDispose<AddPlayerController, AddPlayerState>(
+        (ref) {
   final homeService = ref.watch(homeServiceProvider);
   return AddPlayerController(
+    const AddPlayerState(
+      listOfPlayers: AsyncValue.data([]),
+    ),
     ref,
     homeService,
   );
@@ -14,9 +19,9 @@ final addPlayerControllerProvider =
 
 /// The `ServicesHistoryController` class is responsible for retrieving and setting the services history
 /// in the state of the application.
-class AddPlayerController extends StateNotifier<void> {
+class AddPlayerController extends StateNotifier<AddPlayerState> {
   /// Constructor
-  AddPlayerController(this.ref, this._homeService) : super(null);
+  AddPlayerController(super.state, this.ref, this._homeService);
 
   /// Riverpod reference
   final Ref ref;
@@ -48,6 +53,41 @@ class AddPlayerController extends StateNotifier<void> {
         isCoach: isCoach,
         phone: phone,
         teamId: teamId,
+      );
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) {
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de HomeService',
+      );
+    }
+  }
+
+  /// This function searches for a player and returns a response indicating success or failure.
+  Future<ResponseFailureModel> searchPlayer({
+    required String name,
+    required String level,
+    required String position,
+    required String state,
+    required String city,
+    required String sport,
+    required int page,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _homeService.searchPlayer(
+        name: name,
+        level: level,
+        position: position,
+        state: state,
+        city: city,
+        sport: sport,
+        page: page,
       );
 
       return result.fold(
