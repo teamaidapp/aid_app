@@ -101,7 +101,6 @@ class CreateAccountParentsScreen extends StatelessWidget {
                               const SizedBox(height: 10),
                               TADropdown(
                                 label: 'Age group',
-                                textEditingController: ageGroupController,
                                 placeholder: 'Select age group',
                                 items: [
                                   TADropdownModel(item: 'U-10', id: ''),
@@ -110,7 +109,12 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                   TADropdownModel(item: 'U-16', id: ''),
                                   TADropdownModel(item: 'U-18', id: ''),
                                 ],
-                                onChange: (selectedValue) {},
+                                onChange: (selectedValue) {
+                                  if (selectedValue != null) {
+                                    ageGroupController.text =
+                                        selectedValue.item;
+                                  }
+                                },
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(

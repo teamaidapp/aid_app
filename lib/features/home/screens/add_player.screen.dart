@@ -19,6 +19,7 @@ import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
 import 'package:team_aid/features/home/controllers/add_player.controller.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
+import 'package:team_aid/features/home/entities/player.model.dart';
 
 /// The statelessWidget that handles the current screen
 class AddPlayerScreen extends HookWidget {
@@ -298,235 +299,348 @@ class _AddPlayerWidget extends HookConsumerWidget {
   }
 }
 
-class _SearchPlayerWidget extends HookWidget {
+class _SearchPlayerWidget extends HookConsumerWidget {
   const _SearchPlayerWidget();
 
   @override
-  Widget build(BuildContext context) {
-    final sportController = useTextEditingController();
-    final levelController = useTextEditingController();
-    final positionController = useTextEditingController();
-    final stateController = useTextEditingController();
-    final cityController = useTextEditingController();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final sportController = useState('');
+    final levelController = useState('');
+    final positionController = useState('');
     final nameController = useTextEditingController();
+    final cityState = useState('');
     final currentSelectedState = useState('');
-    return Column(
-      children: [
-        TAContainer(
-          margin: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 30,
-          ),
-          padding: const EdgeInsets.only(
-            top: 20,
-            left: 20,
-            right: 20,
-            bottom: 30,
-          ),
-          child: TADropdown(
-            label: 'Team',
-            placeholder: 'Enter the team',
-            items: [
-              TADropdownModel(item: 'One', id: ''),
-            ],
-            onChange: (selectedValue) {},
-          ),
-        ),
-        TAContainer(
-          margin: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 30,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(left: 6),
-                child: TATypography.paragraph(
-                  text: 'Search by any option',
-                  fontWeight: FontWeight.w600,
-                  color: TAColors.textColor,
-                ),
-              ),
-              const SizedBox(height: 10),
-              TAPrimaryInput(
-                label: 'Name',
-                placeholder: 'Search by name',
-                textEditingController: nameController,
-              ),
-              const SizedBox(height: 10),
-              TADropdown(
-                label: 'Sport',
-                textEditingController: sportController,
-                placeholder: 'Select the sport',
-                items: [
-                  TADropdownModel(
-                    item: 'Cheerleading',
-                    id: '',
-                  )
-                ],
-                onChange: (selectedValue) {},
-              ),
-              const SizedBox(height: 10),
-              TADropdown(
-                label: 'Level',
-                textEditingController: levelController,
-                placeholder: 'Select a level',
-                items: [
-                  TADropdownModel(
-                    item: 'Elite',
-                    id: '',
-                  ),
-                  TADropdownModel(
-                    item: 'Amateur',
-                    id: '',
-                  )
-                ],
-                onChange: (selectedValue) {},
-              ),
-              const SizedBox(height: 20),
-              TADropdown(
-                label: 'Position',
-                textEditingController: positionController,
-                placeholder: 'Select a position',
-                items: [
-                  TADropdownModel(item: 'One', id: ''),
-                ],
-                onChange: (selectedValue) {},
-              ),
-              const SizedBox(height: 20),
-              TADropdown(
-                label: 'State',
-                textEditingController: stateController,
-                placeholder: 'Select a state',
-                items: List.generate(
-                  TAConstants.statesList.length,
-                  (index) => TADropdownModel(
-                    item: TAConstants.statesList[index].name,
-                    id: TAConstants.statesList[index].id,
-                  ),
-                ),
-                onChange: (selectedValue) {
-                  if (selectedValue != null) {
-                    currentSelectedState.value = selectedValue.id;
-                  }
-                },
-              ),
-              const SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TATypography.paragraph(
-                    text: 'City',
-                    fontWeight: FontWeight.w500,
-                    color: TAColors.color1,
-                  ),
-                  SizedBox(height: 0.5.h),
-                  DropdownSearch<TADropdownModel>(
-                    asyncItems: (filter) async {
-                      final response = await http.get(
-                        Uri.parse(
-                          '${dotenv.env['API_URL']}/cities/cities/${currentSelectedState.value}',
-                        ),
-                      );
+    final isLoading = useState(false);
+    final showForm = useState(true);
 
-                      if (response.statusCode == 200) {
-                        final data =
-                            (jsonDecode(response.body) as Map)['data'] as List;
-                        return data.map((e) {
-                          final taDropdownModel = TADropdownModel(
-                            item: e['name'] as String,
-                            id: e['id'] as String,
-                          );
-                          return taDropdownModel;
-                        }).toList();
-                      } else {
-                        return [];
-                      }
-                    },
-                    onChanged: (value) {},
-                    itemAsString: (item) => item.item,
-                    dropdownButtonProps: const DropdownButtonProps(
-                      icon: Icon(
-                        Iconsax.arrow_down_1,
-                        size: 14,
-                        color: Colors.black,
-                      ),
+    final players = ref.watch(addPlayerControllerProvider).listOfPlayers;
+
+    if (showForm.value) {
+      return Column(
+        children: [
+          // TAContainer(
+          //   margin: const EdgeInsets.only(
+          //     left: 20,
+          //     right: 20,
+          //     top: 30,
+          //   ),
+          //   padding: const EdgeInsets.only(
+          //     top: 20,
+          //     left: 20,
+          //     right: 20,
+          //     bottom: 30,
+          //   ),
+          //   child: TADropdown(
+          //     label: 'Team',
+          //     placeholder: 'Enter the team',
+          //     items: [
+          //       TADropdownModel(item: 'One', id: ''),
+          //     ],
+          //     onChange: (selectedValue) {},
+          //   ),
+          // ),
+          TAContainer(
+            margin: const EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.only(left: 6),
+                  child: TATypography.paragraph(
+                    text: 'Search by any option',
+                    fontWeight: FontWeight.w600,
+                    color: TAColors.textColor,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TAPrimaryInput(
+                  label: 'Name',
+                  placeholder: 'Search by name',
+                  textEditingController: nameController,
+                ),
+                const SizedBox(height: 10),
+                TADropdown(
+                  label: 'Sport',
+                  placeholder: 'Select the sport',
+                  items: [
+                    TADropdownModel(
+                      item: 'Cheerleading',
+                      id: '',
+                    )
+                  ],
+                  onChange: (selectedValue) {
+                    if (selectedValue != null) {
+                      sportController.value = selectedValue.item;
+                    }
+                  },
+                ),
+                const SizedBox(height: 10),
+                TADropdown(
+                  label: 'Level',
+                  placeholder: 'Select a level',
+                  items: [
+                    TADropdownModel(
+                      item: 'Elite',
+                      id: '',
                     ),
-                    dropdownDecoratorProps: DropDownDecoratorProps(
-                      baseStyle: GoogleFonts.poppins(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: TAColors.color2,
+                    TADropdownModel(
+                      item: 'Amateur',
+                      id: '',
+                    )
+                  ],
+                  onChange: (selectedValue) {},
+                ),
+                const SizedBox(height: 20),
+                TADropdown(
+                  label: 'Position',
+                  placeholder: 'Select a position',
+                  items: [
+                    TADropdownModel(item: 'One', id: ''),
+                  ],
+                  onChange: (selectedValue) {},
+                ),
+                const SizedBox(height: 20),
+                TADropdown(
+                  label: 'State',
+                  placeholder: 'Select a state',
+                  items: List.generate(
+                    TAConstants.statesList.length,
+                    (index) => TADropdownModel(
+                      item: TAConstants.statesList[index].name,
+                      id: TAConstants.statesList[index].id,
+                    ),
+                  ),
+                  onChange: (selectedValue) {
+                    if (selectedValue != null) {
+                      debugPrint(selectedValue.id);
+                      currentSelectedState.value = selectedValue.id;
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TATypography.paragraph(
+                      text: 'City',
+                      fontWeight: FontWeight.w500,
+                      color: TAColors.color1,
+                    ),
+                    SizedBox(height: 0.5.h),
+                    DropdownSearch<TADropdownModel>(
+                      asyncItems: (filter) async {
+                        final response = await http.get(
+                          Uri.parse(
+                            '${dotenv.env['API_URL']}/cities/cities/${currentSelectedState.value}',
+                          ),
+                        );
+
+                        if (response.statusCode == 200) {
+                          final data = (jsonDecode(response.body)
+                              as Map)['data'] as List;
+                          return data.map((e) {
+                            final taDropdownModel = TADropdownModel(
+                              item: e['name'] as String,
+                              id: e['id'] as String,
+                            );
+                            return taDropdownModel;
+                          }).toList();
+                        } else {
+                          return [];
+                        }
+                      },
+                      onChanged: (value) {
+                        if (value != null) {
+                          cityState.value = value.id;
+                        }
+                      },
+                      itemAsString: (item) => item.item,
+                      dropdownButtonProps: const DropdownButtonProps(
+                        icon: Icon(
+                          Iconsax.arrow_down_1,
+                          size: 14,
+                          color: Colors.black,
+                        ),
                       ),
-                      dropdownSearchDecoration: InputDecoration(
-                        hintText: 'Select a city',
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 10,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            color: TAColors.color1.withOpacity(0.5),
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            color: TAColors.color1.withOpacity(0.5),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                            color: TAColors.color1,
-                          ),
-                        ),
-                        hintStyle: GoogleFonts.poppins(
+                      dropdownDecoratorProps: DropDownDecoratorProps(
+                        baseStyle: GoogleFonts.poppins(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
                           color: TAColors.color2,
                         ),
+                        dropdownSearchDecoration: InputDecoration(
+                          hintText: 'Select a city',
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 10,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: TAColors.color1.withOpacity(0.5),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: TAColors.color1.withOpacity(0.5),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: TAColors.color1,
+                            ),
+                          ),
+                          hintStyle: GoogleFonts.poppins(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: TAColors.color2,
+                          ),
+                        ),
+                      ),
+                      popupProps: PopupProps.menu(
+                        fit: FlexFit.loose,
+                        constraints: const BoxConstraints.tightFor(),
+                        menuProps: MenuProps(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
-                    popupProps: PopupProps.menu(
-                      fit: FlexFit.loose,
-                      constraints: const BoxConstraints.tightFor(),
-                      menuProps: MenuProps(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
+                  ],
+                ),
+                // TADropdown(
+                //   label: 'City',
+                //   textEditingController: cityController,
+                //   placeholder: 'Select a city',
+                //   items: [
+                //     TADropdownModel(item: 'One', id: ''),
+                //   ],
+                //   onChange: (selectedValue) {},
+                // ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+          const SizedBox(height: 80),
+          Consumer(
+            builder: (context, ref, child) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                child: TAPrimaryButton(
+                  text: 'SEARCH',
+                  height: 50,
+                  isLoading: isLoading.value,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  onTap: () async {
+                    isLoading.value = true;
+                    final res = await ref
+                        .read(addPlayerControllerProvider.notifier)
+                        .searchPlayer(
+                          name: nameController.text,
+                          level: levelController.value,
+                          position: positionController.value,
+                          state: currentSelectedState.value,
+                          city: cityState.value,
+                          sport: sportController.value,
+                          page: 1,
+                        );
+                    isLoading.value = false;
+                    if (res.ok && context.mounted) {
+                      // showForm.value = false;
+                    } else {
+                      unawaited(
+                        FailureWidget.build(
+                          title: 'Error',
+                          message: res.message,
+                          context: context,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      );
+    } else {
+      return GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.8,
+        ),
+        itemBuilder: (context, index) {
+          return PlayerCard(
+            onTap: () {},
+            player: players.value![index],
+          );
+        },
+      );
+    }
+  }
+}
+
+class PlayerCard extends StatelessWidget {
+  const PlayerCard({
+    Key? key,
+    required this.player,
+    required this.onTap,
+  }) : super(key: key);
+
+  final PlayerModel player;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: TAContainer(
+        margin: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 150,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+                image: DecorationImage(
+                  image: NetworkImage(
+                      player.avatar ?? 'https://picsum.photos/200'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TATypography.paragraph(
+                    text: player.firstName,
+                    fontWeight: FontWeight.w500,
+                    color: TAColors.color1,
+                  ),
+                  const SizedBox(height: 5),
+                  TATypography.paragraph(
+                    text: player.role,
+                    fontWeight: FontWeight.w500,
+                    color: TAColors.color1,
                   ),
                 ],
               ),
-              // TADropdown(
-              //   label: 'City',
-              //   textEditingController: cityController,
-              //   placeholder: 'Select a city',
-              //   items: [
-              //     TADropdownModel(item: 'One', id: ''),
-              //   ],
-              //   onChange: (selectedValue) {},
-              // ),
-              const SizedBox(height: 20),
-            ],
-          ),
+            ),
+          ],
         ),
-        const SizedBox(height: 80),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: TAPrimaryButton(
-            text: 'SEARCH',
-            height: 50,
-            mainAxisAlignment: MainAxisAlignment.center,
-            onTap: () {},
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

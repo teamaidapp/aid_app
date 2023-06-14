@@ -96,26 +96,36 @@ class CreateAccountTeamScreen extends StatelessWidget {
                               const SizedBox(height: 10),
                               TADropdown(
                                 label: 'Sport',
-                                textEditingController: sportController,
                                 placeholder: 'Select your sport',
                                 items: TAConstants.sportsList,
-                                onChange: (selectedValue) {},
+                                onChange: (selectedValue) {
+                                  if (selectedValue != null) {
+                                    sportController.text = selectedValue.item;
+                                  }
+                                },
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
                                 label: 'Age group',
-                                textEditingController: ageGroupController,
                                 placeholder: 'Select age group',
                                 items: TAConstants.ageGroupList,
-                                onChange: (selectedValue) {},
+                                onChange: (selectedValue) {
+                                  if (selectedValue != null) {
+                                    ageGroupController.text =
+                                        selectedValue.item;
+                                  }
+                                },
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
                                 label: 'Select gender',
-                                textEditingController: genderController,
                                 placeholder: 'Select gender',
                                 items: TAConstants.genderList,
-                                onChange: (selectedValue) {},
+                                onChange: (selectedValue) {
+                                  if (selectedValue != null) {
+                                    genderController.text = selectedValue.item;
+                                  }
+                                },
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(

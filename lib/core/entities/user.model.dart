@@ -10,6 +10,7 @@ class UserModel {
     required this.phoneNumber,
     required this.address,
     required this.password,
+    required this.sportId,
     required this.role,
   });
 
@@ -30,6 +31,7 @@ class UserModel {
       phoneNumber: map['phoneNumber'] as String,
       address: map['address'] as String,
       password: map['password'] as String,
+      sportId: map['sportId'] as String,
       role: map['role'] as String == 'coach'
           ? Role.coach
           : map['role'] as String == 'client'
@@ -70,6 +72,7 @@ class UserModel {
     String? phoneNumber,
     String? address,
     String? password,
+    String? sportId,
     Role? role,
   }) {
     return UserModel(
@@ -79,6 +82,7 @@ class UserModel {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       address: address ?? this.address,
       password: password ?? this.password,
+      sportId: sportId ?? this.sportId,
       role: role ?? this.role,
     );
   }
@@ -124,6 +128,9 @@ class UserModel {
 
   /// The user's password.
   final String password;
+
+  /// The user's sport id.
+  final String sportId;
 
   /// The user's role in the system.
   final Role role;

@@ -54,7 +54,9 @@ class DrawerWidget extends StatelessWidget {
             _DrawerOptionWidget(
               icon: Iconsax.people,
               title: 'Teams',
-              onTap: () {},
+              onTap: () {
+                context.push(AppRoutes.teams);
+              },
             ),
             const SizedBox(height: spaceBetweenItems),
             _DrawerOptionWidget(

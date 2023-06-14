@@ -7,6 +7,8 @@ import 'package:team_aid/features/login/screens/create_account_coach.screen.dart
 import 'package:team_aid/features/login/screens/create_account_team.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_team_player_parents.screen.dart';
 import 'package:team_aid/features/login/screens/request_demo.screen.dart';
+import 'package:team_aid/features/teams/screens/contacts-list.screen.dart';
+import 'package:team_aid/features/teams/teams.screen.dart';
 
 /// This class defines the routes for a GoRouter in a Flutter app, including
 /// a home route and a login route.
@@ -31,6 +33,12 @@ class AppRoutes {
 
   /// The add player route.
   static const String addPlayer = '/home/addPlayer';
+
+  /// The team route.
+  static const String teams = '/home/team';
+
+  /// Contact list route.
+  static const String contactList = '/home/team/contactList';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -65,6 +73,18 @@ final routerProvider = Provider((ref) {
       GoRoute(
         path: AppRoutes.addPlayer,
         builder: (context, state) => const AddPlayerScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.teams,
+        builder: (context, state) => const TeamsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.contactList,
+        name: AppRoutes.contactList,
+        builder: (context, state) => ContactsListScreen(
+          teamId: state.queryParameters['id']!,
+          teamName: state.queryParameters['name']!,
+        ),
       ),
     ],
   );
