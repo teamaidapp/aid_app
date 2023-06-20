@@ -53,7 +53,7 @@ class LoginRepositoryImpl implements LoginRepository {
       if (res.statusCode != 200 && res.statusCode != 201) {
         return Left(
           Failure(
-            message: 'Hubo un error al iniciar sesión',
+            message: 'There was an error logging in',
           ),
         );
       }
@@ -63,7 +63,7 @@ class LoginRepositoryImpl implements LoginRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en LoginRepositoyImpl',
+          message: 'There was an error logging in',
         ),
       );
     }

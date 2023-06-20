@@ -20,4 +20,7 @@ class TAColors {
 
   /// The color number 3
   static const color3 = Color(0xff505050);
+
+  /// The grey color number 1
+  static const grey1 = Color(0xff999999);
 }

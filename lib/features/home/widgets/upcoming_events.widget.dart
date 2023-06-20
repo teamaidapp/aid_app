@@ -37,7 +37,7 @@ class UpcomingEventsWidget extends StatelessWidget {
               ),
               TATypography.paragraph(
                 text: description,
-                color: const Color(0xff999999),
+                color: TAColors.grey1,
               ),
             ],
           ),

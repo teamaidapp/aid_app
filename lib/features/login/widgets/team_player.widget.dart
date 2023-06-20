@@ -49,7 +49,7 @@ class TeamPlayerWidget extends StatelessWidget {
                   children: [
                     TATypography.subparagraph(
                       text: subtitle,
-                      color: const Color(0xff999999),
+                      color: TAColors.grey1,
                     ),
                     TATypography.paragraph(
                       text: title,
@@ -66,7 +66,7 @@ class TeamPlayerWidget extends StatelessWidget {
             TATypography.subparagraph(
               text: description,
               textAlign: TextAlign.center,
-              color: const Color(0xff999999),
+              color: TAColors.grey1,
             )
           ],
         ),

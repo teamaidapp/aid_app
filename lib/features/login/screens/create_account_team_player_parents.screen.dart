@@ -60,6 +60,7 @@ class CreateAccountParentsScreen extends StatelessWidget {
                 final ageGroupController = useTextEditingController();
                 final positionController = useTextEditingController();
                 final emailController = useTextEditingController();
+                final agreeTerms = useState(false);
                 return Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
@@ -138,16 +139,18 @@ class CreateAccountParentsScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               Switch.adaptive(
-                                value: true,
+                                value: agreeTerms.value,
                                 activeColor: const Color(0xff586DF4),
-                                onChanged: (v) {},
+                                onChanged: (v) {
+                                  agreeTerms.value = v;
+                                },
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: TATypography.subparagraph(
                                   text:
                                       'I agree to terms of service and privacy policy',
-                                  color: const Color(0xff999999),
+                                  color: TAColors.grey1,
                                 ),
                               ),
                             ],
@@ -160,7 +163,35 @@ class CreateAccountParentsScreen extends StatelessWidget {
                             text: 'CREATE ACCOUNT',
                             height: 50,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            onTap: () {},
+                            onTap: () {
+                              if (firstNameController.text.isEmpty ||
+                                  lastNameController.text.isEmpty ||
+                                  childNameController.text.isEmpty ||
+                                  ageGroupController.text.isEmpty ||
+                                  positionController.text.isEmpty ||
+                                  emailController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Please fill all the fields'),
+                                  ),
+                                );
+                              }
+                              if (!agreeTerms.value) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Please agree to terms and conditions',
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Method not implemented yet'),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],

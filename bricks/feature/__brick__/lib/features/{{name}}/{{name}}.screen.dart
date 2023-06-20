@@ -93,7 +93,7 @@ class {{#pascalCase}}{{name}} screen {{/pascalCase}} extends StatelessWidget {
                           Expanded(
                             child: TATypography.subparagraph(
                               text: 'I agree to terms of service and privacy policy',
-                              color: const Color(0xff999999),
+                              color: TAColors.grey1,
                             ),
                           ),
                         ],

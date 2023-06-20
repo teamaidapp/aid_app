@@ -240,7 +240,7 @@ class _AddPlayerWidget extends HookConsumerWidget {
                   Expanded(
                     child: TATypography.subparagraph(
                       text: 'Make an administator',
-                      color: const Color(0xff999999),
+                      color: TAColors.grey1,
                     ),
                   ),
                 ],
@@ -571,19 +571,30 @@ class _SearchPlayerWidget extends HookConsumerWidget {
             height: 72.h,
             child: players.when(
               data: (data) {
-                return GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return PlayerCard(
-                      onTap: () {},
-                      player: data[index],
-                    );
-                  },
-                );
+                if (data.isEmpty) {
+                  return Center(
+                    child: TATypography.paragraph(
+                      text: 'No players found',
+                      color: TAColors.color1,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  );
+                } else {
+                  return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.75,
+                    ),
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return PlayerCard(
+                        onTap: () {},
+                        player: data[index],
+                      );
+                    },
+                  );
+                }
               },
               error: (error, stackTrace) {
                 return const SizedBox();

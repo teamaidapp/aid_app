@@ -66,7 +66,7 @@ class CreateAccountRepositoryRepositoryImpl implements CreateAccountRepository {
       if (res.statusCode != 200 && res.statusCode != 201) {
         return Left(
           Failure(
-            message: 'Hubo un error al crear la cuenta',
+            message: 'There was an error creating the account',
           ),
         );
       }
@@ -78,7 +78,7 @@ class CreateAccountRepositoryRepositoryImpl implements CreateAccountRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en CreateAccountImpl',
+          message: 'An error occurred on CreateAccountImpl',
         ),
       );
     }

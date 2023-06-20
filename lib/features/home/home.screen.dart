@@ -134,7 +134,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 children: [
                                   TATypography.subparagraph(
                                     text: 'Monday',
-                                    color: const Color(0xff999999),
+                                    color: TAColors.grey1,
                                   ),
                                   TATypography.paragraph(
                                     text: '17 / APR',

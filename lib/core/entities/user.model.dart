@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 import 'package:team_aid/core/enums/role.enum.dart';
 
 /// The UserModel class is a data model that represents a user in the system.
@@ -12,6 +15,8 @@ class UserModel {
     required this.password,
     required this.sportId,
     required this.role,
+    required this.cityId,
+    required this.stateId,
   });
 
   /// This is a factory function in Dart that creates a UserModel object from a map of key-value pairs.
@@ -37,6 +42,8 @@ class UserModel {
           : map['role'] as String == 'client'
               ? Role.client
               : Role.support,
+      cityId: map['cityId'] as String,
+      stateId: map['stateId'] as String,
     );
   }
 
@@ -74,6 +81,8 @@ class UserModel {
     String? password,
     String? sportId,
     Role? role,
+    String? cityId,
+    String? stateId,
   }) {
     return UserModel(
       firstName: firstName ?? this.firstName,
@@ -84,6 +93,8 @@ class UserModel {
       password: password ?? this.password,
       sportId: sportId ?? this.sportId,
       role: role ?? this.role,
+      cityId: cityId ?? this.cityId,
+      stateId: stateId ?? this.stateId,
     );
   }
 
@@ -102,6 +113,9 @@ class UserModel {
       'phoneNumber': phoneNumber,
       'address': address,
       'password': password,
+      'sportId': sportId,
+      'cityId': cityId,
+      'stateId': stateId,
       'role': role.name,
     };
   }
@@ -134,4 +148,15 @@ class UserModel {
 
   /// The user's role in the system.
   final Role role;
+
+  /// The user's city id.
+  final String cityId;
+
+  /// The user's state id.
+  final String stateId;
+
+  String toJson() => json.encode(toMap());
+
+  factory UserModel.fromJson(String source) =>
+      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

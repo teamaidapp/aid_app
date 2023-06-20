@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:team_aid/features/calendar/calendar.screen.dart';
 import 'package:team_aid/features/home/home.screen.dart';
 import 'package:team_aid/features/home/screens/add_player.screen.dart';
 import 'package:team_aid/features/login/login.screen.dart';
@@ -39,6 +40,9 @@ class AppRoutes {
 
   /// Contact list route.
   static const String contactList = '/home/team/contactList';
+
+  /// Calendar route.
+  static const String calendar = '/home/calendar';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -85,6 +89,10 @@ final routerProvider = Provider((ref) {
           teamId: state.queryParameters['id']!,
           teamName: state.queryParameters['name']!,
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.calendar,
+        builder: (context, state) => const CalendarScreen(),
       ),
     ],
   );

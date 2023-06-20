@@ -203,6 +203,15 @@ class _LoginPage extends HookWidget {
               isLoading: isLoading.value,
               mainAxisAlignment: MainAxisAlignment.center,
               onTap: () async {
+                if (emailController.text.isEmpty ||
+                    passwordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Complete all fields'),
+                    ),
+                  );
+                  return;
+                }
                 isLoading.value = true;
                 final res =
                     await ref.read(loginControllerProvider.notifier).login(

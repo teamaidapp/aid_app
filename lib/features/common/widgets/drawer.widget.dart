@@ -93,7 +93,9 @@ class DrawerWidget extends ConsumerWidget {
             _DrawerOptionWidget(
               icon: Iconsax.clipboard,
               title: 'Calendar',
-              onTap: () {},
+              onTap: () {
+                context.push(AppRoutes.calendar);
+              },
             ),
             const SizedBox(height: spaceBetweenItems),
             _DrawerOptionWidget(
