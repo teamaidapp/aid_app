@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/features/home/services/home.service.dart';
@@ -57,7 +59,7 @@ class HomeController extends StateNotifier<HomeScreenState> {
     var response = ResponseFailureModel.defaultFailureResponse();
     try {
       final result = await _homeService.getUserTeams();
-
+      inspect(result);
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
         (list) {

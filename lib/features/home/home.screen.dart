@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/constants.dart';
+import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/drawer.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
@@ -152,7 +153,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             text: 'CREATE TEAM',
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             icon: Iconsax.add,
-                            onTap: () {},
+                            onTap: () {
+                              context.push(AppRoutes.createAccountTeamForCoach);
+                            },
                           ),
                         ),
                       ],

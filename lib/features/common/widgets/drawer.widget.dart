@@ -69,12 +69,12 @@ class DrawerWidget extends ConsumerWidget {
                 context.push(AppRoutes.addPlayer);
               },
             ),
-            const SizedBox(height: spaceBetweenItems),
-            _DrawerOptionWidget(
-              icon: Iconsax.home,
-              title: 'Household',
-              onTap: () {},
-            ),
+            // const SizedBox(height: spaceBetweenItems),
+            // _DrawerOptionWidget(
+            //   icon: Iconsax.home,
+            //   title: 'Household',
+            //   onTap: () {},
+            // ),
             const SizedBox(height: spaceBetweenItems),
             _DrawerOptionWidget(
               icon: Iconsax.people,
@@ -83,12 +83,12 @@ class DrawerWidget extends ConsumerWidget {
                 context.push(AppRoutes.teams);
               },
             ),
-            const SizedBox(height: spaceBetweenItems),
-            _DrawerOptionWidget(
-              icon: Iconsax.sms,
-              title: 'Messages',
-              onTap: () {},
-            ),
+            // const SizedBox(height: spaceBetweenItems),
+            // _DrawerOptionWidget(
+            //   icon: Iconsax.sms,
+            //   title: 'Messages',
+            //   onTap: () {},
+            // ),
             const SizedBox(height: spaceBetweenItems),
             _DrawerOptionWidget(
               icon: Iconsax.clipboard,
@@ -106,23 +106,23 @@ class DrawerWidget extends ConsumerWidget {
               },
             ),
             const SizedBox(height: spaceBetweenItems),
-            _DrawerOptionWidget(
-              icon: Iconsax.folder_open,
-              title: 'My Files',
-              onTap: () {},
-            ),
-            const SizedBox(height: spaceBetweenItems),
-            _DrawerOptionWidget(
-              icon: Iconsax.profile_circle,
-              title: 'My Account',
-              onTap: () {},
-            ),
-            const SizedBox(height: spaceBetweenItems),
-            _DrawerOptionWidget(
-              icon: Iconsax.message_question,
-              title: 'Help and Support',
-              onTap: () {},
-            ),
+            // _DrawerOptionWidget(
+            //   icon: Iconsax.folder_open,
+            //   title: 'My Files',
+            //   onTap: () {},
+            // ),
+            // const SizedBox(height: spaceBetweenItems),
+            // _DrawerOptionWidget(
+            //   icon: Iconsax.profile_circle,
+            //   title: 'My Account',
+            //   onTap: () {},
+            // ),
+            // const SizedBox(height: spaceBetweenItems),
+            // _DrawerOptionWidget(
+            //   icon: Iconsax.message_question,
+            //   title: 'Help and Support',
+            //   onTap: () {},
+            // ),
             const SizedBox(height: spaceBetweenItems),
             _DrawerOptionWidget(
               icon: Iconsax.logout,
