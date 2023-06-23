@@ -101,7 +101,9 @@ class DrawerWidget extends ConsumerWidget {
             _DrawerOptionWidget(
               icon: Iconsax.global,
               title: 'Travels',
-              onTap: () {},
+              onTap: () {
+                context.push(AppRoutes.travel);
+              },
             ),
             const SizedBox(height: spaceBetweenItems),
             _DrawerOptionWidget(

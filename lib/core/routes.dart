@@ -10,6 +10,7 @@ import 'package:team_aid/features/login/screens/create_account_team_player_paren
 import 'package:team_aid/features/login/screens/request_demo.screen.dart';
 import 'package:team_aid/features/teams/screens/contacts-list.screen.dart';
 import 'package:team_aid/features/teams/teams.screen.dart';
+import 'package:team_aid/features/travels/travels.screen.dart';
 
 /// This class defines the routes for a GoRouter in a Flutter app, including
 /// a home route and a login route.
@@ -43,6 +44,9 @@ class AppRoutes {
 
   /// Calendar route.
   static const String calendar = '/home/calendar';
+
+  /// Travel route.
+  static const String travel = '/home/travel';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -93,6 +97,10 @@ final routerProvider = Provider((ref) {
       GoRoute(
         path: AppRoutes.calendar,
         builder: (context, state) => const CalendarScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.travel,
+        builder: (context, state) => const TravelsScreen(),
       ),
     ],
   );

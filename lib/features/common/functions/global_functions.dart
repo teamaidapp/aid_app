@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/user.model.dart';
+import 'package:team_aid/features/calendar/entities/hour.model.dart';
 
 /// The GlobalFunctions class has a method to save user session data to SharedPreferences.
 class GlobalFunctions {
@@ -27,5 +28,55 @@ class GlobalFunctions {
     await prefs.setString(TAConstants.phoneNumber, user.phoneNumber);
     await prefs.setString(TAConstants.address, user.address);
     await prefs.setString(TAConstants.role, user.role.name);
+  }
+
+  /// The function generates a list of HourModel objects representing hours and minutes in both AM and PM
+  /// formats.
+  ///
+  /// Returns:
+  ///   The function `generateHourModels()` returns a list of `HourModel` objects.
+  static List<HourModel> generateHourModels() {
+    final hourModels = <HourModel>[];
+
+    for (var i = 1; i <= 12; i++) {
+      final hour = i.toString().padLeft(2, '0');
+      hourModels
+        ..add(HourModel(hour: hour, description: '$hour:00AM', minute: '00'))
+        ..add(HourModel(hour: hour, description: '$hour:30AM', minute: '30'));
+    }
+
+    for (var i = 1; i <= 12; i++) {
+      final hour = (i + 12).toString().padLeft(2, '0');
+      hourModels
+        ..add(HourModel(hour: hour, description: '$hour:00PM', minute: '00'))
+        ..add(HourModel(hour: hour, description: '$hour:30PM', minute: '30'));
+    }
+
+    return hourModels;
+  }
+
+  /// This function returns a list of all the days in a given month and year.
+  ///
+  /// Args:
+  ///   year (int): The year for which we want to get the days in a month. It is a required parameter and
+  /// must be provided while calling the function.
+  ///   month (int): The month parameter is an integer value representing the month of the year, where
+  /// January is 1 and December is 12.
+  ///
+  /// Returns:
+  ///   a list of DateTime objects representing all the days in a given month and year.
+  static List<DateTime> getDaysInMonth({
+    required int year,
+    required int month,
+  }) {
+    final daysInMonth = <DateTime>[];
+
+    final daysCount = DateTime(year, month + 1, 0).day;
+
+    for (var day = 1; day <= daysCount; day++) {
+      daysInMonth.add(DateTime(year, month, day));
+    }
+
+    return daysInMonth;
   }
 }
