@@ -8,6 +8,7 @@ import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/drawer.widget.dart';
+import 'package:team_aid/features/common/widgets/today.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/home/widgets/messages.widget.dart';
 import 'package:team_aid/features/home/widgets/requests.widget.dart';
@@ -117,36 +118,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TAContainer(
-                          radius: 28,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 4,
-                            horizontal: 16,
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Iconsax.calendar,
-                                color: TAColors.purple,
-                              ),
-                              const SizedBox(width: 8),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TATypography.subparagraph(
-                                    text: 'Monday',
-                                    color: TAColors.grey1,
-                                  ),
-                                  TATypography.paragraph(
-                                    text: '17 / APR',
-                                    fontWeight: FontWeight.w600,
-                                    color: TAColors.textColor,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                        TodayWidget(),
                         const SizedBox(width: 80),
                         Expanded(
                           child: TAPrimaryButton(
@@ -251,12 +223,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    TAPrimaryButton(
-                      text: 'ADD SCHEDULE',
-                      height: 50,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      onTap: () {},
-                    ),
+                    // TAPrimaryButton(
+                    //   text: 'ADD SCHEDULE',
+                    //   height: 50,
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   onTap: () {},
+                    // ),
                   ],
                 ),
               ),

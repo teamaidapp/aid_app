@@ -96,6 +96,7 @@ class CalendarRepositoryImpl implements CalendarRepository {
         url,
         headers: {
           'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
         },
         body: jsonEncode(schedule.toMap()),
       );

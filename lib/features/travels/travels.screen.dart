@@ -4,9 +4,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/common/widgets/today.widget.dart';
 import 'package:team_aid/features/travels/screens/hotel.screen.dart';
 import 'package:team_aid/features/travels/screens/itinerary.screen.dart';
 import 'package:team_aid/features/travels/screens/meeting.screen.dart';
@@ -23,10 +23,6 @@ class TravelsScreen extends StatefulHookConsumerWidget {
 class _TravelsScreenState extends ConsumerState<TravelsScreen> {
   @override
   Widget build(BuildContext context) {
-    final formattedDate =
-        DateFormat('dd / MMM').format(DateTime.now()).toUpperCase();
-    final formattedDay =
-        DateFormat('EEEE').format(DateTime.now()).toUpperCase();
     final seeTravels = useState(true);
     final formPageController = usePageController();
     return Scaffold(
@@ -85,36 +81,7 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          TAContainer(
-                            radius: 28,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 4,
-                              horizontal: 18,
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Iconsax.calendar,
-                                  color: TAColors.purple,
-                                ),
-                                const SizedBox(width: 6),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TATypography.subparagraph(
-                                      text: formattedDay,
-                                      color: TAColors.grey1,
-                                    ),
-                                    TATypography.paragraph(
-                                      text: formattedDate,
-                                      fontWeight: FontWeight.w600,
-                                      color: TAColors.textColor,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
+                          TodayWidget(),
                           const SizedBox(width: 80),
                           Expanded(
                             child: TAPrimaryButton(
