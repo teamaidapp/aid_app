@@ -1,6 +1,22 @@
-// ignore_for_file: public_member_api_docs
+import 'package:team_aid/core/entities/guest.model.dart';
 
+/// A class representing a schedule for an event.
 class ScheduleModel {
+  /// Creates a new instance of [ScheduleModel].
+  ///
+  /// The [eventName] parameter is required and represents the name of the event.
+  ///
+  /// The [startDate] parameter is required and represents the start date of the event.
+  ///
+  /// The [endDate] parameter is required and represents the end date of the event.
+  ///
+  /// The [location] parameter is required and represents the location of the event.
+  ///
+  /// The [eventDescription] parameter is required and represents the description of the event.
+  ///
+  /// The [guest] parameter is required and represents the list of guests for the event.
+  ///
+  /// The [periodicity] parameter is required and represents the periodicity of the event.
   const ScheduleModel({
     required this.eventName,
     required this.startDate,
@@ -11,6 +27,9 @@ class ScheduleModel {
     required this.periodicity,
   });
 
+  /// Converts this [ScheduleModel] instance to a map.
+  ///
+  /// Returns a map representation of this [ScheduleModel] instance.
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'eventName': eventName,
@@ -23,25 +42,24 @@ class ScheduleModel {
     };
   }
 
+  /// The name of the event.
   final String eventName;
+
+  /// The start date of the event.
   final String startDate;
+
+  /// The end date of the event.
   final String endDate;
+
+  /// The location of the event.
   final String location;
+
+  /// The description of the event.
   final String eventDescription;
+
+  /// The list of guests for the event.
   final List<Guest> guest;
+
+  /// The periodicity of the event.
   final String periodicity;
-}
-
-class Guest {
-  const Guest({
-    required this.userId,
-  });
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'userId': userId,
-    };
-  }
-
-  final String userId;
 }

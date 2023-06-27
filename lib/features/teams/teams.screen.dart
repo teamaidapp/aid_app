@@ -139,6 +139,15 @@ class TeamsScreen extends HookConsumerWidget {
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: TAPrimaryButton(
+              text: 'ADD NEW TEAM',
+              mainAxisAlignment: MainAxisAlignment.center,
+              onTap: () {},
+            ),
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );

@@ -141,6 +141,7 @@ class AddPlayerRepositoryImpl implements AddPlayerRepository {
         );
       }
 
+      // ignore: avoid_dynamic_calls
       final data = (jsonDecode(res.body) as Map<String, dynamic>)['data']
           ['result'] as List;
 

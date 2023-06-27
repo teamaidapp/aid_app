@@ -43,11 +43,11 @@ class TeamCardWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const Spacer(),
-              const Icon(
-                Iconsax.more,
-                color: TAColors.textColor,
-              ),
+              // const Spacer(),
+              // const Icon(
+              //   Iconsax.more,
+              //   color: TAColors.textColor,
+              // ),
             ],
           ),
           const Divider(),

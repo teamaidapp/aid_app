@@ -222,7 +222,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   const SizedBox(height: 20),
                   if (createSchedule.value)
                     const Expanded(
-                      child: const _CreateScheduleWidget(),
+                      child: _CreateScheduleWidget(),
                     )
                   else
                     showTodayWidget.value
@@ -587,19 +587,19 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
   final months = <String>[];
   final years = <String>[];
   final currentDay = DateTime.now().day;
-  var currentSelectedMonth = DateTime.now().month;
-  var currentSelectedYear = DateTime.now().year;
+  var _currentSelectedMonth = DateTime.now().month;
+  var _currentSelectedYear = DateTime.now().year;
 
-  var fromDate = DateTime.now();
-  var toDate = DateTime.now();
+  var _fromDate = DateTime.now();
+  var _toDate = DateTime.now();
 
   @override
   void initState() {
     hours.addAll(GlobalFunctions.generateHourModels());
     days.addAll(
       GlobalFunctions.getDaysInMonth(
-        month: currentSelectedMonth,
-        year: currentSelectedYear,
+        month: _currentSelectedMonth,
+        year: _currentSelectedYear,
       ),
     );
     months.addAll(
@@ -669,9 +669,9 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
                     ),
                     placeholder: '',
                     onChange: (v) {
-                      fromDate = DateTime(
-                        currentSelectedYear,
-                        currentSelectedMonth,
+                      _fromDate = DateTime(
+                        _currentSelectedYear,
+                        _currentSelectedMonth,
                         currentDay,
                       );
                     },
@@ -682,8 +682,8 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
                   child: TADropdown(
                     label: 'Month',
                     selectedValue: TADropdownModel(
-                      item: currentSelectedMonth.toString(),
-                      id: currentSelectedMonth.toString(),
+                      item: _currentSelectedMonth.toString(),
+                      id: _currentSelectedMonth.toString(),
                     ),
                     items: List.generate(
                       months.length,
@@ -699,11 +699,11 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
                     onChange: (v) {
                       if (v != null) {
                         setState(() {
-                          currentSelectedMonth = int.parse(v.id);
+                          _currentSelectedMonth = int.parse(v.id);
 
-                          fromDate = DateTime(
-                            currentSelectedYear,
-                            currentSelectedMonth,
+                          _fromDate = DateTime(
+                            _currentSelectedYear,
+                            _currentSelectedMonth,
                             currentDay,
                           );
 
@@ -711,8 +711,8 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
                             ..clear()
                             ..addAll(
                               GlobalFunctions.getDaysInMonth(
-                                month: currentSelectedMonth,
-                                year: currentSelectedYear,
+                                month: _currentSelectedMonth,
+                                year: _currentSelectedYear,
                               ),
                             );
                         });
@@ -725,8 +725,8 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
                   child: TADropdown(
                     label: 'Year',
                     selectedValue: TADropdownModel(
-                      item: currentSelectedYear.toString(),
-                      id: currentSelectedYear.toString(),
+                      item: _currentSelectedYear.toString(),
+                      id: _currentSelectedYear.toString(),
                     ),
                     items: List.generate(
                       years.length,
@@ -742,12 +742,12 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
                     onChange: (v) {
                       if (v != null) {
                         setState(() {
-                          fromDate = DateTime(
-                            currentSelectedYear,
-                            currentSelectedMonth,
+                          _fromDate = DateTime(
+                            _currentSelectedYear,
+                            _currentSelectedMonth,
                             currentDay,
                           );
-                          currentSelectedYear = int.parse(v.id);
+                          _currentSelectedYear = int.parse(v.id);
                         });
                       }
                     },
@@ -775,9 +775,9 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
                     onChange: (v) {
                       if (v != null) {
                         setState(() {
-                          fromDate = DateTime(
-                            currentSelectedYear,
-                            currentSelectedMonth,
+                          _fromDate = DateTime(
+                            _currentSelectedYear,
+                            _currentSelectedMonth,
                             currentDay,
                             int.parse(
                               v.id.split('hour:')[1].split('minute:')[0],
@@ -809,9 +809,9 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
                     onChange: (v) {
                       if (v != null) {
                         setState(() {
-                          toDate = DateTime(
-                            currentSelectedYear,
-                            currentSelectedMonth,
+                          _toDate = DateTime(
+                            _currentSelectedYear,
+                            _currentSelectedMonth,
                             currentDay,
                             int.parse(
                               v.id.split('hour:')[1].split('minute:')[0],
@@ -908,8 +908,8 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
                           isLoading.value = true;
                           final event = ScheduleModel(
                             eventName: eventName.text,
-                            startDate: fromDate.toIso8601String(),
-                            endDate: toDate.toIso8601String(),
+                            startDate: _fromDate.toIso8601String(),
+                            endDate: _toDate.toIso8601String(),
                             location: locationController.text,
                             eventDescription: descriptionController.text,
                             guest: [],

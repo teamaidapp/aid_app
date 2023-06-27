@@ -38,6 +38,22 @@ class TAConstants {
     TADropdownModel(item: 'Women', id: ''),
   ];
 
+  /// A list of the transportations
+  static final transportsList = <TADropdownModel>[
+    TADropdownModel(
+      item: 'Airport',
+      id: 'Airport',
+    ),
+    TADropdownModel(
+      item: 'Bus',
+      id: 'Bus',
+    ),
+    TADropdownModel(
+      item: 'Personal Car',
+      id: 'Personal Car',
+    ),
+  ];
+
   /// A list of all the age groups
   static final ageGroupList = <TADropdownModel>[
     TADropdownModel(item: 'Elementary', id: ''),

@@ -2,6 +2,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -24,9 +25,70 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
   @override
   Widget build(BuildContext context) {
     final seeTravels = useState(true);
+    final selectedIndex = useState(0);
     final formPageController = usePageController();
     return Scaffold(
-      backgroundColor: Colors.white,
+      bottomNavigationBar: !seeTravels.value
+          ? Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(28),
+                  topLeft: Radius.circular(28),
+                ),
+                color: Colors.transparent,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 11,
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(28),
+                  topRight: Radius.circular(28),
+                ),
+                child: BottomNavigationBar(
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  selectedLabelStyle: GoogleFonts.poppins(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  unselectedLabelStyle: GoogleFonts.poppins(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  type: BottomNavigationBarType.fixed,
+                  selectedItemColor: TAColors.textColor,
+                  unselectedItemColor: TAColors.color1,
+                  currentIndex: selectedIndex.value,
+                  onTap: (index) {
+                    selectedIndex.value = index;
+                    formPageController.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  items: const [
+                    BottomNavigationBarItem(
+                      icon: Icon(Iconsax.bus),
+                      label: 'Itinerary',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Iconsax.building_4),
+                      label: 'Hotel',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Iconsax.user_tag),
+                      label: 'Meeting',
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : const SizedBox(),
       body: Column(
         children: [
           const SizedBox(height: 10),
@@ -72,7 +134,7 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
                   topRight: Radius.circular(40),
                 ),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.only(top: 20),
               child: Column(
                 children: [
                   if (seeTravels.value)
