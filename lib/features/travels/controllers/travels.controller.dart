@@ -76,7 +76,8 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
 
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
-        (success) {
+        (success) async {
+          await getData();
           return response = response.copyWith(ok: true);
         },
       );
@@ -103,7 +104,8 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
 
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
-        (success) {
+        (success) async {
+          await getData();
           return response = response.copyWith(ok: true);
         },
       );
