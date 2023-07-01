@@ -1,8 +1,8 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:team_aid/features/teams/entities/contact.model.dart';
+import 'package:team_aid/features/travels/entities/itinerary.model.dart';
 
 /// State of the travels screen
 @immutable
@@ -10,6 +10,7 @@ class TravelsScreenState {
   /// Constructor
   const TravelsScreenState({
     required this.contactList,
+    required this.itineraryList,
   });
 
   /// The function returns a new instance of the TravelsScreenState class with updated contactList if
@@ -28,12 +29,17 @@ class TravelsScreenState {
   /// the `contactList` parameter which is updated with the new value if it is
   TravelsScreenState copyWith({
     AsyncValue<List<ContactModel>>? contactList,
+    AsyncValue<List<ItineraryModel>>? itineraryList,
   }) {
     return TravelsScreenState(
       contactList: contactList ?? this.contactList,
+      itineraryList: itineraryList ?? this.itineraryList,
     );
   }
 
   /// The contact list
   final AsyncValue<List<ContactModel>> contactList;
+
+  /// The itinerary list
+  final AsyncValue<List<ItineraryModel>> itineraryList;
 }

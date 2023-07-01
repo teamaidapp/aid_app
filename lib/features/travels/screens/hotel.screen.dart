@@ -75,8 +75,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
       child: Column(
         children: [
           TAContainer(
-            padding:
-                const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
             child: teams.when(
               data: (data) {
                 return TADropdown(
@@ -342,7 +341,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                       child: Consumer(
                         builder: (context, ref, child) {
                           return TAPrimaryButton(
-                            text: 'NEXT',
+                            text: 'CREATE',
                             isLoading: isLoading.value,
                             mainAxisAlignment: MainAxisAlignment.center,
                             onTap: () async {
@@ -350,8 +349,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                                 unawaited(
                                   FailureWidget.build(
                                     title: 'Something went wrong!',
-                                    message:
-                                        'Please enter event name to continue.',
+                                    message: 'Please enter event name to continue.',
                                     context: context,
                                   ),
                                 );
@@ -368,32 +366,28 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                                 place: name.text.trim(),
                                 startDate: _fromDate.toIso8601String(),
                                 endDate: _toDate.toIso8601String(),
-                                reservationCode:
-                                    reservationController.text.trim(),
+                                reservationCode: reservationController.text.trim(),
                                 guests: newGuests,
                               );
                               inspect(hotel);
-                              final res = await ref
-                                  .read(travelsControllerProvider.notifier)
-                                  .addHotel(hotel: hotel);
+                              final res = await ref.read(travelsControllerProvider.notifier).addHotel(hotel: hotel);
                               isLoading.value = false;
 
                               if (res.ok && mounted) {
                                 unawaited(
                                   SuccessWidget.build(
                                     title: 'Success!',
-                                    message:
-                                        'Event has been added successfully.',
+                                    message: 'Event has been added successfully.',
                                     context: context,
                                   ),
                                 );
+                                if (!mounted) return;
                                 Navigator.pop(context);
                               } else {
                                 unawaited(
                                   FailureWidget.build(
                                     title: 'Something went wrong!',
-                                    message:
-                                        'There was an error adding the event.',
+                                    message: 'There was an error adding the event.',
                                     context: context,
                                   ),
                                 );

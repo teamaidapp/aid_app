@@ -34,6 +34,9 @@ abstract class TravelsRepository {
   Future<Either<Failure, Success>> addHotel({
     required HotelModel hotel,
   });
+
+  /// Get the itineraries
+  Future<Either<Failure, List<ItineraryModel>>> getItinerary();
 }
 
 /// This class is responsible for implementing the TravelsRepository
@@ -72,10 +75,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
       );
       final res = await http.post(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json'
-        },
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode(hotel.toMap()),
       );
       if (res.statusCode != 200 && res.statusCode != 201) {
@@ -106,10 +106,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
       );
       final res = await http.post(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json'
-        },
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode(itinerary.toMap()),
       );
       if (res.statusCode != 200 && res.statusCode != 201) {
@@ -120,6 +117,43 @@ class TravelsRepositoryImpl implements TravelsRepository {
         );
       }
       return Right(Success(ok: true, message: 'Event created'));
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un error en CalendarRepositoyImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ItineraryModel>>> getItinerary() async {
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/itinerary',
+      );
+      final res = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+      );
+      final itineraries = <ItineraryModel>[];
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error while fetching the data',
+          ),
+        );
+      }
+
+      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
+
+      for (final itinerary in data) {
+        final itineraryModel = ItineraryModel.fromMap((itinerary as Map<String, dynamic>)['itineraryId'] as Map<String, dynamic>);
+        itineraries.add(itineraryModel);
+      }
+
+      return Right(itineraries);
     } catch (e) {
       return Left(
         Failure(

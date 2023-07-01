@@ -28,8 +28,7 @@ class MeetingTravelScreen extends StatefulHookConsumerWidget {
   /// The page controller
   final PageController pageController;
   @override
-  ConsumerState<MeetingTravelScreen> createState() =>
-      _MeetingTravelScreenState();
+  ConsumerState<MeetingTravelScreen> createState() => _MeetingTravelScreenState();
 }
 
 class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
@@ -78,8 +77,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
       child: Column(
         children: [
           TAContainer(
-            padding:
-                const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
             child: teams.when(
               data: (data) {
                 return TADropdown(
@@ -371,8 +369,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                 unawaited(
                                   FailureWidget.build(
                                     title: 'Something went wrong!',
-                                    message:
-                                        'Please enter event name to continue.',
+                                    message: 'Please enter event name to continue.',
                                     context: context,
                                   ),
                                 );
@@ -382,8 +379,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                 unawaited(
                                   FailureWidget.build(
                                     title: 'Something went wrong!',
-                                    message:
-                                        'Please enter location to continue.',
+                                    message: 'Please enter location to continue.',
                                     context: context,
                                   ),
                                 );
@@ -408,27 +404,24 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                 guest: [],
                                 periodicity: periodicity.value,
                               );
-                              final res = await ref
-                                  .read(calendarControllerProvider.notifier)
-                                  .addSchedule(schedule: event);
+                              final res = await ref.read(calendarControllerProvider.notifier).addSchedule(schedule: event);
                               isLoading.value = false;
 
                               if (res.ok && mounted) {
                                 unawaited(
                                   SuccessWidget.build(
                                     title: 'Success!',
-                                    message:
-                                        'Event has been added successfully.',
+                                    message: 'Event has been added successfully.',
                                     context: context,
                                   ),
                                 );
+                                if (!mounted) return;
                                 Navigator.pop(context);
                               } else {
                                 unawaited(
                                   FailureWidget.build(
                                     title: 'Something went wrong!',
-                                    message:
-                                        'There was an error adding the event.',
+                                    message: 'There was an error adding the event.',
                                     context: context,
                                   ),
                                 );

@@ -94,9 +94,7 @@ class LoginScreen extends HookWidget {
                       ),
                       child: AnimatedSwitcher(
                         duration: const Duration(milliseconds: 200),
-                        child: isLoginScreen.value
-                            ? _LoginPage()
-                            : _CreateAccountPage(),
+                        child: isLoginScreen.value ? _LoginPage() : _CreateAccountPage(),
                       ),
                     ),
                     Container(
@@ -129,9 +127,7 @@ class LoginScreen extends HookWidget {
                             behavior: HitTestBehavior.translucent,
                             child: TATypography.paragraph(
                               text: 'LOGIN',
-                              color: isLoginScreen.value
-                                  ? Colors.white
-                                  : Colors.white.withOpacity(0.25),
+                              color: isLoginScreen.value ? Colors.white : Colors.white.withOpacity(0.25),
                             ),
                           ),
                           TATypography.paragraph(
@@ -145,9 +141,7 @@ class LoginScreen extends HookWidget {
                             behavior: HitTestBehavior.translucent,
                             child: TATypography.paragraph(
                               text: 'SIGN UP',
-                              color: !isLoginScreen.value
-                                  ? Colors.white
-                                  : Colors.white.withOpacity(0.25),
+                              color: !isLoginScreen.value ? Colors.white : Colors.white.withOpacity(0.25),
                             ),
                           ),
                         ],
@@ -203,8 +197,7 @@ class _LoginPage extends HookWidget {
               isLoading: isLoading.value,
               mainAxisAlignment: MainAxisAlignment.center,
               onTap: () async {
-                if (emailController.text.isEmpty ||
-                    passwordController.text.isEmpty) {
+                if (emailController.text.isEmpty || passwordController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Complete all fields'),
@@ -213,11 +206,10 @@ class _LoginPage extends HookWidget {
                   return;
                 }
                 isLoading.value = true;
-                final res =
-                    await ref.read(loginControllerProvider.notifier).login(
-                          email: emailController.text,
-                          password: passwordController.text,
-                        );
+                final res = await ref.read(loginControllerProvider.notifier).login(
+                      email: emailController.text,
+                      password: passwordController.text,
+                    );
                 isLoading.value = false;
                 if (res.ok && context.mounted) {
                   context.go(AppRoutes.home);
@@ -290,8 +282,7 @@ class _CreateAccountPage extends HookWidget {
                     subtitle: 'Under age',
                     title: 'Parents',
                     icon: Iconsax.profile_2user,
-                    description:
-                        'School sponsored / Elementary / Middle and High School',
+                    description: 'School sponsored / Elementary / Middle and High School',
                     onTap: () {
                       context.push(AppRoutes.createAccountParents);
                     },
@@ -301,8 +292,7 @@ class _CreateAccountPage extends HookWidget {
                     subtitle: 'Starting college',
                     title: 'Team player',
                     icon: Iconsax.people,
-                    description:
-                        'College / Youth Leagues / Athletic Associations / Professional players',
+                    description: 'College / Youth Leagues / Athletic Associations / Professional players',
                     onTap: () {},
                   ),
                 ],

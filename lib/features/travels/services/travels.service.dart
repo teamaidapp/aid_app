@@ -47,6 +47,9 @@ abstract class TravelsService {
   Future<Either<Failure, List<ContactModel>>> getContactList({
     required String teamId,
   });
+
+  /// Get the itineraries
+  Future<Either<Failure, List<ItineraryModel>>> getItinerary();
 }
 
 /// This class is responsible for implementing the TravelsService
@@ -76,8 +79,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message:
-              'Hubo un problema al obtener los datos de TravelsServiceImpl',
+          message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
         ),
       );
     }
@@ -111,8 +113,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message:
-              'Hubo un problema al agregar el itinerario en TravelsServiceImpl',
+          message: 'Hubo un problema al agregar el itinerario en TravelsServiceImpl',
         ),
       );
     }
@@ -127,8 +128,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message:
-              'Hubo un problema al obtener los datos de CalendarServiceImpl',
+          message: 'Hubo un problema al obtener los datos de CalendarServiceImpl',
         ),
       );
     }
@@ -146,6 +146,21 @@ class TravelsServiceImpl implements TravelsService {
       return Left(
         Failure(
           message: 'Hubo un problema al obtener los datos de TeamsServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ItineraryModel>>> getItinerary() async {
+    try {
+      final result = await travelsRepository.getItinerary();
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
         ),
       );
     }

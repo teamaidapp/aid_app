@@ -34,11 +34,12 @@ class ItineraryModel {
       startDate: map['startDate'] as String,
       endDate: map['endDate'] as String,
       location: map['location'] as String,
-      guests: List<Guest>.from(
-        (map['guests'] as List<int>).map<Guest>(
-          (x) => Guest.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      guests: [],
+      // guests: List<Guest>.from(
+      //   (map['guests'] as List<int>).map<Guest>(
+      //     (x) => Guest.fromMap(x as Map<String, dynamic>),
+      //   ),
+      // ),
     );
   }
 
@@ -93,7 +94,7 @@ class ItineraryModel {
       'startDate': startDate,
       'endDate': endDate,
       'location': location,
-      'guests': guests.map((x) => x.toMap()).toList(),
+      'guest': guests.map((x) => x.toMap()).toList(),
     };
   }
 }

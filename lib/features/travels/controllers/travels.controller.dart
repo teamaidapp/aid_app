@@ -7,12 +7,11 @@ import 'package:team_aid/features/travels/services/travels.service.dart';
 import 'package:team_aid/features/travels/state/travels.state.dart';
 
 /// A dependency injection.
-final travelsControllerProvider =
-    StateNotifierProvider.autoDispose<TravelsController, TravelsScreenState>(
-        (ref) {
+final travelsControllerProvider = StateNotifierProvider.autoDispose<TravelsController, TravelsScreenState>((ref) {
   return TravelsController(
     const TravelsScreenState(
       contactList: AsyncValue.loading(),
+      itineraryList: AsyncValue.loading(),
     ),
     ref,
     ref.watch(travelsServiceProvider),
@@ -131,6 +130,34 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
         (list) {
           state = state.copyWith(
             contactList: AsyncValue.data(list),
+          );
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de TeamsService',
+      );
+    }
+  }
+
+  /// The function `getItineraries` retrieves a list of itineraries from a travel service and updates the
+  /// state accordingly.
+  ///
+  /// Returns:
+  ///   a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> getItineraries() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _travelsService.getItinerary();
+
+      state = state.copyWith(contactList: const AsyncValue.loading());
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (list) {
+          state = state.copyWith(
+            itineraryList: AsyncValue.data(list),
           );
           return response = response.copyWith(ok: true);
         },

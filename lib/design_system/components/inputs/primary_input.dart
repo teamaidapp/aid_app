@@ -14,6 +14,7 @@ class TAPrimaryInput extends StatefulWidget {
     super.key,
     this.textEditingController,
     this.isPassword = false,
+    this.maxLines,
   });
 
   /// The controller for the text field.
@@ -28,13 +29,14 @@ class TAPrimaryInput extends StatefulWidget {
   /// A boolean that is used to determine if the text field is a password field.
   final bool isPassword;
 
+  final int? maxLines;
+
   @override
   State<TAPrimaryInput> createState() => _TAPrimaryInputState();
 }
 
 class _TAPrimaryInputState extends State<TAPrimaryInput> {
-  late TextEditingController textEditingController =
-      widget.textEditingController ?? TextEditingController();
+  late TextEditingController textEditingController = widget.textEditingController ?? TextEditingController();
   bool obscureText = true;
   bool isPassword = false;
   @override
@@ -58,10 +60,10 @@ class _TAPrimaryInputState extends State<TAPrimaryInput> {
           cursorColor: TAColors.color2,
           controller: textEditingController,
           obscureText: obscureText,
+          // maxLines: widget.maxLines,
           decoration: InputDecoration(
             filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 1.5.h),
+            contentPadding: EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 1.5.h),
             fillColor: Colors.white,
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(

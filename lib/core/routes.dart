@@ -8,6 +8,10 @@ import 'package:team_aid/features/login/screens/create_account_coach.screen.dart
 import 'package:team_aid/features/login/screens/create_account_team.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_team_player_parents.screen.dart';
 import 'package:team_aid/features/login/screens/request_demo.screen.dart';
+import 'package:team_aid/features/myAccount/myAccount.screen.dart';
+import 'package:team_aid/features/myAccount/screens/address.screen.dart';
+import 'package:team_aid/features/myAccount/screens/biography.screen.dart';
+import 'package:team_aid/features/myAccount/screens/phone.screen.dart';
 import 'package:team_aid/features/teams/screens/contacts-list.screen.dart';
 import 'package:team_aid/features/teams/teams.screen.dart';
 import 'package:team_aid/features/travels/travels.screen.dart';
@@ -47,6 +51,18 @@ class AppRoutes {
 
   /// Travel route.
   static const String travel = '/home/travel';
+
+  /// Account route.
+  static const String account = '/account';
+
+  /// Biography profile route.
+  static const String biography = '/account/biography';
+
+  /// Phone profile route.
+  static const String phoneProfile = '/account/phoneProfile';
+
+  /// Address profile route
+  static const String addressProfile = '/account/address';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -101,6 +117,22 @@ final routerProvider = Provider((ref) {
       GoRoute(
         path: AppRoutes.travel,
         builder: (context, state) => const TravelsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.account,
+        builder: (context, state) => const MyAccountScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.biography,
+        builder: (context, state) => const BiographyScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.phoneProfile,
+        builder: (context, state) => const PhoneScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.addressProfile,
+        builder: (context, state) => const AddressScreen(),
       ),
     ],
   );

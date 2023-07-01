@@ -112,11 +112,13 @@ class DrawerWidget extends ConsumerWidget {
             //   onTap: () {},
             // ),
             // const SizedBox(height: spaceBetweenItems),
-            // _DrawerOptionWidget(
-            //   icon: Iconsax.profile_circle,
-            //   title: 'My Account',
-            //   onTap: () {},
-            // ),
+            _DrawerOptionWidget(
+              icon: Iconsax.profile_circle,
+              title: 'My Account',
+              onTap: () {
+                context.push(AppRoutes.account);
+              },
+            ),
             // const SizedBox(height: spaceBetweenItems),
             // _DrawerOptionWidget(
             //   icon: Iconsax.message_question,

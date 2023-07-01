@@ -79,8 +79,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
       child: Column(
         children: [
           TAContainer(
-            padding:
-                const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
             child: teams.when(
               data: (data) {
                 return TADropdown(
@@ -96,9 +95,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                   onChange: (selectedValue) {
                     if (selectedValue != null) {
                       teamId.value = selectedValue.id;
-                      ref
-                          .read(travelsControllerProvider.notifier)
-                          .getContactList(teamId: teamId.value);
+                      ref.read(travelsControllerProvider.notifier).getContactList(teamId: teamId.value);
                     }
                   },
                 );
@@ -367,7 +364,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                       child: Consumer(
                         builder: (context, ref, child) {
                           return TAPrimaryButton(
-                            text: 'NEXT',
+                            text: 'CREATE',
                             isLoading: isLoading.value,
                             mainAxisAlignment: MainAxisAlignment.center,
                             onTap: () async {
@@ -375,8 +372,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                 unawaited(
                                   FailureWidget.build(
                                     title: 'Something went wrong!',
-                                    message:
-                                        'Please enter event name to continue.',
+                                    message: 'Please enter event name to continue.',
                                     context: context,
                                   ),
                                 );
@@ -386,8 +382,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                 unawaited(
                                   FailureWidget.build(
                                     title: 'Something went wrong!',
-                                    message:
-                                        'Please enter location to continue.',
+                                    message: 'Please enter location to continue.',
                                     context: context,
                                   ),
                                 );
@@ -410,27 +405,22 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                               );
 
                               isLoading.value = true;
-                              final res = await ref
-                                  .read(travelsControllerProvider.notifier)
-                                  .addItinerary(itinerary: itinerary);
+                              final res = await ref.read(travelsControllerProvider.notifier).addItinerary(itinerary: itinerary);
                               isLoading.value = false;
 
                               if (res.ok && mounted) {
-                                unawaited(
-                                  SuccessWidget.build(
-                                    title: 'Success!',
-                                    message:
-                                        'Itinerary has been added successfully.',
-                                    context: context,
-                                  ),
+                                await SuccessWidget.build(
+                                  title: 'Success!',
+                                  message: 'Itinerary has been added successfully.',
+                                  context: context,
                                 );
+                                if (!mounted) return;
                                 Navigator.pop(context);
                               } else {
                                 unawaited(
                                   FailureWidget.build(
                                     title: 'Something went wrong!',
-                                    message:
-                                        'There was an error adding the Itinerary.',
+                                    message: 'There was an error adding the Itinerary.',
                                     context: context,
                                   ),
                                 );

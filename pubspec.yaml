@@ -27,6 +27,7 @@ dependencies:
   responsive_sizer: ^3.1.1
   searchable_listview: ^2.4.0
   shared_preferences: ^2.1.1
+  url_launcher: ^6.1.11
 
 dev_dependencies:
   custom_lint:

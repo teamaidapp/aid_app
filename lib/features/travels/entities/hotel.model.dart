@@ -66,7 +66,7 @@ class HotelModel {
       'startDate': startDate,
       'endDate': endDate,
       'reservationCode': reservationCode,
-      'guests': guests.map((x) => x.toMap()).toList(),
+      'guest': guests.map((x) => x.toMap()).toList(),
     };
   }
 
