@@ -50,6 +50,9 @@ abstract class TravelsService {
 
   /// Get the itineraries
   Future<Either<Failure, List<ItineraryModel>>> getItinerary();
+
+  /// Get the hotels
+  Future<Either<Failure, List<HotelModel>>> getHotels();
 }
 
 /// This class is responsible for implementing the TravelsService
@@ -155,6 +158,21 @@ class TravelsServiceImpl implements TravelsService {
   Future<Either<Failure, List<ItineraryModel>>> getItinerary() async {
     try {
       final result = await travelsRepository.getItinerary();
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<HotelModel>>> getHotels() async {
+    try {
+      final result = await travelsRepository.getHotels();
 
       return result.fold(Left.new, Right.new);
     } catch (e) {

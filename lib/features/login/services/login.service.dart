@@ -39,8 +39,7 @@ class LoginServiceImpl implements LoginService {
     required String password,
   }) async {
     try {
-      final result =
-          await loginRepository.login(email: email, password: password);
+      final result = await loginRepository.login(email: email, password: password);
 
       return result.fold(
         Left.new,
@@ -51,6 +50,7 @@ class LoginServiceImpl implements LoginService {
               email: email,
               address: r['address'] as String? ?? '',
               password: '',
+              biography: '',
               firstName: r['firstName'] as String,
               lastName: r['lastName'] as String,
               phoneNumber: r['phoneNumber'] as String,

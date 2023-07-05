@@ -1,6 +1,6 @@
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
+import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/features/myAccount/services/myAccount.service.dart';
 import 'package:team_aid/features/myAccount/state/myAccount.state.dart';
 
@@ -35,12 +35,34 @@ class MyAccountController extends StateNotifier<MyAccountScreenState> {
 
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
-        (success) {          
+        (success) {
           return response = response.copyWith(ok: true);
         },
       );
     } catch (e) {
       return response = response.copyWith(message: 'Hubo un problema al obtener los datos de MyAccountService');
+    }
+  }
+
+  /// This function creates a team by calling the `_myAccountService.createAccount` method with a
+  /// user object and returns a `ResponseFailureModel` object indicating success or failure.
+  Future<ResponseFailureModel> updateUserData({
+    required UserModel user,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _myAccountService.updateUserData(user: user);
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) {
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de CreateAccountService',
+      );
     }
   }
 }

@@ -139,8 +139,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                 onChange: (selectedValue) {
                                   if (selectedValue != null) {
                                     debugPrint(selectedValue.id);
-                                    currentSelectedState.value =
-                                        selectedValue.id;
+                                    currentSelectedState.value = selectedValue.id;
                                   }
                                 },
                               ),
@@ -163,11 +162,9 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                       );
 
                                       if (response.statusCode == 200) {
-                                        final data = (jsonDecode(response.body)
-                                            as Map)['data'] as List;
+                                        final data = (jsonDecode(response.body) as Map)['data'] as List;
                                         return data.map((e) {
-                                          final taDropdownModel =
-                                              TADropdownModel(
+                                          final taDropdownModel = TADropdownModel(
                                             item: (e as Map)['name'] as String,
                                             id: e['id'] as String,
                                           );
@@ -183,16 +180,14 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                       }
                                     },
                                     itemAsString: (item) => item.item,
-                                    dropdownButtonProps:
-                                        const DropdownButtonProps(
+                                    dropdownButtonProps: const DropdownButtonProps(
                                       icon: Icon(
                                         Iconsax.arrow_down_1,
                                         size: 14,
                                         color: Colors.black,
                                       ),
                                     ),
-                                    dropdownDecoratorProps:
-                                        DropDownDecoratorProps(
+                                    dropdownDecoratorProps: DropDownDecoratorProps(
                                       baseStyle: GoogleFonts.poppins(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.w500,
@@ -200,30 +195,24 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                       ),
                                       dropdownSearchDecoration: InputDecoration(
                                         hintText: 'Select a city',
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsets.symmetric(
                                           horizontal: 10,
                                           vertical: 10,
                                         ),
                                         border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(10),
                                           borderSide: BorderSide(
-                                            color: TAColors.color1
-                                                .withOpacity(0.5),
+                                            color: TAColors.color1.withOpacity(0.5),
                                           ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(10),
                                           borderSide: BorderSide(
-                                            color: TAColors.color1
-                                                .withOpacity(0.5),
+                                            color: TAColors.color1.withOpacity(0.5),
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(10),
                                           borderSide: const BorderSide(
                                             color: TAColors.color1,
                                           ),
@@ -237,8 +226,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                     ),
                                     popupProps: PopupProps.menu(
                                       fit: FlexFit.loose,
-                                      constraints:
-                                          const BoxConstraints.tightFor(),
+                                      constraints: const BoxConstraints.tightFor(),
                                       menuProps: MenuProps(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
@@ -284,8 +272,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: TATypography.subparagraph(
-                                  text:
-                                      'I agree to terms of service and privacy policy',
+                                  text: 'I agree to terms of service and privacy policy',
                                   color: TAColors.grey1,
                                 ),
                               ),
@@ -297,8 +284,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                           builder: (context, ref, child) {
                             final isLoading = useState(false);
                             return Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 20, right: 20),
+                              padding: const EdgeInsets.only(left: 20, right: 20),
                               child: TAPrimaryButton(
                                 text: 'CREATE ACCOUNT',
                                 height: 50,
@@ -342,12 +328,12 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                     role: Role.coach,
                                     cityId: cityState.value,
                                     stateId: currentSelectedState.value,
+                                    biography: '',
                                   );
                                   isLoading.value = true;
                                   final res = await ref
                                       .read(
-                                        createAccountControllerProvider
-                                            .notifier,
+                                        createAccountControllerProvider.notifier,
                                       )
                                       .createAccount(user: user);
                                   isLoading.value = false;

@@ -17,6 +17,7 @@ class UserModel {
     required this.role,
     required this.cityId,
     required this.stateId,
+    required this.biography,
   });
 
   /// This is a factory function in Dart that creates a UserModel object from a map of key-value pairs.
@@ -44,6 +45,7 @@ class UserModel {
               : Role.support,
       cityId: map['cityId'] as String,
       stateId: map['stateId'] as String,
+      biography: map['biography'] as String,
     );
   }
 
@@ -83,6 +85,7 @@ class UserModel {
     Role? role,
     String? cityId,
     String? stateId,
+    String? biography,
   }) {
     return UserModel(
       firstName: firstName ?? this.firstName,
@@ -95,6 +98,7 @@ class UserModel {
       role: role ?? this.role,
       cityId: cityId ?? this.cityId,
       stateId: stateId ?? this.stateId,
+      biography: biography ?? this.biography,
     );
   }
 
@@ -155,8 +159,10 @@ class UserModel {
   /// The user's state id.
   final String stateId;
 
+  /// The user's biography.
+  final String biography;
+
   String toJson() => json.encode(toMap());
 
-  factory UserModel.fromJson(String source) =>
-      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserModel.fromJson(String source) => UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

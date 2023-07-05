@@ -3,8 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_aid/core/constants.dart';
-import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
@@ -16,8 +16,9 @@ class MyAccountScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sportController = useTextEditingController();
-    final levelController = useTextEditingController();
+    final nameController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.firstName);
+    final sportController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.sport);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -92,9 +93,10 @@ class MyAccountScreen extends HookWidget {
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              const TAPrimaryInput(
+                              TAPrimaryInput(
                                 label: 'Name',
                                 placeholder: '',
+                                textEditingController: nameController,
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
@@ -104,26 +106,6 @@ class MyAccountScreen extends HookWidget {
                                 onChange: (selectedValue) {
                                   if (selectedValue != null) {
                                     sportController.text = selectedValue.item;
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              TADropdown(
-                                label: 'Level',
-                                placeholder: 'Select a level',
-                                items: [
-                                  TADropdownModel(
-                                    item: 'Elite',
-                                    id: '',
-                                  ),
-                                  TADropdownModel(
-                                    item: 'Amateur',
-                                    id: '',
-                                  )
-                                ],
-                                onChange: (selectedValue) {
-                                  if (selectedValue != null) {
-                                    levelController.text = selectedValue.item;
                                   }
                                 },
                               ),
@@ -155,9 +137,9 @@ class MyAccountScreen extends HookWidget {
                               ),
                               const Divider(),
                               _OptionalWidget(
-                                title: 'Phone',
-                                icon: Iconsax.call,
-                                description: 'Add phone number',
+                                title: 'Birthdate',
+                                icon: Iconsax.cake,
+                                description: 'Add your birthdate',
                                 onTap: () {},
                               ),
                               const Divider(),
@@ -218,6 +200,22 @@ class MyAccountScreen extends HookWidget {
       ),
     );
   }
+}
+
+TextEditingController useSharedPrefsTextEditingController({
+  required String sharedPreferencesKey,
+}) {
+  final controller = useTextEditingController();
+
+  useEffect(() {
+    SharedPreferences.getInstance().then((prefs) {
+      final value = prefs.getString(sharedPreferencesKey) ?? '';
+      controller.text = value;
+    });
+    return () {};
+  }, [controller]);
+
+  return controller;
 }
 
 class _OptionalWidget extends StatelessWidget {

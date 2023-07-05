@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
 import 'package:team_aid/core/entities/success.dart';
+import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/features/myAccount/repositories/myAccount.repository.dart';
 
 /// The provider of MyAccountService
@@ -15,11 +16,13 @@ final myAccountServiceProvider = Provider<MyAccountServiceImpl>((ref) {
 abstract class MyAccountService {
   /// Get data
   Future<Either<Failure, Success>> getData();
+
+  /// Update user data
+  Future<Either<Failure, Success>> updateUserData({required UserModel user});
 }
 
 /// This class is responsible for implementing the MyAccountService
 class MyAccountServiceImpl implements MyAccountService {
-
   /// Constructor
   MyAccountServiceImpl(this.myAccountRepository);
 
@@ -34,8 +37,25 @@ class MyAccountServiceImpl implements MyAccountService {
       return result.fold(Left.new, Right.new);
     } catch (e) {
       return Left(
-        Failure(          
+        Failure(
           message: 'Hubo un problema al obtener los datos de MyAccountServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> updateUserData({
+    required UserModel user,
+  }) async {
+    try {
+      final result = await myAccountRepository.updateUserData(user: user);
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al actualizar los datos de MyAccountServiceImpl',
         ),
       );
     }

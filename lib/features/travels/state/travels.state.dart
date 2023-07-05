@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:team_aid/features/teams/entities/contact.model.dart';
+import 'package:team_aid/features/travels/entities/hotel.model.dart';
 import 'package:team_aid/features/travels/entities/itinerary.model.dart';
 
 /// State of the travels screen
@@ -11,6 +12,7 @@ class TravelsScreenState {
   const TravelsScreenState({
     required this.contactList,
     required this.itineraryList,
+    required this.hotelList,
   });
 
   /// The function returns a new instance of the TravelsScreenState class with updated contactList if
@@ -30,10 +32,12 @@ class TravelsScreenState {
   TravelsScreenState copyWith({
     AsyncValue<List<ContactModel>>? contactList,
     AsyncValue<List<ItineraryModel>>? itineraryList,
+    AsyncValue<List<HotelModel>>? hotelList,
   }) {
     return TravelsScreenState(
       contactList: contactList ?? this.contactList,
       itineraryList: itineraryList ?? this.itineraryList,
+      hotelList: hotelList ?? this.hotelList,
     );
   }
 
@@ -42,4 +46,7 @@ class TravelsScreenState {
 
   /// The itinerary list
   final AsyncValue<List<ItineraryModel>> itineraryList;
+
+  /// The hotel list
+  final AsyncValue<List<HotelModel>> hotelList;
 }

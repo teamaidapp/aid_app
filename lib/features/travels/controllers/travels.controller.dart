@@ -12,6 +12,7 @@ final travelsControllerProvider = StateNotifierProvider.autoDispose<TravelsContr
     const TravelsScreenState(
       contactList: AsyncValue.loading(),
       itineraryList: AsyncValue.loading(),
+      hotelList: AsyncValue.loading(),
     ),
     ref,
     ref.watch(travelsServiceProvider),
@@ -160,6 +161,34 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
         (list) {
           state = state.copyWith(
             itineraryList: AsyncValue.data(list),
+          );
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de TeamsService',
+      );
+    }
+  }
+
+  /// The function `getItineraries` retrieves a list of itineraries from a travel service and updates the
+  /// state accordingly.
+  ///
+  /// Returns:
+  ///   a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> getHotels() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _travelsService.getHotels();
+
+      state = state.copyWith(contactList: const AsyncValue.loading());
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (list) {
+          state = state.copyWith(
+            hotelList: AsyncValue.data(list),
           );
           return response = response.copyWith(ok: true);
         },

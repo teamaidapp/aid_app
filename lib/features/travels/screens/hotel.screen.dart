@@ -91,6 +91,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                   onChange: (selectedValue) {
                     if (selectedValue != null) {
                       teamId.value = selectedValue.id;
+                      ref.read(travelsControllerProvider.notifier).getContactList(teamId: teamId.value);
                     }
                   },
                 );
@@ -364,6 +365,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                               isLoading.value = true;
                               final hotel = HotelModel(
                                 place: name.text.trim(),
+                                placeDescription: name.text.trim(),
                                 startDate: _fromDate.toIso8601String(),
                                 endDate: _toDate.toIso8601String(),
                                 reservationCode: reservationController.text.trim(),
@@ -374,12 +376,10 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                               isLoading.value = false;
 
                               if (res.ok && mounted) {
-                                unawaited(
-                                  SuccessWidget.build(
-                                    title: 'Success!',
-                                    message: 'Event has been added successfully.',
-                                    context: context,
-                                  ),
+                                await SuccessWidget.build(
+                                  title: 'Success!',
+                                  message: 'Event has been added successfully.',
+                                  context: context,
                                 );
                                 if (!mounted) return;
                                 Navigator.pop(context);

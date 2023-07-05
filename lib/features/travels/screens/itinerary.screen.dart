@@ -67,6 +67,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
   @override
   Widget build(BuildContext context) {
     final teamId = useState('');
+    final locationDescription = useState('');
     final isLoading = useState(false);
     final transportation = useState('');
     final eventName = useTextEditingController();
@@ -310,6 +311,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                   onChanged: (v) {
                     if (v != null) {
                       locationController.text = v.id;
+                      locationDescription.value = v.item;
                     }
                   },
                 ),
@@ -401,6 +403,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                 startDate: _fromDate.toIso8601String(),
                                 endDate: _toDate.toIso8601String(),
                                 location: locationController.text.trim(),
+                                locationDescription: locationDescription.value,
                                 guests: newGuests,
                               );
 
@@ -415,7 +418,6 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                   context: context,
                                 );
                                 if (!mounted) return;
-                                Navigator.pop(context);
                               } else {
                                 unawaited(
                                   FailureWidget.build(

@@ -37,6 +37,9 @@ abstract class TravelsRepository {
 
   /// Get the itineraries
   Future<Either<Failure, List<ItineraryModel>>> getItinerary();
+
+  /// Get the hotels
+  Future<Either<Failure, List<HotelModel>>> getHotels();
 }
 
 /// This class is responsible for implementing the TravelsRepository
@@ -154,6 +157,43 @@ class TravelsRepositoryImpl implements TravelsRepository {
       }
 
       return Right(itineraries);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un error en CalendarRepositoyImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<HotelModel>>> getHotels() async {
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/itinerary',
+      );
+      final res = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+      );
+      final hotels = <HotelModel>[];
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error while fetching the data',
+          ),
+        );
+      }
+
+      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
+
+      for (final hotel in data) {
+        final itineraryModel = HotelModel.fromMap((hotel as Map<String, dynamic>)['itineraryId'] as Map<String, dynamic>);
+        hotels.add(itineraryModel);
+      }
+
+      return Right(hotels);
     } catch (e) {
       return Left(
         Failure(

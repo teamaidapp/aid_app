@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:team_aid/core/entities/guest.model.dart';
 
 /// A class representing an itinerary for an event.
@@ -21,6 +22,7 @@ class ItineraryModel {
     required this.startDate,
     required this.endDate,
     required this.location,
+    required this.locationDescription,
     required this.guests,
   });
 
@@ -34,6 +36,7 @@ class ItineraryModel {
       startDate: map['startDate'] as String,
       endDate: map['endDate'] as String,
       location: map['location'] as String,
+      locationDescription: map['locationDescription'] as String,
       guests: [],
       // guests: List<Guest>.from(
       //   (map['guests'] as List<int>).map<Guest>(
@@ -58,6 +61,9 @@ class ItineraryModel {
   /// The location of the itinerary.
   final String location;
 
+  /// The location description of the itinerary.
+  final String locationDescription;
+
   /// The list of guests for the itinerary.
   final List<Guest> guests;
 
@@ -69,6 +75,7 @@ class ItineraryModel {
   ItineraryModel copyWith({
     String? name,
     String? transportation,
+    String? locationDescription,
     String? startDate,
     String? endDate,
     String? location,
@@ -80,6 +87,7 @@ class ItineraryModel {
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       location: location ?? this.location,
+      locationDescription: locationDescription ?? this.locationDescription,
       guests: guests ?? this.guests,
     );
   }
@@ -94,6 +102,7 @@ class ItineraryModel {
       'startDate': startDate,
       'endDate': endDate,
       'location': location,
+      'locationDescription': locationDescription,
       'guest': guests.map((x) => x.toMap()).toList(),
     };
   }

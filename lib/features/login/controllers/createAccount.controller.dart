@@ -6,8 +6,7 @@ import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/features/login/services/create_account.service.dart';
 
 /// A dependency injection.
-final createAccountControllerProvider =
-    StateNotifierProvider.autoDispose<CreateAccountController, void>((ref) {
+final createAccountControllerProvider = StateNotifierProvider.autoDispose<CreateAccountController, void>((ref) {
   return CreateAccountController(
     ref,
     ref.watch(createAccountServiceProvider),
@@ -42,8 +41,7 @@ class CreateAccountController extends StateNotifier<void> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message:
-            'Hubo un problema al obtener los datos de CreateAccountService',
+        message: 'Hubo un problema al obtener los datos de CreateAccountService',
       );
     }
   }
@@ -71,8 +69,7 @@ class CreateAccountController extends StateNotifier<void> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message:
-            'Hubo un problema al obtener los datos de CreateAccountService',
+        message: 'Hubo un problema al obtener los datos de CreateAccountService',
       );
     }
   }
@@ -100,8 +97,7 @@ class CreateAccountController extends StateNotifier<void> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message:
-            'Hubo un problema al obtener los datos de CreateAccountService',
+        message: 'Hubo un problema al obtener los datos de CreateAccountService',
       );
     }
   }

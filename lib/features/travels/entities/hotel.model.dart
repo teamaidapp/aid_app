@@ -17,6 +17,7 @@ class HotelModel {
     required this.endDate,
     required this.reservationCode,
     required this.guests,
+    required this.placeDescription,
   });
 
   /// Creates a new instance of [HotelModel] from a map.
@@ -27,6 +28,7 @@ class HotelModel {
       place: map['place'] as String,
       startDate: map['startDate'] as String,
       endDate: map['endDate'] as String,
+      placeDescription: map['placeDescription'] as String,
       reservationCode: map['reservationCode'] as String,
       guests: List<Guest>.from(
         (map['guests'] as List<int>).map<Guest>(
@@ -45,6 +47,7 @@ class HotelModel {
     String? place,
     String? startDate,
     String? endDate,
+    String? placeDescription,
     String? reservationCode,
     List<Guest>? guests,
   }) {
@@ -52,6 +55,7 @@ class HotelModel {
       place: place ?? this.place,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
+      placeDescription: placeDescription ?? this.placeDescription,
       reservationCode: reservationCode ?? this.reservationCode,
       guests: guests ?? this.guests,
     );
@@ -65,7 +69,8 @@ class HotelModel {
       'place': place,
       'startDate': startDate,
       'endDate': endDate,
-      'reservationCode': reservationCode,
+      'placeDescription': placeDescription,
+      'reservation_code': reservationCode,
       'guest': guests.map((x) => x.toMap()).toList(),
     };
   }
@@ -77,6 +82,9 @@ class HotelModel {
 
   /// The name of the hotel.
   final String place;
+
+  /// The description of the hotel.
+  final String placeDescription;
 
   /// The start date of the reservation.
   final String startDate;

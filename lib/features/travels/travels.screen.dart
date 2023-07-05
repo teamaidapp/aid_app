@@ -11,6 +11,7 @@ import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/today.widget.dart';
 import 'package:team_aid/features/travels/controllers/travels.controller.dart';
+import 'package:team_aid/features/travels/entities/hotel.model.dart';
 import 'package:team_aid/features/travels/entities/itinerary.model.dart';
 import 'package:team_aid/features/travels/screens/hotel.screen.dart';
 import 'package:team_aid/features/travels/screens/itinerary.screen.dart';
@@ -30,6 +31,7 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(travelsControllerProvider.notifier).getItineraries();
+      ref.read(travelsControllerProvider.notifier).getHotels();
     });
     super.initState();
   }
@@ -40,6 +42,7 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
     final selectedIndex = useState(0);
     final formPageController = usePageController();
     final itineraries = ref.watch(travelsControllerProvider).itineraryList;
+    final hotels = ref.watch(travelsControllerProvider).hotelList;
     return Scaffold(
       bottomNavigationBar: !seeTravels.value
           ? Container(
@@ -176,6 +179,7 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
                     Expanded(
                       child: Column(
                         children: [
+                          const SizedBox(height: 20),
                           TATypography.h3(text: 'Itineraries'),
                           Expanded(
                             child: itineraries.when(
@@ -205,6 +209,35 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
                               },
                             ),
                           ),
+                          // TATypography.h3(text: 'Hotels'),
+                          // Expanded(
+                          //   child: hotels.when(
+                          //     data: (data) {
+                          //       return ListView.builder(
+                          //         padding: const EdgeInsets.all(20),
+                          //         itemCount: data.length,
+                          //         itemBuilder: (context, index) {
+                          //           return Column(
+                          //             children: [
+                          //               _HotelWidget(
+                          //                 hotel: data[index],
+                          //               ),
+                          //               const SizedBox(height: 10),
+                          //             ],
+                          //           );
+                          //         },
+                          //       );
+                          //     },
+                          //     error: (error, stackTrace) {
+                          //       return const SizedBox();
+                          //     },
+                          //     loading: () {
+                          //       return const Center(
+                          //         child: CircularProgressIndicator(),
+                          //       );
+                          //     },
+                          //   ),
+                          // ),
                         ],
                       ),
                     )
@@ -252,7 +285,7 @@ class _ItineraryWidget extends StatelessWidget {
     final endDateHour = DateFormat('hh:mm a').format(DateTime.parse(itinerary.endDate));
 
     /// The formatted day to display.
-    final formattedDay = DateFormat('EEEE').format(DateTime.parse(itinerary.endDate)).toUpperCase();
+    final formattedDay = DateFormat('EE').format(DateTime.parse(itinerary.endDate)).toUpperCase();
 
     return TAContainer(
       padding: EdgeInsets.zero,
@@ -268,15 +301,239 @@ class _ItineraryWidget extends StatelessWidget {
                 color: TAColors.purple,
               ),
               const SizedBox(width: 10),
+              SizedBox(
+                width: 170,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TATypography.paragraph(
+                      text: itinerary.name,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    TATypography.paragraph(
+                      text: itinerary.transportation,
+                      color: TAColors.grey1,
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              const SizedBox(
+                height: 90,
+                child: VerticalDivider(),
+              ),
+              const SizedBox(width: 10),
+              Column(
+                children: [
+                  TATypography.paragraph(
+                    text: formattedDay,
+                    color: TAColors.grey1,
+                  ),
+                  TATypography.paragraph(
+                    text: formattedDate,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ),
+              const SizedBox(width: 20),
+            ],
+          ),
+        ),
+        expanded: Column(
+          children: [
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 30,
+                vertical: 20,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Iconsax.airplane),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TATypography.subparagraph(
+                                text: 'FROM',
+                                color: TAColors.grey1,
+                              ),
+                              TATypography.paragraph(
+                                text: formattedDate,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              TATypography.paragraph(
+                                text: startDateHour,
+                                color: TAColors.grey1,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 60),
+                      Row(
+                        children: [
+                          const Icon(Iconsax.airplane),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TATypography.subparagraph(
+                                text: 'TO',
+                                color: TAColors.grey1,
+                              ),
+                              TATypography.paragraph(
+                                text: formattedEndDate,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              TATypography.paragraph(
+                                text: endDateHour,
+                                color: TAColors.grey1,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      const Icon(Iconsax.building_4),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TATypography.subparagraph(
+                              text: 'Hotel',
+                              color: TAColors.grey1,
+                            ),
+                            TATypography.paragraph(
+                              text: 'Rio All Suites',
+                              fontWeight: FontWeight.w600,
+                            ),
+                            TATypography.paragraph(
+                              text: '3700 W Flamingo Rd, Las Vegas, NV 89103',
+                              color: TAColors.grey1,
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          openLink('https://www.google.com/maps/place/?q=place_id:${itinerary.location}');
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: TAColors.purple,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          child: const Icon(
+                            Iconsax.location,
+                            color: TAColors.purple,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  // Row(
+                  //   children: [
+                  //     const Icon(Iconsax.user_tag),
+                  //     const SizedBox(width: 8),
+                  //     Expanded(
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           TATypography.subparagraph(
+                  //             text: 'Meeting',
+                  //             color: TAColors.grey1,
+                  //           ),
+                  //           TATypography.paragraph(
+                  //             text: 'Doral Campus Academy',
+                  //             fontWeight: FontWeight.w600,
+                  //           ),
+                  //           TATypography.paragraph(
+                  //             text: '9025 W Cactus Ave, Las Vegas, NV 89178',
+                  //             color: TAColors.grey1,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //     Container(
+                  //       decoration: BoxDecoration(
+                  //         shape: BoxShape.circle,
+                  //         border: Border.all(
+                  //           color: TAColors.purple,
+                  //         ),
+                  //       ),
+                  //       padding: const EdgeInsets.all(6),
+                  //       child: const Icon(
+                  //         Iconsax.location,
+                  //         color: TAColors.purple,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HotelWidget extends StatelessWidget {
+  const _HotelWidget({
+    required this.hotel,
+  });
+
+  final HotelModel hotel;
+
+  @override
+  Widget build(BuildContext context) {
+    /// The formatted date to display.
+    final formattedDate = DateFormat('dd MMM').format(DateTime.parse(hotel.startDate)).toUpperCase();
+    final formattedEndDate = DateFormat('dd MMM').format(DateTime.parse(hotel.endDate)).toUpperCase();
+    final startDateHour = DateFormat('hh:mm a').format(DateTime.parse(hotel.startDate));
+    final endDateHour = DateFormat('hh:mm a').format(DateTime.parse(hotel.endDate));
+
+    /// The formatted day to display.
+    final formattedDay = DateFormat('EEEE').format(DateTime.parse(hotel.endDate)).toUpperCase();
+
+    return TAContainer(
+      padding: EdgeInsets.zero,
+      child: ExpandablePanel(
+        collapsed: const SizedBox(),
+        theme: const ExpandableThemeData(hasIcon: false),
+        header: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              const Icon(
+                Iconsax.house,
+                color: TAColors.purple,
+              ),
+              const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TATypography.paragraph(
-                    text: itinerary.name,
+                    text: hotel.place,
                     fontWeight: FontWeight.w600,
                   ),
                   TATypography.paragraph(
-                    text: itinerary.transportation,
+                    text: hotel.reservationCode,
                     color: TAColors.grey1,
                   ),
                 ],
@@ -390,7 +647,7 @@ class _ItineraryWidget extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () {
-                          openLink('https://www.google.com/maps/place/?q=place_id:${itinerary.location}');
+                          openLink('https://www.google.com/maps/place/?q=place_id:${hotel.place}');
                         },
                         child: Container(
                           decoration: BoxDecoration(

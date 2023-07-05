@@ -9,12 +9,25 @@ import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/teams/widgets/team_card.widget.dart';
 
 /// The statelessWidget that handles the current screen
-class TeamsScreen extends HookConsumerWidget {
+class TeamsScreen extends StatefulHookConsumerWidget {
   /// The constructor.
   const TeamsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TeamsScreen> createState() => _TeamsScreenState();
+}
+
+class _TeamsScreenState extends ConsumerState<TeamsScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(homeControllerProvider.notifier).getUserTeams();
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final teamsScreen = useState(true);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -66,9 +79,7 @@ class TeamsScreen extends HookConsumerWidget {
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: teamsScreen.value
-                          ? const Color(0xffF5F8FB)
-                          : Colors.white,
+                      color: teamsScreen.value ? const Color(0xffF5F8FB) : Colors.white,
                       borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(20),
                         topLeft: Radius.circular(20),
@@ -79,9 +90,7 @@ class TeamsScreen extends HookConsumerWidget {
                       child: TATypography.paragraph(
                         text: 'Teams',
                         key: const Key('add_player_title'),
-                        color: teamsScreen.value
-                            ? TAColors.textColor
-                            : const Color(0x0D253C4D).withOpacity(0.3),
+                        color: teamsScreen.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -100,9 +109,7 @@ class TeamsScreen extends HookConsumerWidget {
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
-                      color: !teamsScreen.value
-                          ? const Color(0xffF5F8FB)
-                          : Colors.transparent,
+                      color: !teamsScreen.value ? const Color(0xffF5F8FB) : Colors.transparent,
                       borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(20),
                         topLeft: Radius.circular(20),
@@ -111,9 +118,7 @@ class TeamsScreen extends HookConsumerWidget {
                     child: Center(
                       child: TATypography.paragraph(
                         text: 'Invitations',
-                        color: !teamsScreen.value
-                            ? TAColors.textColor
-                            : const Color(0x0D253C4D).withOpacity(0.3),
+                        color: !teamsScreen.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -132,11 +137,7 @@ class TeamsScreen extends HookConsumerWidget {
                   topRight: Radius.circular(40),
                 ),
               ),
-              child: SingleChildScrollView(
-                child: teamsScreen.value
-                    ? const TeamsListWidget()
-                    : const MyInvitationsWidget(),
-              ),
+              child: teamsScreen.value ? const TeamsListWidget() : const MyInvitationsWidget(),
             ),
           ),
           Padding(
@@ -179,8 +180,11 @@ class TeamsListWidget extends ConsumerWidget {
               padding: EdgeInsets.zero,
               itemCount: data.length,
               itemBuilder: (context, index) {
-                return TeamCardWidget(
-                  team: data[index],
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: TeamCardWidget(
+                    team: data[index],
+                  ),
                 );
               },
             );
