@@ -24,6 +24,9 @@ class TAConstants {
   /// The key for the user's role in shared preferences.
   static const String role = 'role';
 
+  /// The key for the user's biography in shared preferences.
+  static const String biography = 'biography';
+
   /// The key for the user's sp in shared preferences.
   static const String sport = 'sport';
 

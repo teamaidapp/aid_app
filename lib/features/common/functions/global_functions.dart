@@ -29,6 +29,7 @@ class GlobalFunctions {
     await prefs.setString(TAConstants.address, user.address);
     await prefs.setString(TAConstants.role, user.role.name);
     await prefs.setString(TAConstants.sport, user.sportId);
+    await prefs.setString(TAConstants.biography, user.biography);
   }
 
   /// The function generates a list of HourModel objects representing hours and minutes in both AM and PM

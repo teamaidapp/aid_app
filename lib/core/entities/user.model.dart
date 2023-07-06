@@ -17,7 +17,7 @@ class UserModel {
     required this.role,
     required this.cityId,
     required this.stateId,
-    required this.biography,
+    this.biography = '',
   });
 
   /// This is a factory function in Dart that creates a UserModel object from a map of key-value pairs.
@@ -121,12 +121,13 @@ class UserModel {
       'cityId': cityId,
       'stateId': stateId,
       'role': role.name,
+      'biography': biography,
     };
   }
 
   @override
   String toString() {
-    return 'UserModel(firstName: $firstName, lastName: $lastName, email: $email, phoneNumber: $phoneNumber, address: $address, password: $password, role: $role)';
+    return 'UserModel(firstName: $firstName, lastName: $lastName, email: $email, phoneNumber: $phoneNumber, address: $address, password: $password, role: $role , sportId: $sportId, cityId: $cityId, stateId: $stateId, biography: $biography)';
   }
 
   /// The user's first name.

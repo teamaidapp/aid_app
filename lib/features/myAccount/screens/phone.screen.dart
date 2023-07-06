@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
+import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
@@ -18,7 +20,8 @@ class PhoneScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final phoneController = useTextEditingController();
+    final phoneController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.phoneNumber);
+
     final isLoading = useState(false);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -158,7 +161,6 @@ class PhoneScreen extends HookConsumerWidget {
                                   role: Role.coach,
                                   cityId: '',
                                   stateId: '',
-                                  biography: '',
                                 );
 
                                 isLoading.value = true;

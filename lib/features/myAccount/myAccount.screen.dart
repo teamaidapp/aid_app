@@ -3,10 +3,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_aid/core/constants.dart';
+import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
-import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
 
 /// The statelessWidget that handles the current screen
@@ -17,7 +16,7 @@ class MyAccountScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final nameController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.firstName);
-    final sportController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.sport);
+    // final sportController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.sport);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -98,17 +97,17 @@ class MyAccountScreen extends HookWidget {
                                 placeholder: '',
                                 textEditingController: nameController,
                               ),
-                              const SizedBox(height: 10),
-                              TADropdown(
-                                label: 'Sport',
-                                placeholder: 'Select your sport',
-                                items: TAConstants.sportsList,
-                                onChange: (selectedValue) {
-                                  if (selectedValue != null) {
-                                    sportController.text = selectedValue.item;
-                                  }
-                                },
-                              ),
+                              // const SizedBox(height: 10),
+                              // TADropdown(
+                              //   label: 'Sport',
+                              //   placeholder: 'Select your sport',
+                              //   items: TAConstants.sportsList,
+                              //   onChange: (selectedValue) {
+                              //     if (selectedValue != null) {
+                              //       sportController.text = selectedValue.item;
+                              //     }
+                              //   },
+                              // ),
                               const SizedBox(height: 20),
                               Align(
                                 alignment: Alignment.centerLeft,
@@ -135,13 +134,13 @@ class MyAccountScreen extends HookWidget {
                                   context.push(AppRoutes.phoneProfile);
                                 },
                               ),
-                              const Divider(),
-                              _OptionalWidget(
-                                title: 'Birthdate',
-                                icon: Iconsax.cake,
-                                description: 'Add your birthdate',
-                                onTap: () {},
-                              ),
+                              // const Divider(),
+                              // _OptionalWidget(
+                              //   title: 'Birthdate',
+                              //   icon: Iconsax.cake,
+                              //   description: 'Add your birthdate',
+                              //   onTap: () {},
+                              // ),
                               const Divider(),
                               const SizedBox(height: 20),
                             ],
@@ -200,22 +199,6 @@ class MyAccountScreen extends HookWidget {
       ),
     );
   }
-}
-
-TextEditingController useSharedPrefsTextEditingController({
-  required String sharedPreferencesKey,
-}) {
-  final controller = useTextEditingController();
-
-  useEffect(() {
-    SharedPreferences.getInstance().then((prefs) {
-      final value = prefs.getString(sharedPreferencesKey) ?? '';
-      controller.text = value;
-    });
-    return () {};
-  }, [controller]);
-
-  return controller;
 }
 
 class _OptionalWidget extends StatelessWidget {

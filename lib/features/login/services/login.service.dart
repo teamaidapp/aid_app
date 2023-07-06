@@ -50,7 +50,7 @@ class LoginServiceImpl implements LoginService {
               email: email,
               address: r['address'] as String? ?? '',
               password: '',
-              biography: '',
+              biography: r['biography'] as String? ?? '',
               firstName: r['firstName'] as String,
               lastName: r['lastName'] as String,
               phoneNumber: r['phoneNumber'] as String,
