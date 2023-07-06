@@ -11,7 +11,6 @@ import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/today.widget.dart';
 import 'package:team_aid/features/travels/controllers/travels.controller.dart';
-import 'package:team_aid/features/travels/entities/hotel.model.dart';
 import 'package:team_aid/features/travels/entities/itinerary.model.dart';
 import 'package:team_aid/features/travels/screens/hotel.screen.dart';
 import 'package:team_aid/features/travels/screens/itinerary.screen.dart';
@@ -42,7 +41,7 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
     final selectedIndex = useState(0);
     final formPageController = usePageController();
     final itineraries = ref.watch(travelsControllerProvider).itineraryList;
-    final hotels = ref.watch(travelsControllerProvider).hotelList;
+    // final hotels = ref.watch(travelsControllerProvider).hotelList;
     return Scaffold(
       bottomNavigationBar: !seeTravels.value
           ? Container(
@@ -493,223 +492,223 @@ class _ItineraryWidget extends StatelessWidget {
   }
 }
 
-class _HotelWidget extends StatelessWidget {
-  const _HotelWidget({
-    required this.hotel,
-  });
+// class _HotelWidget extends StatelessWidget {
+//   const _HotelWidget({
+//     required this.hotel,
+//   });
 
-  final HotelModel hotel;
+//   final HotelModel hotel;
 
-  @override
-  Widget build(BuildContext context) {
-    /// The formatted date to display.
-    final formattedDate = DateFormat('dd MMM').format(DateTime.parse(hotel.startDate)).toUpperCase();
-    final formattedEndDate = DateFormat('dd MMM').format(DateTime.parse(hotel.endDate)).toUpperCase();
-    final startDateHour = DateFormat('hh:mm a').format(DateTime.parse(hotel.startDate));
-    final endDateHour = DateFormat('hh:mm a').format(DateTime.parse(hotel.endDate));
+//   @override
+//   Widget build(BuildContext context) {
+//     /// The formatted date to display.
+//     final formattedDate = DateFormat('dd MMM').format(DateTime.parse(hotel.startDate)).toUpperCase();
+//     final formattedEndDate = DateFormat('dd MMM').format(DateTime.parse(hotel.endDate)).toUpperCase();
+//     final startDateHour = DateFormat('hh:mm a').format(DateTime.parse(hotel.startDate));
+//     final endDateHour = DateFormat('hh:mm a').format(DateTime.parse(hotel.endDate));
 
-    /// The formatted day to display.
-    final formattedDay = DateFormat('EEEE').format(DateTime.parse(hotel.endDate)).toUpperCase();
+//     /// The formatted day to display.
+//     final formattedDay = DateFormat('EEEE').format(DateTime.parse(hotel.endDate)).toUpperCase();
 
-    return TAContainer(
-      padding: EdgeInsets.zero,
-      child: ExpandablePanel(
-        collapsed: const SizedBox(),
-        theme: const ExpandableThemeData(hasIcon: false),
-        header: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              const Icon(
-                Iconsax.house,
-                color: TAColors.purple,
-              ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TATypography.paragraph(
-                    text: hotel.place,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  TATypography.paragraph(
-                    text: hotel.reservationCode,
-                    color: TAColors.grey1,
-                  ),
-                ],
-              ),
-              const Spacer(),
-              const SizedBox(
-                height: 90,
-                child: VerticalDivider(),
-              ),
-              const SizedBox(width: 10),
-              Column(
-                children: [
-                  TATypography.paragraph(
-                    text: formattedDay,
-                    color: TAColors.grey1,
-                  ),
-                  TATypography.paragraph(
-                    text: formattedDate,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ],
-              ),
-              const SizedBox(width: 20),
-            ],
-          ),
-        ),
-        expanded: Column(
-          children: [
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 30,
-                vertical: 20,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Iconsax.airplane),
-                          const SizedBox(width: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TATypography.subparagraph(
-                                text: 'FROM',
-                                color: TAColors.grey1,
-                              ),
-                              TATypography.paragraph(
-                                text: formattedDate,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              TATypography.paragraph(
-                                text: startDateHour,
-                                color: TAColors.grey1,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 60),
-                      Row(
-                        children: [
-                          const Icon(Iconsax.airplane),
-                          const SizedBox(width: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TATypography.subparagraph(
-                                text: 'TO',
-                                color: TAColors.grey1,
-                              ),
-                              TATypography.paragraph(
-                                text: formattedEndDate,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              TATypography.paragraph(
-                                text: endDateHour,
-                                color: TAColors.grey1,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      const Icon(Iconsax.building_4),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TATypography.subparagraph(
-                              text: 'Hotel',
-                              color: TAColors.grey1,
-                            ),
-                            TATypography.paragraph(
-                              text: 'Rio All Suites',
-                              fontWeight: FontWeight.w600,
-                            ),
-                            TATypography.paragraph(
-                              text: '3700 W Flamingo Rd, Las Vegas, NV 89103',
-                              color: TAColors.grey1,
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          openLink('https://www.google.com/maps/place/?q=place_id:${hotel.place}');
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: TAColors.purple,
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(6),
-                          child: const Icon(
-                            Iconsax.location,
-                            color: TAColors.purple,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  // Row(
-                  //   children: [
-                  //     const Icon(Iconsax.user_tag),
-                  //     const SizedBox(width: 8),
-                  //     Expanded(
-                  //       child: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           TATypography.subparagraph(
-                  //             text: 'Meeting',
-                  //             color: TAColors.grey1,
-                  //           ),
-                  //           TATypography.paragraph(
-                  //             text: 'Doral Campus Academy',
-                  //             fontWeight: FontWeight.w600,
-                  //           ),
-                  //           TATypography.paragraph(
-                  //             text: '9025 W Cactus Ave, Las Vegas, NV 89178',
-                  //             color: TAColors.grey1,
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //     Container(
-                  //       decoration: BoxDecoration(
-                  //         shape: BoxShape.circle,
-                  //         border: Border.all(
-                  //           color: TAColors.purple,
-                  //         ),
-                  //       ),
-                  //       padding: const EdgeInsets.all(6),
-                  //       child: const Icon(
-                  //         Iconsax.location,
-                  //         color: TAColors.purple,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//     return TAContainer(
+//       padding: EdgeInsets.zero,
+//       child: ExpandablePanel(
+//         collapsed: const SizedBox(),
+//         theme: const ExpandableThemeData(hasIcon: false),
+//         header: Padding(
+//           padding: const EdgeInsets.symmetric(horizontal: 20),
+//           child: Row(
+//             children: [
+//               const Icon(
+//                 Iconsax.house,
+//                 color: TAColors.purple,
+//               ),
+//               const SizedBox(width: 10),
+//               Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   TATypography.paragraph(
+//                     text: hotel.place,
+//                     fontWeight: FontWeight.w600,
+//                   ),
+//                   TATypography.paragraph(
+//                     text: hotel.reservationCode,
+//                     color: TAColors.grey1,
+//                   ),
+//                 ],
+//               ),
+//               const Spacer(),
+//               const SizedBox(
+//                 height: 90,
+//                 child: VerticalDivider(),
+//               ),
+//               const SizedBox(width: 10),
+//               Column(
+//                 children: [
+//                   TATypography.paragraph(
+//                     text: formattedDay,
+//                     color: TAColors.grey1,
+//                   ),
+//                   TATypography.paragraph(
+//                     text: formattedDate,
+//                     fontWeight: FontWeight.w600,
+//                   ),
+//                 ],
+//               ),
+//               const SizedBox(width: 20),
+//             ],
+//           ),
+//         ),
+//         expanded: Column(
+//           children: [
+//             const Divider(),
+//             Padding(
+//               padding: const EdgeInsets.symmetric(
+//                 horizontal: 30,
+//                 vertical: 20,
+//               ),
+//               child: Column(
+//                 children: [
+//                   Row(
+//                     children: [
+//                       Row(
+//                         children: [
+//                           const Icon(Iconsax.airplane),
+//                           const SizedBox(width: 8),
+//                           Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               TATypography.subparagraph(
+//                                 text: 'FROM',
+//                                 color: TAColors.grey1,
+//                               ),
+//                               TATypography.paragraph(
+//                                 text: formattedDate,
+//                                 fontWeight: FontWeight.w600,
+//                               ),
+//                               TATypography.paragraph(
+//                                 text: startDateHour,
+//                                 color: TAColors.grey1,
+//                               ),
+//                             ],
+//                           ),
+//                         ],
+//                       ),
+//                       const SizedBox(width: 60),
+//                       Row(
+//                         children: [
+//                           const Icon(Iconsax.airplane),
+//                           const SizedBox(width: 8),
+//                           Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               TATypography.subparagraph(
+//                                 text: 'TO',
+//                                 color: TAColors.grey1,
+//                               ),
+//                               TATypography.paragraph(
+//                                 text: formattedEndDate,
+//                                 fontWeight: FontWeight.w600,
+//                               ),
+//                               TATypography.paragraph(
+//                                 text: endDateHour,
+//                                 color: TAColors.grey1,
+//                               ),
+//                             ],
+//                           ),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                   const SizedBox(height: 20),
+//                   Row(
+//                     children: [
+//                       const Icon(Iconsax.building_4),
+//                       const SizedBox(width: 8),
+//                       Expanded(
+//                         child: Column(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             TATypography.subparagraph(
+//                               text: 'Hotel',
+//                               color: TAColors.grey1,
+//                             ),
+//                             TATypography.paragraph(
+//                               text: 'Rio All Suites',
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                             TATypography.paragraph(
+//                               text: '3700 W Flamingo Rd, Las Vegas, NV 89103',
+//                               color: TAColors.grey1,
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                       GestureDetector(
+//                         onTap: () {
+//                           openLink('https://www.google.com/maps/place/?q=place_id:${hotel.place}');
+//                         },
+//                         child: Container(
+//                           decoration: BoxDecoration(
+//                             shape: BoxShape.circle,
+//                             border: Border.all(
+//                               color: TAColors.purple,
+//                             ),
+//                           ),
+//                           padding: const EdgeInsets.all(6),
+//                           child: const Icon(
+//                             Iconsax.location,
+//                             color: TAColors.purple,
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                   const SizedBox(height: 20),
+//                   // Row(
+//                   //   children: [
+//                   //     const Icon(Iconsax.user_tag),
+//                   //     const SizedBox(width: 8),
+//                   //     Expanded(
+//                   //       child: Column(
+//                   //         crossAxisAlignment: CrossAxisAlignment.start,
+//                   //         children: [
+//                   //           TATypography.subparagraph(
+//                   //             text: 'Meeting',
+//                   //             color: TAColors.grey1,
+//                   //           ),
+//                   //           TATypography.paragraph(
+//                   //             text: 'Doral Campus Academy',
+//                   //             fontWeight: FontWeight.w600,
+//                   //           ),
+//                   //           TATypography.paragraph(
+//                   //             text: '9025 W Cactus Ave, Las Vegas, NV 89178',
+//                   //             color: TAColors.grey1,
+//                   //           ),
+//                   //         ],
+//                   //       ),
+//                   //     ),
+//                   //     Container(
+//                   //       decoration: BoxDecoration(
+//                   //         shape: BoxShape.circle,
+//                   //         border: Border.all(
+//                   //           color: TAColors.purple,
+//                   //         ),
+//                   //       ),
+//                   //       padding: const EdgeInsets.all(6),
+//                   //       child: const Icon(
+//                   //         Iconsax.location,
+//                   //         color: TAColors.purple,
+//                   //       ),
+//                   //     ),
+//                   //   ],
+//                   // ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

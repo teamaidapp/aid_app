@@ -328,7 +328,6 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                     role: Role.coach,
                                     cityId: cityState.value,
                                     stateId: currentSelectedState.value,
-                                    biography: '',
                                   );
                                   isLoading.value = true;
                                   final res = await ref

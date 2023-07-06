@@ -29,6 +29,7 @@ class TAPrimaryInput extends StatefulWidget {
   /// A boolean that is used to determine if the text field is a password field.
   final bool isPassword;
 
+  /// The maximum number of lines for the text field.
   final int? maxLines;
 
   @override
