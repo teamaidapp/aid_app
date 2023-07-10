@@ -169,7 +169,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                   const SizedBox(height: 10),
                   const Divider(),
                   const SizedBox(height: 10),
-                  if (selectedFile != null)
+                  if (selectedFile != null || selectedImage != null)
                     Row(
                       children: [
                         const Icon(
@@ -178,10 +178,20 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                           color: TAColors.purple,
                         ),
                         const SizedBox(width: 10),
-                        TATypography.paragraph(
-                          text: selectedFile!.path.split('/').last,
-                          color: TAColors.color2,
-                        ),
+                        if (selectedFile != null)
+                          Expanded(
+                            child: TATypography.paragraph(
+                              text: selectedFile!.path.split('/').last,
+                              color: TAColors.color2,
+                            ),
+                          ),
+                        if (selectedImage != null)
+                          Expanded(
+                            child: TATypography.paragraph(
+                              text: selectedImage!.path.split('/').last,
+                              color: TAColors.color2,
+                            ),
+                          ),
                       ],
                     )
                   else
