@@ -25,6 +25,7 @@ class ScheduleModel {
     required this.eventDescription,
     required this.guest,
     required this.periodicity,
+    required this.locationDescription,
   });
 
   /// Converts this [ScheduleModel] instance to a map.
@@ -39,6 +40,7 @@ class ScheduleModel {
       'eventDescription': eventDescription,
       'guest': guest.map((x) => x.toMap()).toList(),
       'periodicity': periodicity,
+      'locationDescription': locationDescription,
     };
   }
 
@@ -53,6 +55,9 @@ class ScheduleModel {
 
   /// The location of the event.
   final String location;
+
+  /// The description of the location.
+  final String locationDescription;
 
   /// The description of the event.
   final String eventDescription;

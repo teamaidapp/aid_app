@@ -97,7 +97,7 @@ class EventWidget extends StatelessWidget {
                 ),
                 TATypography.paragraph(
                   text: 'End',
-                  color: TAColors.color3,
+                  color: TAColors.grey1,
                 ),
                 TATypography.paragraph(
                   text: endTime,

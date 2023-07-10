@@ -85,7 +85,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
               data: (data) {
                 return TADropdown(
                   label: 'Team',
-                  placeholder: 'Enter the team',
+                  placeholder: 'Select a team',
                   items: List.generate(
                     data.length,
                     (index) => TADropdownModel(

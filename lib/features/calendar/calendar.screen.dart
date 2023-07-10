@@ -9,9 +9,11 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
+import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/extensions.dart';
 import 'package:team_aid/design_system/components/buttons/secondary_button.dart';
 import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
+import 'package:team_aid/design_system/components/inputs/multi_dropdown.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/controllers/calendar.controller.dart';
 import 'package:team_aid/features/calendar/entities/event.model.dart';
@@ -22,6 +24,7 @@ import 'package:team_aid/features/common/functions/global_functions.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/location.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
+import 'package:team_aid/features/home/controllers/home.controller.dart';
 
 /// The statelessWidget that handles the current screen
 class CalendarScreen extends StatefulHookConsumerWidget {
@@ -42,10 +45,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     final showTodayWidget = useState(true);
-    final formattedDate =
-        DateFormat('dd / MMM').format(DateTime.now()).toUpperCase();
-    final formattedDay =
-        DateFormat('EEEE').format(DateTime.now()).toUpperCase();
+    final formattedDate = DateFormat('dd / MMM').format(DateTime.now()).toUpperCase();
+    final formattedDay = DateFormat('EEEE').format(DateTime.now()).toUpperCase();
 
     final events = ref.watch(calendarControllerProvider).calendarEvents;
     final createSchedule = useState(false);
@@ -100,9 +101,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: showTodayWidget.value
-                          ? const Color(0xffF5F8FB)
-                          : Colors.white,
+                      color: showTodayWidget.value ? const Color(0xffF5F8FB) : Colors.white,
                       borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(20),
                         topLeft: Radius.circular(20),
@@ -113,9 +112,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       child: TATypography.paragraph(
                         text: 'Today',
                         key: const Key('today_title'),
-                        color: showTodayWidget.value
-                            ? TAColors.textColor
-                            : const Color(0x0D253C4D).withOpacity(0.3),
+                        color: showTodayWidget.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -134,9 +131,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
-                      color: !showTodayWidget.value
-                          ? const Color(0xffF5F8FB)
-                          : Colors.transparent,
+                      color: !showTodayWidget.value ? const Color(0xffF5F8FB) : Colors.transparent,
                       borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(20),
                         topLeft: Radius.circular(20),
@@ -145,9 +140,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     child: Center(
                       child: TATypography.paragraph(
                         text: 'Full Calendar',
-                        color: !showTodayWidget.value
-                            ? TAColors.textColor
-                            : const Color(0x0D253C4D).withOpacity(0.3),
+                        color: !showTodayWidget.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -225,9 +218,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       child: _CreateScheduleWidget(),
                     )
                   else
-                    showTodayWidget.value
-                        ? _TodayWidget(events: events)
-                        : _FullCalendarWidget(events: events),
+                    showTodayWidget.value ? _TodayWidget(events: events) : _FullCalendarWidget(events: events),
                   const SizedBox(height: 20),
                 ],
               ),
@@ -254,24 +245,26 @@ class _TodayWidget extends StatelessWidget {
         data: (data) {
           // Filter events by dateKey
           final filteredEvents = data.where((event) {
-            return event.dateKey ==
-                DateTime.now().toIso8601String().split('T')[0];
+            return event.dateKey.split('T')[0] == DateTime.now().toIso8601String().split('T')[0];
           }).toList();
 
           if (filteredEvents.isNotEmpty) {
             return ListView.builder(
               itemCount: filteredEvents.length,
               padding: EdgeInsets.zero,
+              shrinkWrap: true,
               itemBuilder: (context, index) {
                 final event = filteredEvents[index];
+                final startTime = DateFormat('hh:mm a').format(event.event.startDate).toUpperCase();
+                final endTime = DateFormat('hh:mm a').format(event.event.endDate).toUpperCase();
                 return Column(
                   children: [
                     const SizedBox(height: 20),
                     EventWidget(
                       eventName: event.event.eventName.capitalizeWord(),
                       organizerName: 'Coach Felipe',
-                      startTime: '3:30 PM',
-                      endTime: '4:30 PM',
+                      startTime: startTime,
+                      endTime: endTime,
                     ),
                   ],
                 );
@@ -356,8 +349,7 @@ class _FullCalendarWidgetState extends State<_FullCalendarWidget> {
               const SizedBox(width: 20),
               GestureDetector(
                 onTap: () {
-                  _initialDate =
-                      _initialDate.subtract(const Duration(days: 30));
+                  _initialDate = _initialDate.subtract(const Duration(days: 30));
                   setState(getMonths);
                 },
                 behavior: HitTestBehavior.translucent,
@@ -399,13 +391,10 @@ class _FullCalendarWidgetState extends State<_FullCalendarWidget> {
                 final dayName = getDayName(currentMonthDays[index]);
                 final dayNumber = currentMonthDays[index].day;
                 final monthName = getMonthName(currentMonthDays[index]);
-                final isToday =
-                    currentMonthDays[index].day == DateTime.now().day;
+                final isToday = currentMonthDays[index].day == DateTime.now().day;
                 return LayoutBuilder(
                   builder: (context, constraints) {
-                    final hoursWidth = isToday
-                        ? todayHours.length * 120.0
-                        : hours.length * 120.0;
+                    final hoursWidth = isToday ? todayHours.length * 120.0 : hours.length * 120.0;
                     return SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.only(left: 10),
@@ -418,8 +407,7 @@ class _FullCalendarWidgetState extends State<_FullCalendarWidget> {
                               child: Row(
                                 children: [
                                   Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       TATypography.subparagraph(
                                         text: dayName,
@@ -460,12 +448,9 @@ class _FullCalendarWidgetState extends State<_FullCalendarWidget> {
                                     child: SizedBox(
                                       height: 80,
                                       child: ListView.builder(
-                                        itemCount: isToday
-                                            ? todayHours.length
-                                            : hours.length,
+                                        itemCount: isToday ? todayHours.length : hours.length,
                                         shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
+                                        physics: const NeverScrollableScrollPhysics(),
                                         scrollDirection: Axis.horizontal,
                                         itemBuilder: (context, index) {
                                           return SizedBox(
@@ -479,11 +464,8 @@ class _FullCalendarWidgetState extends State<_FullCalendarWidget> {
                                                       child: VerticalDivider(),
                                                     ),
                                                     TATypography.paragraph(
-                                                      text: isToday
-                                                          ? todayHours[index]
-                                                          : hours[index],
-                                                      color: TAColors.textColor
-                                                          .withOpacity(0.25),
+                                                      text: isToday ? todayHours[index] : hours[index],
+                                                      color: TAColors.textColor.withOpacity(0.25),
                                                     ),
                                                   ],
                                                 ),
@@ -517,8 +499,7 @@ class _FullCalendarWidgetState extends State<_FullCalendarWidget> {
 
     final hourList = List<String>.generate(
       24 - currentHour,
-      (index) =>
-          '${currentHour + index} ${currentHour + index >= 12 ? 'PM' : 'AM'}',
+      (index) => '${currentHour + index} ${currentHour + index >= 12 ? 'PM' : 'AM'}',
     );
 
     return hourList;
@@ -574,14 +555,14 @@ class _FullCalendarWidgetState extends State<_FullCalendarWidget> {
   }
 }
 
-class _CreateScheduleWidget extends StatefulHookWidget {
+class _CreateScheduleWidget extends StatefulHookConsumerWidget {
   const _CreateScheduleWidget();
 
   @override
-  State<_CreateScheduleWidget> createState() => _CreateScheduleWidgetState();
+  ConsumerState<_CreateScheduleWidget> createState() => _CreateScheduleWidgetState();
 }
 
-class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
+class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
   final hours = <HourModel>[];
   final days = <DateTime>[];
   final months = <String>[];
@@ -613,341 +594,395 @@ class _CreateScheduleWidgetState extends State<_CreateScheduleWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final eventName = useTextEditingController();
-    final locationController = useTextEditingController();
-    final guestController = useTextEditingController();
-    final descriptionController = useTextEditingController();
+    final teamId = useState('');
     final periodicity = useState('');
     final isLoading = useState(false);
+    final locationDescription = useState('');
+    final eventName = useTextEditingController();
+    final selectedGuests = useState(<TADropdownModel>[]);
+    final locationController = useTextEditingController();
+    final descriptionController = useTextEditingController();
+    final teams = ref.watch(homeControllerProvider).userTeams;
+    final guests = ref.watch(calendarControllerProvider).contactList;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: TAContainer(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Iconsax.calendar_2,
-                  size: 20,
-                  color: TAColors.purple,
-                ),
-                const SizedBox(width: 10),
-                TATypography.h3(text: 'Add a schedule'),
-              ],
-            ),
-            const SizedBox(height: 20),
-            TAPrimaryInput(
-              label: 'Event Name',
-              textEditingController: eventName,
-              placeholder: '',
-            ),
-            const SizedBox(height: 10),
-            TAPrimaryInput(
-              label: 'Event Description',
-              textEditingController: descriptionController,
-              placeholder: '',
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: TADropdown(
-                    label: 'Day',
-                    selectedValue: TADropdownModel(
-                      item: currentDay.toString(),
-                      id: currentDay.toString(),
+      child: Column(
+        children: [
+          TAContainer(
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
+            child: teams.when(
+              data: (data) {
+                return TADropdown(
+                  label: 'Team',
+                  placeholder: 'Select a team',
+                  items: List.generate(
+                    data.length,
+                    (index) => TADropdownModel(
+                      item: data[index].teamName,
+                      id: data[index].id,
                     ),
-                    items: List.generate(
-                      days.length,
-                      (index) {
-                        final item = days[index];
-                        return TADropdownModel(
-                          item: item.day.toString(),
-                          id: item.day.toString(),
-                        );
-                      },
-                    ),
-                    placeholder: '',
-                    onChange: (v) {
-                      _fromDate = DateTime(
-                        _currentSelectedYear,
-                        _currentSelectedMonth,
-                        currentDay,
-                      );
-                    },
                   ),
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: TADropdown(
-                    label: 'Month',
-                    selectedValue: TADropdownModel(
-                      item: _currentSelectedMonth.toString(),
-                      id: _currentSelectedMonth.toString(),
-                    ),
-                    items: List.generate(
-                      months.length,
-                      (index) {
-                        final item = months[index];
-                        return TADropdownModel(
-                          item: item,
-                          id: item,
-                        );
-                      },
-                    ),
-                    placeholder: '',
-                    onChange: (v) {
-                      if (v != null) {
-                        setState(() {
-                          _currentSelectedMonth = int.parse(v.id);
-
-                          _fromDate = DateTime(
-                            _currentSelectedYear,
-                            _currentSelectedMonth,
-                            currentDay,
-                          );
-
-                          days
-                            ..clear()
-                            ..addAll(
-                              GlobalFunctions.getDaysInMonth(
-                                month: _currentSelectedMonth,
-                                year: _currentSelectedYear,
-                              ),
-                            );
-                        });
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: TADropdown(
-                    label: 'Year',
-                    selectedValue: TADropdownModel(
-                      item: _currentSelectedYear.toString(),
-                      id: _currentSelectedYear.toString(),
-                    ),
-                    items: List.generate(
-                      years.length,
-                      (index) {
-                        final item = years[index];
-                        return TADropdownModel(
-                          item: item,
-                          id: item,
-                        );
-                      },
-                    ),
-                    placeholder: '',
-                    onChange: (v) {
-                      if (v != null) {
-                        setState(() {
-                          _fromDate = DateTime(
-                            _currentSelectedYear,
-                            _currentSelectedMonth,
-                            currentDay,
-                          );
-                          _currentSelectedYear = int.parse(v.id);
-                        });
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: TADropdown(
-                    label: 'From',
-                    items: List.generate(
-                      hours.length,
-                      (index) {
-                        final item = hours[index];
-                        return TADropdownModel(
-                          item: item.description,
-                          id: 'hour:${item.hour}minute:${item.minute}',
-                        );
-                      },
-                    ),
-                    placeholder: '',
-                    onChange: (v) {
-                      if (v != null) {
-                        setState(() {
-                          _fromDate = DateTime(
-                            _currentSelectedYear,
-                            _currentSelectedMonth,
-                            currentDay,
-                            int.parse(
-                              v.id.split('hour:')[1].split('minute:')[0],
-                            ),
-                            int.parse(
-                              v.id.split('hour:')[1].split('minute:')[1],
-                            ),
-                          );
-                        });
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: TADropdown(
-                    label: 'To',
-                    items: List.generate(
-                      hours.length,
-                      (index) {
-                        final item = hours[index];
-                        return TADropdownModel(
-                          item: item.description,
-                          id: 'hour:${item.hour}minute:${item.minute}',
-                        );
-                      },
-                    ),
-                    placeholder: '',
-                    onChange: (v) {
-                      if (v != null) {
-                        setState(() {
-                          _toDate = DateTime(
-                            _currentSelectedYear,
-                            _currentSelectedMonth,
-                            currentDay,
-                            int.parse(
-                              v.id.split('hour:')[1].split('minute:')[0],
-                            ),
-                            int.parse(
-                              v.id.split('hour:')[1].split('minute:')[1],
-                            ),
-                          );
-                        });
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            TADropdown(
-              label: 'Repeat',
-              items: [
-                TADropdownModel(item: 'Daily', id: 'daily'),
-                TADropdownModel(item: 'Weekly', id: 'weekly'),
-                TADropdownModel(item: 'Monthly', id: 'monthly'),
-                TADropdownModel(item: 'Yearly', id: 'yearly'),
-              ],
-              placeholder: '',
-              onChange: (v) {
-                if (v != null) {
-                  setState(() {
-                    periodicity.value = v.id;
-                  });
-                }
+                  onChange: (selectedValue) {
+                    if (selectedValue != null) {
+                      teamId.value = selectedValue.id;
+                      ref.read(calendarControllerProvider.notifier).getContactList(teamId: teamId.value);
+                    }
+                  },
+                );
               },
+              error: (e, s) => const SizedBox(),
+              loading: () => const SizedBox(),
             ),
-            const SizedBox(height: 10),
-            LocationWidget(
-              onChanged: (v) {
-                if (v != null) {
-                  locationController.text = v.id;
-                }
-              },
-            ),
-            // TAPrimaryInput(
-            //   placeholder: '',
-            //   textEditingController: locationController,
-            //   label: 'Location',
-            // ),
-            const SizedBox(height: 10),
-            TAPrimaryInput(
-              placeholder: '',
-              textEditingController: guestController,
-              label: 'Guest',
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          ),
+          const SizedBox(height: 10),
+          TAContainer(
+            child: Column(
               children: [
-                SizedBox(
-                  width: 100,
-                  child: TATypography.paragraph(
-                    text: 'Cancel',
-                    underline: true,
-                  ),
+                Row(
+                  children: [
+                    const Icon(
+                      Iconsax.calendar_2,
+                      size: 20,
+                      color: TAColors.purple,
+                    ),
+                    const SizedBox(width: 10),
+                    TATypography.h3(text: 'Add a schedule'),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                SizedBox(
-                  width: 120,
-                  child: Consumer(
-                    builder: (context, ref, child) {
-                      return TAPrimaryButton(
-                        text: 'SAVE',
-                        isLoading: isLoading.value,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        onTap: () async {
-                          if (eventName.text.isEmpty) {
-                            unawaited(
-                              FailureWidget.build(
-                                title: 'Something went wrong!',
-                                message: 'Please enter event name to continue.',
-                                context: context,
-                              ),
+                const SizedBox(height: 20),
+                TAPrimaryInput(
+                  label: 'Event Name',
+                  textEditingController: eventName,
+                  placeholder: '',
+                ),
+                const SizedBox(height: 10),
+                TAPrimaryInput(
+                  label: 'Event Description',
+                  textEditingController: descriptionController,
+                  placeholder: '',
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TADropdown(
+                        label: 'Day',
+                        selectedValue: TADropdownModel(
+                          item: currentDay.toString(),
+                          id: currentDay.toString(),
+                        ),
+                        items: List.generate(
+                          days.length,
+                          (index) {
+                            final item = days[index];
+                            return TADropdownModel(
+                              item: item.day.toString(),
+                              id: item.day.toString(),
                             );
-                            return;
-                          }
-                          if (locationController.text.isEmpty) {
-                            unawaited(
-                              FailureWidget.build(
-                                title: 'Something went wrong!',
-                                message: 'Please enter location to continue.',
-                                context: context,
-                              ),
-                            );
-                            return;
-                          }
-                          isLoading.value = true;
-                          final event = ScheduleModel(
-                            eventName: eventName.text,
-                            startDate: _fromDate.toIso8601String(),
-                            endDate: _toDate.toIso8601String(),
-                            location: locationController.text,
-                            eventDescription: descriptionController.text,
-                            guest: [],
-                            periodicity: periodicity.value,
+                          },
+                        ),
+                        placeholder: '',
+                        onChange: (v) {
+                          _fromDate = DateTime(
+                            _currentSelectedYear,
+                            _currentSelectedMonth,
+                            currentDay,
                           );
-                          inspect(event);
-                          final res = await ref
-                              .read(calendarControllerProvider.notifier)
-                              .addSchedule(schedule: event);
-                          isLoading.value = false;
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: TADropdown(
+                        label: 'Month',
+                        selectedValue: TADropdownModel(
+                          item: _currentSelectedMonth.toString(),
+                          id: _currentSelectedMonth.toString(),
+                        ),
+                        items: List.generate(
+                          months.length,
+                          (index) {
+                            final item = months[index];
+                            return TADropdownModel(
+                              item: item,
+                              id: item,
+                            );
+                          },
+                        ),
+                        placeholder: '',
+                        onChange: (v) {
+                          if (v != null) {
+                            setState(() {
+                              _currentSelectedMonth = int.parse(v.id);
 
-                          if (res.ok && mounted) {
-                            unawaited(
-                              SuccessWidget.build(
-                                title: 'Success!',
-                                message: 'Event has been added successfully.',
-                                context: context,
-                              ),
-                            );
-                            Navigator.pop(context);
-                          } else {
-                            unawaited(
-                              FailureWidget.build(
-                                title: 'Something went wrong!',
-                                message: 'There was an error adding the event.',
-                                context: context,
-                              ),
-                            );
+                              _fromDate = DateTime(
+                                _currentSelectedYear,
+                                _currentSelectedMonth,
+                                currentDay,
+                              );
+
+                              days
+                                ..clear()
+                                ..addAll(
+                                  GlobalFunctions.getDaysInMonth(
+                                    month: _currentSelectedMonth,
+                                    year: _currentSelectedYear,
+                                  ),
+                                );
+                            });
                           }
                         },
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: TADropdown(
+                        label: 'Year',
+                        selectedValue: TADropdownModel(
+                          item: _currentSelectedYear.toString(),
+                          id: _currentSelectedYear.toString(),
+                        ),
+                        items: List.generate(
+                          years.length,
+                          (index) {
+                            final item = years[index];
+                            return TADropdownModel(
+                              item: item,
+                              id: item,
+                            );
+                          },
+                        ),
+                        placeholder: '',
+                        onChange: (v) {
+                          if (v != null) {
+                            setState(() {
+                              _fromDate = DateTime(
+                                _currentSelectedYear,
+                                _currentSelectedMonth,
+                                currentDay,
+                              );
+                              _currentSelectedYear = int.parse(v.id);
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TADropdown(
+                        label: 'From',
+                        items: List.generate(
+                          hours.length,
+                          (index) {
+                            final item = hours[index];
+                            return TADropdownModel(
+                              item: item.description,
+                              id: 'hour:${item.hour}minute:${item.minute}',
+                            );
+                          },
+                        ),
+                        placeholder: '',
+                        onChange: (v) {
+                          if (v != null) {
+                            setState(() {
+                              _fromDate = DateTime(
+                                _currentSelectedYear,
+                                _currentSelectedMonth,
+                                currentDay,
+                                int.parse(
+                                  v.id.split('hour:')[1].split('minute:')[0],
+                                ),
+                                int.parse(
+                                  v.id.split('hour:')[1].split('minute:')[1],
+                                ),
+                              );
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: TADropdown(
+                        label: 'To',
+                        items: List.generate(
+                          hours.length,
+                          (index) {
+                            final item = hours[index];
+                            return TADropdownModel(
+                              item: item.description,
+                              id: 'hour:${item.hour}minute:${item.minute}',
+                            );
+                          },
+                        ),
+                        placeholder: '',
+                        onChange: (v) {
+                          if (v != null) {
+                            setState(() {
+                              _toDate = DateTime(
+                                _currentSelectedYear,
+                                _currentSelectedMonth,
+                                currentDay,
+                                int.parse(
+                                  v.id.split('hour:')[1].split('minute:')[0],
+                                ),
+                                int.parse(
+                                  v.id.split('hour:')[1].split('minute:')[1],
+                                ),
+                              );
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                TADropdown(
+                  label: 'Repeat',
+                  items: [
+                    TADropdownModel(item: 'Daily', id: 'daily'),
+                    TADropdownModel(item: 'Weekly', id: 'weekly'),
+                    TADropdownModel(item: 'Monthly', id: 'monthly'),
+                    TADropdownModel(item: 'Yearly', id: 'yearly'),
+                  ],
+                  placeholder: '',
+                  onChange: (v) {
+                    if (v != null) {
+                      setState(() {
+                        periodicity.value = v.id;
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: 10),
+                LocationWidget(
+                  onChanged: (v) {
+                    if (v != null) {
+                      locationController.text = v.id;
+                      locationDescription.value = v.item;
+                    }
+                  },
+                ),
+                // TAPrimaryInput(
+                //   placeholder: '',
+                //   textEditingController: locationController,
+                //   label: 'Location',
+                // ),
+                const SizedBox(height: 10),
+                TAMultiDropdown(
+                  label: 'Guests',
+                  items: List.generate(
+                    guests.valueOrNull?.length ?? 0,
+                    (index) {
+                      final item = guests.valueOrNull?[index];
+                      return TADropdownModel(
+                        item: item != null ? item.user.firstName : '',
+                        id: item != null ? item.id : '',
                       );
                     },
                   ),
+                  placeholder: '',
+                  onChange: (v) {
+                    selectedGuests.value = v;
+                  },
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      child: TATypography.paragraph(
+                        text: 'Cancel',
+                        underline: true,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      width: 120,
+                      child: Consumer(
+                        builder: (context, ref, child) {
+                          return TAPrimaryButton(
+                            text: 'SAVE',
+                            isLoading: isLoading.value,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            onTap: () async {
+                              if (eventName.text.isEmpty) {
+                                unawaited(
+                                  FailureWidget.build(
+                                    title: 'Something went wrong!',
+                                    message: 'Please enter event name to continue.',
+                                    context: context,
+                                  ),
+                                );
+                                return;
+                              }
+                              if (locationController.text.isEmpty) {
+                                unawaited(
+                                  FailureWidget.build(
+                                    title: 'Something went wrong!',
+                                    message: 'Please enter location to continue.',
+                                    context: context,
+                                  ),
+                                );
+                                return;
+                              }
+                              isLoading.value = true;
+
+                              final newGuests = <Guest>[];
+
+                              for (final guest in selectedGuests.value) {
+                                newGuests.add(Guest(userId: guest.id));
+                              }
+
+                              final event = ScheduleModel(
+                                eventName: eventName.text,
+                                locationDescription: locationDescription.value,
+                                startDate: _fromDate.toIso8601String(),
+                                endDate: _toDate.toIso8601String(),
+                                location: locationController.text,
+                                eventDescription: descriptionController.text,
+                                guest: newGuests,
+                                periodicity: periodicity.value,
+                              );
+                              inspect(event);
+                              final res = await ref.read(calendarControllerProvider.notifier).addSchedule(schedule: event);
+                              isLoading.value = false;
+
+                              if (res.ok && mounted) {
+                                await SuccessWidget.build(
+                                  title: 'Success!',
+                                  message: 'Event has been added successfully.',
+                                  context: context,
+                                );
+                                if (context.mounted) {
+                                  Navigator.of(context).pop();
+                                }
+                              } else {
+                                unawaited(
+                                  FailureWidget.build(
+                                    title: 'Something went wrong!',
+                                    message: 'There was an error adding the event.',
+                                    context: context,
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

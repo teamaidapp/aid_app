@@ -82,7 +82,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
               data: (data) {
                 return TADropdown(
                   label: 'Team',
-                  placeholder: 'Enter the team',
+                  placeholder: 'Select a team',
                   items: List.generate(
                     data.length,
                     (index) => TADropdownModel(
@@ -401,6 +401,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                 endDate: _toDate.toIso8601String(),
                                 location: locationController.text,
                                 eventDescription: eventDescription.text,
+                                locationDescription: '',
                                 guest: [],
                                 periodicity: periodicity.value,
                               );

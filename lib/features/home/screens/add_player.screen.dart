@@ -79,9 +79,7 @@ class AddPlayerScreen extends HookWidget {
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: addPlayerScreen.value
-                          ? const Color(0xffF5F8FB)
-                          : Colors.white,
+                      color: addPlayerScreen.value ? const Color(0xffF5F8FB) : Colors.white,
                       borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(20),
                         topLeft: Radius.circular(20),
@@ -92,9 +90,7 @@ class AddPlayerScreen extends HookWidget {
                       child: TATypography.paragraph(
                         text: 'Add Player',
                         key: const Key('add_player_title'),
-                        color: addPlayerScreen.value
-                            ? TAColors.textColor
-                            : const Color(0x0D253C4D).withOpacity(0.3),
+                        color: addPlayerScreen.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -113,9 +109,7 @@ class AddPlayerScreen extends HookWidget {
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
-                      color: !addPlayerScreen.value
-                          ? const Color(0xffF5F8FB)
-                          : Colors.transparent,
+                      color: !addPlayerScreen.value ? const Color(0xffF5F8FB) : Colors.transparent,
                       borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(20),
                         topLeft: Radius.circular(20),
@@ -124,9 +118,7 @@ class AddPlayerScreen extends HookWidget {
                     child: Center(
                       child: TATypography.paragraph(
                         text: 'Search Player',
-                        color: !addPlayerScreen.value
-                            ? TAColors.textColor
-                            : const Color(0x0D253C4D).withOpacity(0.3),
+                        color: !addPlayerScreen.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -146,9 +138,7 @@ class AddPlayerScreen extends HookWidget {
                 ),
               ),
               child: SingleChildScrollView(
-                child: addPlayerScreen.value
-                    ? const _AddPlayerWidget()
-                    : const _SearchPlayerWidget(),
+                child: addPlayerScreen.value ? const _AddPlayerWidget() : const _SearchPlayerWidget(),
               ),
             ),
           ),
@@ -187,7 +177,7 @@ class _AddPlayerWidget extends HookConsumerWidget {
             data: (data) {
               return TADropdown(
                 label: 'Team',
-                placeholder: 'Enter the team',
+                placeholder: 'Select a team',
                 items: List.generate(
                   data.length,
                   (index) => TADropdownModel(
@@ -258,9 +248,7 @@ class _AddPlayerWidget extends HookConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             onTap: () async {
               isLoading.value = true;
-              final res = await ref
-                  .read(addPlayerControllerProvider.notifier)
-                  .sendPlayerInvitation(
+              final res = await ref.read(addPlayerControllerProvider.notifier).sendPlayerInvitation(
                     email: emailController.text,
                     phone: phoneController.text,
                     teamId: teamId.value,
@@ -332,7 +320,7 @@ class _SearchPlayerWidget extends HookConsumerWidget {
           //   ),
           //   child: TADropdown(
           //     label: 'Team',
-          //     placeholder: 'Enter the team',
+          //     placeholder: 'Select a team',
           //     items: [
           //       TADropdownModel(item: 'One', id: ''),
           //     ],
@@ -436,8 +424,7 @@ class _SearchPlayerWidget extends HookConsumerWidget {
                         );
 
                         if (response.statusCode == 200) {
-                          final data = (jsonDecode(response.body)
-                              as Map)['data'] as List;
+                          final data = (jsonDecode(response.body) as Map)['data'] as List;
                           return data.map((e) {
                             final taDropdownModel = TADropdownModel(
                               item: (e as Map)['name'] as String,
@@ -534,9 +521,7 @@ class _SearchPlayerWidget extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   onTap: () async {
                     isLoading.value = true;
-                    final res = await ref
-                        .read(addPlayerControllerProvider.notifier)
-                        .searchPlayer(
+                    final res = await ref.read(addPlayerControllerProvider.notifier).searchPlayer(
                           name: nameController.text,
                           level: levelController.value,
                           position: positionController.value,
@@ -581,8 +566,7 @@ class _SearchPlayerWidget extends HookConsumerWidget {
                   );
                 } else {
                   return GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 0.75,
                     ),
@@ -661,9 +645,7 @@ class PlayerCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(28),
                     child: Image.network(
-                      player.avatar.isEmpty
-                          ? 'https://placehold.co/200/png'
-                          : player.avatar,
+                      player.avatar.isEmpty ? 'https://placehold.co/200/png' : player.avatar,
                     ),
                   ),
                   const SizedBox(height: 10),

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:team_aid/features/calendar/entities/event.model.dart';
+import 'package:team_aid/features/teams/entities/contact.model.dart';
 
 /// State of the calendar screen
 @immutable
@@ -9,6 +10,7 @@ class CalendarScreenState {
   /// Constructor
   const CalendarScreenState({
     required this.calendarEvents,
+    required this.contactList,
   });
 
   /// The function returns a new instance of the `CalendarScreenState` class with updated `calendarEvents`
@@ -27,12 +29,17 @@ class CalendarScreenState {
   /// value.
   CalendarScreenState copyWith({
     AsyncValue<List<CalendarEvent>>? calendarEvents,
+    AsyncValue<List<ContactModel>>? contactList,
   }) {
     return CalendarScreenState(
       calendarEvents: calendarEvents ?? this.calendarEvents,
+      contactList: contactList ?? this.contactList,
     );
   }
 
   /// The list of calendar events
   final AsyncValue<List<CalendarEvent>> calendarEvents;
+
+  /// The contact list
+  final AsyncValue<List<ContactModel>> contactList;
 }

@@ -242,7 +242,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
     try {
       final token = await secureStorage.read(key: TAConstants.accessToken);
       final url = Uri.parse(
-        '${dotenv.env['API_URL']}/itinerary',
+        '${dotenv.env['API_URL']}/file',
       );
       final request = multi_http.MultipartRequest('POST', url);
 

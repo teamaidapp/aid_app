@@ -210,7 +210,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                       isLoading: isLoading.value,
                       mainAxisAlignment: MainAxisAlignment.center,
                       onTap: () async {
-                        if (selectedFile == null) {
+                        if (selectedFile == null && selectedImage == null) {
                           unawaited(
                             FailureWidget.build(
                               title: 'Oops',
@@ -220,10 +220,14 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                           );
                           return;
                         }
+                        File newFile;
+                        if (selectedFile != null) {
+                          newFile = selectedFile!;
+                        } else {
+                          newFile = File(selectedImage!.path);
+                        }
                         isLoading.value = true;
-                        final res = await ref.read(travelsControllerProvider.notifier).uploadFile(
-                              file: selectedFile!,
-                            );
+                        final res = await ref.read(travelsControllerProvider.notifier).uploadFile(file: newFile);
                         isLoading.value = false;
 
                         if (res.ok && mounted) {

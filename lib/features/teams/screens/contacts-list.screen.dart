@@ -97,13 +97,12 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                 child: Column(
                   children: [
                     TAContainer(
-                      margin:
-                          const EdgeInsets.only(left: 20, right: 20, top: 30),
+                      margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
                       child: teams.when(
                         data: (data) {
                           return TADropdown(
                             label: 'Team',
-                            placeholder: 'Enter the team',
+                            placeholder: 'Select a team',
                             selectedValue: TADropdownModel(
                               item: widget.teamName,
                               id: widget.teamId,
@@ -127,8 +126,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                       ),
                     ),
                     TAContainer(
-                      margin:
-                          const EdgeInsets.only(left: 20, right: 20, top: 30),
+                      margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
                       child: contactList.when(
                         data: (data) {
                           if (data.isEmpty) {
@@ -148,8 +146,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                   ),
                                   builder: (ContactModel user) {
                                     return Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 10),
+                                      padding: const EdgeInsets.only(bottom: 10),
                                       child: Row(
                                         children: [
                                           const Icon(
@@ -158,8 +155,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                           ),
                                           const SizedBox(width: 10),
                                           Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               TATypography.paragraph(
                                                 text: user.user.firstName,
@@ -176,8 +172,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                           GestureDetector(
                                             onTap: () async {
                                               try {
-                                                await FlutterPhoneDirectCaller
-                                                    .callNumber(
+                                                await FlutterPhoneDirectCaller.callNumber(
                                                   user.user.phoneNumber,
                                                 );
                                               } catch (e) {
@@ -185,8 +180,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                                 unawaited(
                                                   FailureWidget.build(
                                                     title: 'Error',
-                                                    message:
-                                                        "The call wasn't placed",
+                                                    message: "The call wasn't placed",
                                                     context: context,
                                                   ),
                                                 );
@@ -204,9 +198,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                   },
                                   filter: (value) => data
                                       .where(
-                                        (element) => element.user.firstName
-                                            .toLowerCase()
-                                            .contains(value),
+                                        (element) => element.user.firstName.toLowerCase().contains(value),
                                       )
                                       .toList(),
                                   emptyWidget: const Center(
@@ -235,8 +227,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                       borderSide: BorderSide.none,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.never,
+                                    floatingLabelBehavior: FloatingLabelBehavior.never,
                                     labelStyle: GoogleFonts.poppins(
                                       color: TAColors.color1,
                                     ),
@@ -274,8 +265,6 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
   }
 
   Future<void> getContactList({required String id}) {
-    return ref
-        .read(teamsControllerProvider.notifier)
-        .getContactList(teamId: id);
+    return ref.read(teamsControllerProvider.notifier).getContactList(teamId: id);
   }
 }

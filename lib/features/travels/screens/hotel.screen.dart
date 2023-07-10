@@ -80,7 +80,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
               data: (data) {
                 return TADropdown(
                   label: 'Team',
-                  placeholder: 'Enter the team',
+                  placeholder: 'Select a team',
                   items: List.generate(
                     data.length,
                     (index) => TADropdownModel(
