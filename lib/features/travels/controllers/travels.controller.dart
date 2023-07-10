@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/features/teams/services/teams.service.dart';
@@ -13,6 +15,7 @@ final travelsControllerProvider = StateNotifierProvider.autoDispose<TravelsContr
       contactList: AsyncValue.loading(),
       itineraryList: AsyncValue.loading(),
       hotelList: AsyncValue.loading(),
+      filesList: AsyncValue.loading(),
     ),
     ref,
     ref.watch(travelsServiceProvider),
@@ -38,28 +41,6 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
 
   final TeamsService _teamsService;
 
-  /// This function retrieves the total earnings and returns a response indicating success or failure.
-  ///
-  /// Returns:
-  ///   A `Future` object that will eventually return a `ResponseFailureModel` object.
-  Future<ResponseFailureModel> getData() async {
-    var response = ResponseFailureModel.defaultFailureResponse();
-    try {
-      final result = await _travelsService.getData();
-
-      return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
-        (success) {
-          return response = response.copyWith(ok: true);
-        },
-      );
-    } catch (e) {
-      return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TravelsService',
-      );
-    }
-  }
-
   /// This function adds an itinerary and returns a response indicating success or failure.
   ///
   /// Args:
@@ -78,7 +59,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
         (success) async {
-          await getData();
+          await getItineraries();
           return response = response.copyWith(ok: true);
         },
       );
@@ -106,7 +87,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
         (success) async {
-          await getData();
+          await getHotels();
           return response = response.copyWith(ok: true);
         },
       );
@@ -196,6 +177,50 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
     } catch (e) {
       return response = response.copyWith(
         message: 'Hubo un problema al obtener los datos de TeamsService',
+      );
+    }
+  }
+
+  /// Upload the file
+  Future<ResponseFailureModel> uploadFile({
+    required File file,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _travelsService.uploadFile(file: file);
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          await getFiles();
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de TravelsService',
+      );
+    }
+  }
+
+  /// Get the files
+  Future<ResponseFailureModel> getFiles() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _travelsService.getFiles();
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          state = state.copyWith(
+            filesList: AsyncValue.data(success),
+          );
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de TravelsService',
       );
     }
   }

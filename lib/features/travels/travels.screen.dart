@@ -12,6 +12,7 @@ import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/today.widget.dart';
 import 'package:team_aid/features/travels/controllers/travels.controller.dart';
 import 'package:team_aid/features/travels/entities/itinerary.model.dart';
+import 'package:team_aid/features/travels/screens/files.screen.dart';
 import 'package:team_aid/features/travels/screens/hotel.screen.dart';
 import 'package:team_aid/features/travels/screens/itinerary.screen.dart';
 import 'package:team_aid/features/travels/screens/meeting.screen.dart';
@@ -98,6 +99,10 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
                     BottomNavigationBarItem(
                       icon: Icon(Iconsax.user_tag),
                       label: 'Meeting',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Iconsax.document),
+                      label: 'Files',
                     ),
                   ],
                 ),
@@ -253,6 +258,9 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
                             pageController: formPageController,
                           ),
                           MeetingTravelScreen(
+                            pageController: formPageController,
+                          ),
+                          FilesScreen(
                             pageController: formPageController,
                           ),
                         ],

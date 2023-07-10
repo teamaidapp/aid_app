@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/features/teams/entities/contact.model.dart';
 import 'package:team_aid/features/travels/entities/hotel.model.dart';
 import 'package:team_aid/features/travels/entities/itinerary.model.dart';
+import 'package:team_aid/features/travels/entities/user_files.model.dart';
 
 /// State of the travels screen
 @immutable
@@ -13,6 +14,7 @@ class TravelsScreenState {
     required this.contactList,
     required this.itineraryList,
     required this.hotelList,
+    required this.filesList,
   });
 
   /// The function returns a new instance of the TravelsScreenState class with updated contactList if
@@ -33,11 +35,13 @@ class TravelsScreenState {
     AsyncValue<List<ContactModel>>? contactList,
     AsyncValue<List<ItineraryModel>>? itineraryList,
     AsyncValue<List<HotelModel>>? hotelList,
+    AsyncValue<List<UserFiles>>? filesList,
   }) {
     return TravelsScreenState(
       contactList: contactList ?? this.contactList,
       itineraryList: itineraryList ?? this.itineraryList,
       hotelList: hotelList ?? this.hotelList,
+      filesList: filesList ?? this.filesList,
     );
   }
 
@@ -49,4 +53,7 @@ class TravelsScreenState {
 
   /// The hotel list
   final AsyncValue<List<HotelModel>> hotelList;
+
+  /// The files list
+  final AsyncValue<List<UserFiles>> filesList;
 }

@@ -1,4 +1,6 @@
 // ignore_for_file: one_member_abstracts
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
@@ -9,6 +11,7 @@ import 'package:team_aid/features/teams/entities/contact.model.dart';
 import 'package:team_aid/features/teams/repositories/teams.repository.dart';
 import 'package:team_aid/features/travels/entities/hotel.model.dart';
 import 'package:team_aid/features/travels/entities/itinerary.model.dart';
+import 'package:team_aid/features/travels/entities/user_files.model.dart';
 import 'package:team_aid/features/travels/repositories/travels.repository.dart';
 
 /// The provider of TravelsService
@@ -25,8 +28,8 @@ final travelsServiceProvider = Provider<TravelsServiceImpl>((ref) {
 
 /// This class is responsible of the abstraction
 abstract class TravelsService {
-  /// Get data
-  Future<Either<Failure, Success>> getData();
+  /// Get files
+  Future<Either<Failure, List<UserFiles>>> getFiles();
 
   /// Add itinerary
   Future<Either<Failure, Success>> addItinerary({
@@ -53,6 +56,9 @@ abstract class TravelsService {
 
   /// Get the hotels
   Future<Either<Failure, List<HotelModel>>> getHotels();
+
+  /// Upload a file
+  Future<Either<Failure, Success>> uploadFile({required File file});
 }
 
 /// This class is responsible for implementing the TravelsService
@@ -74,9 +80,9 @@ class TravelsServiceImpl implements TravelsService {
   final TeamsRepository teamsRepository;
 
   @override
-  Future<Either<Failure, Success>> getData() async {
+  Future<Either<Failure, List<UserFiles>>> getFiles() async {
     try {
-      final result = await travelsRepository.getData();
+      final result = await travelsRepository.getFiles();
 
       return result.fold(Left.new, Right.new);
     } catch (e) {
@@ -173,6 +179,23 @@ class TravelsServiceImpl implements TravelsService {
   Future<Either<Failure, List<HotelModel>>> getHotels() async {
     try {
       final result = await travelsRepository.getHotels();
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> uploadFile({
+    required File file,
+  }) async {
+    try {
+      final result = await travelsRepository.uploadFile(file: file);
 
       return result.fold(Left.new, Right.new);
     } catch (e) {

@@ -51,5 +51,11 @@
 	<array>
 	<string>tel</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Used to take a photo an upload it to your cloud files</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Used to take a photo an upload it to your cloud files</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used to select images from the library </string>
 </dict>
 </plist>
