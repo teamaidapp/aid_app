@@ -3,8 +3,11 @@ enum Role {
   /// Coach role
   coach,
 
-  /// User role
-  client,
+  /// Player role
+  player,
+
+  /// Parent role
+  parent,
 
   /// Support role
   support,

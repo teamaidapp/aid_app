@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/features/teams/services/teams.service.dart';
 import 'package:team_aid/features/travels/entities/hotel.model.dart';
@@ -16,6 +18,8 @@ final travelsControllerProvider = StateNotifierProvider.autoDispose<TravelsContr
       itineraryList: AsyncValue.loading(),
       hotelList: AsyncValue.loading(),
       filesList: AsyncValue.loading(),
+      calendarEvents: AsyncValue.loading(),
+      fileId: '',
     ),
     ref,
     ref.watch(travelsServiceProvider),
@@ -66,6 +70,29 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
     } catch (e) {
       return response = response.copyWith(
         message: 'Hubo un problema al obtener los datos de TravelsService',
+      );
+    }
+  }
+
+  /// This function retrieves the total earnings and returns a response indicating success or failure.
+  ///
+  /// Returns:
+  ///   A `Future` object that will eventually return a `ResponseFailureModel` object.
+  Future<ResponseFailureModel> getCalendarData() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _travelsService.getCalendarData();
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) {
+          state = state.copyWith(calendarEvents: AsyncValue.data(success));
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de CalendarService',
       );
     }
   }
@@ -166,7 +193,12 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       state = state.copyWith(contactList: const AsyncValue.loading());
 
       return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
+        (failure) {
+          state = state.copyWith(
+            hotelList: const AsyncValue.data([]),
+          );
+          return response = response.copyWith(message: failure.message);
+        },
         (list) {
           state = state.copyWith(
             hotelList: AsyncValue.data(list),
@@ -188,6 +220,31 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
     var response = ResponseFailureModel.defaultFailureResponse();
     try {
       final result = await _travelsService.uploadFile(file: file);
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          state = state.copyWith(fileId: success.message);
+          debugPrint('FileId: ${state.fileId}');
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de TravelsService',
+      );
+    }
+  }
+
+  /// Patch the uploaded file
+  Future<ResponseFailureModel> patchFile({
+    required String description,
+    required String fileId,
+    required List<Guest> guests,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _travelsService.patchFile(description: description, fileId: fileId, guests: guests);
 
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),

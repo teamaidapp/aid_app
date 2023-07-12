@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:team_aid/features/calendar/entities/event.model.dart';
 import 'package:team_aid/features/teams/entities/contact.model.dart';
 import 'package:team_aid/features/travels/entities/hotel.model.dart';
 import 'package:team_aid/features/travels/entities/itinerary.model.dart';
@@ -15,6 +16,8 @@ class TravelsScreenState {
     required this.itineraryList,
     required this.hotelList,
     required this.filesList,
+    required this.calendarEvents,
+    required this.fileId,
   });
 
   /// The function returns a new instance of the TravelsScreenState class with updated contactList if
@@ -36,12 +39,16 @@ class TravelsScreenState {
     AsyncValue<List<ItineraryModel>>? itineraryList,
     AsyncValue<List<HotelModel>>? hotelList,
     AsyncValue<List<UserFiles>>? filesList,
+    AsyncValue<List<CalendarEvent>>? calendarEvents,
+    String? fileId,
   }) {
     return TravelsScreenState(
       contactList: contactList ?? this.contactList,
       itineraryList: itineraryList ?? this.itineraryList,
       hotelList: hotelList ?? this.hotelList,
       filesList: filesList ?? this.filesList,
+      calendarEvents: calendarEvents ?? this.calendarEvents,
+      fileId: fileId ?? this.fileId,
     );
   }
 
@@ -56,4 +63,11 @@ class TravelsScreenState {
 
   /// The files list
   final AsyncValue<List<UserFiles>> filesList;
+
+  /// The list of calendar events
+  final AsyncValue<List<CalendarEvent>> calendarEvents;
+
+  /// The file id that was uploaded to the server
+  /// this is populated by the response of the server
+  final String fileId;
 }

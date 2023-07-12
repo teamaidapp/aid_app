@@ -7,9 +7,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:team_aid/core/entities/dropdown.model.dart';
+import 'package:team_aid/core/entities/guest.model.dart';
+import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
+import 'package:team_aid/design_system/components/inputs/multi_dropdown.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
+import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/travels/controllers/travels.controller.dart';
 import 'package:team_aid/features/travels/screens/view_file.screen.dart';
 
@@ -45,7 +50,12 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
   Widget build(BuildContext context) {
     final isLoading = useState(false);
     final showAddFiles = useState(true);
+    final descriptionController = useTextEditingController();
+    final selectedGuests = useState(<TADropdownModel>[]);
     final filesList = ref.watch(travelsControllerProvider).filesList;
+    final teams = ref.watch(homeControllerProvider).userTeams;
+    final guests = ref.watch(travelsControllerProvider).contactList;
+    final teamId = useState('');
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -108,6 +118,34 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
           ),
           if (showAddFiles.value)
             TAContainer(
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
+              margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
+              child: teams.when(
+                data: (data) {
+                  return TADropdown(
+                    label: 'Team',
+                    placeholder: 'Select a team',
+                    items: List.generate(
+                      data.length,
+                      (index) => TADropdownModel(
+                        item: data[index].teamName,
+                        id: data[index].id,
+                      ),
+                    ),
+                    onChange: (selectedValue) {
+                      if (selectedValue != null) {
+                        teamId.value = selectedValue.id;
+                        ref.read(travelsControllerProvider.notifier).getContactList(teamId: teamId.value);
+                      }
+                    },
+                  );
+                },
+                error: (e, s) => const SizedBox(),
+                loading: () => const SizedBox(),
+              ),
+            ),
+          if (showAddFiles.value)
+            TAContainer(
               margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -124,6 +162,14 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                     ],
                   ),
                   const Divider(),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TATypography.paragraph(
+                      text: 'Choose file from:',
+                      color: TAColors.color2,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -169,6 +215,30 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                   const SizedBox(height: 10),
                   const Divider(),
                   const SizedBox(height: 10),
+                  TAPrimaryInput(
+                    label: 'File Description',
+                    textEditingController: descriptionController,
+                    placeholder: '',
+                  ),
+                  const SizedBox(height: 10),
+                  TAMultiDropdown(
+                    label: 'Guests',
+                    items: List.generate(
+                      guests.valueOrNull?.length ?? 0,
+                      (index) {
+                        final item = guests.valueOrNull?[index];
+                        return TADropdownModel(
+                          item: item != null ? item.user.firstName : '',
+                          id: item != null ? item.id : '',
+                        );
+                      },
+                    ),
+                    placeholder: '',
+                    onChange: (v) {
+                      selectedGuests.value = v;
+                    },
+                  ),
+                  const SizedBox(height: 30),
                   if (selectedFile != null || selectedImage != null)
                     Row(
                       children: [
@@ -193,13 +263,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                             ),
                           ),
                       ],
-                    )
-                  else
-                    TATypography.paragraph(
-                      text: 'Choose files',
-                      color: TAColors.color2,
                     ),
-                  const SizedBox(height: 10),
                   const Divider(),
                   const SizedBox(height: 20),
                   Padding(
@@ -227,21 +291,49 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                           newFile = File(selectedImage!.path);
                         }
                         isLoading.value = true;
+
+                        /// First upload the file
                         final res = await ref.read(travelsControllerProvider.notifier).uploadFile(file: newFile);
-                        isLoading.value = false;
 
                         if (res.ok && mounted) {
-                          setState(() {
-                            selectedFile = null;
-                          });
-                          unawaited(
-                            SuccessWidget.build(
-                              title: 'Success',
-                              message: 'File uploaded successfully',
-                              context: context,
-                            ),
-                          );
+                          final newGuests = <Guest>[];
+
+                          for (final guest in selectedGuests.value) {
+                            newGuests.add(Guest(userId: guest.id));
+                          }
+
+                          /// Ater uploading the file, patch the file and add the guests and description to it
+                          final patchRes = await ref.read(travelsControllerProvider.notifier).patchFile(
+                                description: descriptionController.text.trim(),
+                                fileId: ref.read(travelsControllerProvider).fileId,
+                                guests: newGuests,
+                              );
+                          isLoading.value = false;
+                          if (patchRes.ok && mounted) {
+                            setState(() {
+                              selectedFile = null;
+                              selectedImage = null;
+                              descriptionController.clear();
+                              selectedGuests.value = [];
+                            });
+                            unawaited(
+                              SuccessWidget.build(
+                                title: 'Success',
+                                message: 'File uploaded successfully',
+                                context: context,
+                              ),
+                            );
+                          } else {
+                            unawaited(
+                              FailureWidget.build(
+                                title: 'Oops',
+                                message: 'Something went wrong',
+                                context: context,
+                              ),
+                            );
+                          }
                         } else {
+                          isLoading.value = false;
                           unawaited(
                             FailureWidget.build(
                               title: 'Oops',
@@ -327,10 +419,10 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                     error: (_, __) => const SizedBox(),
                     loading: () => const Center(child: CircularProgressIndicator()),
                   ),
-                  const SizedBox(height: 10),
                 ],
               ),
             ),
+          const SizedBox(height: 20),
         ],
       ),
     );

@@ -38,11 +38,9 @@ class UserModel {
       address: map['address'] as String,
       password: map['password'] as String,
       sportId: map['sportId'] as String,
-      role: map['role'] as String == 'coach'
-          ? Role.coach
-          : map['role'] as String == 'client'
-              ? Role.client
-              : Role.support,
+      role: Role.values.firstWhere(
+        (e) => e.toString() == 'Role.${map['role'] as String}',
+      ),
       cityId: map['cityId'] as String,
       stateId: map['stateId'] as String,
       biography: map['biography'] as String,

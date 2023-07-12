@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
+import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/success.dart';
+import 'package:team_aid/features/calendar/entities/event.model.dart';
 import 'package:team_aid/features/calendar/entities/schedule.model.dart';
 import 'package:team_aid/features/calendar/repositories/calendar.repository.dart';
 import 'package:team_aid/features/teams/entities/contact.model.dart';
@@ -59,6 +61,16 @@ abstract class TravelsService {
 
   /// Upload a file
   Future<Either<Failure, Success>> uploadFile({required File file});
+
+  /// Patch a file
+  Future<Either<Failure, Success>> patchFile({
+    required String fileId,
+    required String description,
+    required List<Guest> guests,
+  });
+
+  /// Get data
+  Future<Either<Failure, List<CalendarEvent>>> getCalendarData();
 }
 
 /// This class is responsible for implementing the TravelsService
@@ -89,6 +101,21 @@ class TravelsServiceImpl implements TravelsService {
       return Left(
         Failure(
           message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<CalendarEvent>>> getCalendarData() async {
+    try {
+      final result = await calendarRepository.getCalendarData();
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al obtener los datos de CalendarServiceImpl',
         ),
       );
     }
@@ -196,6 +223,29 @@ class TravelsServiceImpl implements TravelsService {
   }) async {
     try {
       final result = await travelsRepository.uploadFile(file: file);
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> patchFile({
+    required String fileId,
+    required String description,
+    required List<Guest> guests,
+  }) async {
+    try {
+      final result = await travelsRepository.patchFile(
+        fileId: fileId,
+        description: description,
+        guests: guests,
+      );
 
       return result.fold(Left.new, Right.new);
     } catch (e) {

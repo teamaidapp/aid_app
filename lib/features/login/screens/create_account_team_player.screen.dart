@@ -20,9 +20,15 @@ import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
 
 /// The statelessWidget that handles the current screen
-class CreateAccountParentsScreen extends StatelessWidget {
+class CreateAccountTeamPlayerScreen extends StatelessWidget {
   /// The constructor.
-  const CreateAccountParentsScreen({super.key});
+  const CreateAccountTeamPlayerScreen({
+    required this.isCreatingSon,
+    super.key,
+  });
+
+  /// If the user is creating a son or not.
+  final bool isCreatingSon;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +54,7 @@ class CreateAccountParentsScreen extends StatelessWidget {
                     ),
                     const Spacer(),
                     TATypography.h3(
-                      text: 'Create child account',
+                      text: isCreatingSon ? 'Parent' : 'Team Player',
                       color: TAColors.textColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -330,10 +336,18 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                     stateId: currentSelectedState.value,
                                   );
                                   isLoading.value = true;
-                                  final res = await ref.read(createAccountControllerProvider.notifier).createChildAccount(user: user);
+                                  final res = await ref
+                                      .read(
+                                        createAccountControllerProvider.notifier,
+                                      )
+                                      .createAccount(user: user);
                                   isLoading.value = false;
                                   if (res.ok && context.mounted) {
-                                    context.go(AppRoutes.home);
+                                    if (isCreatingSon) {
+                                      context.go(AppRoutes.createAccountParents);
+                                    } else {
+                                      context.go(AppRoutes.home);
+                                    }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(

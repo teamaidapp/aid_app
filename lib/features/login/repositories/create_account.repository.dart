@@ -24,6 +24,9 @@ abstract class CreateAccountRepository {
   /// Create Account
   Future<Either<Failure, String>> createAccount({required UserModel user});
 
+  /// Create child account
+  Future<Either<Failure, String>> createChildAccount({required UserModel user});
+
   /// Create team
   Future<Either<Failure, String>> createTeam({required TeamModel team});
 
@@ -71,8 +74,44 @@ class CreateAccountRepositoryRepositoryImpl implements CreateAccountRepository {
         );
       }
 
-      final token =
-          (jsonDecode(res.body) as Map<String, dynamic>)['data'] as String;
+      final token = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as String;
+
+      return Right(token);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'An error occurred on CreateAccountImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> createChildAccount({
+    required UserModel user,
+  }) async {
+    try {
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/users/create-son',
+      );
+      final accessToken = await const FlutterSecureStorage().read(key: TAConstants.accessToken);
+      final headers = <String, String>{'Content-Type': 'application/json', 'authorization': 'Bearer $accessToken'};
+
+      final res = await http.post(
+        url,
+        headers: headers,
+        body: user.toMap(),
+      );
+
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error creating the account',
+          ),
+        );
+      }
+
+      final token = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as String;
 
       return Right(token);
     } catch (e) {
@@ -90,12 +129,8 @@ class CreateAccountRepositoryRepositoryImpl implements CreateAccountRepository {
       final url = Uri.parse(
         '${dotenv.env['API_URL']}/teams/create-team',
       );
-      final accessToken =
-          await const FlutterSecureStorage().read(key: TAConstants.accessToken);
-      final headers = <String, String>{
-        'Content-Type': 'application/json',
-        'authorization': 'Bearer $accessToken'
-      };
+      final accessToken = await const FlutterSecureStorage().read(key: TAConstants.accessToken);
+      final headers = <String, String>{'Content-Type': 'application/json', 'authorization': 'Bearer $accessToken'};
 
       final res = await http.post(
         url,
@@ -111,8 +146,7 @@ class CreateAccountRepositoryRepositoryImpl implements CreateAccountRepository {
         );
       }
 
-      final token =
-          (jsonDecode(res.body) as Map<String, dynamic>)['data'] as String;
+      final token = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as String;
 
       return Right(token);
     } catch (e) {

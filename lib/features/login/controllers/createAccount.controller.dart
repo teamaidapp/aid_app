@@ -46,6 +46,28 @@ class CreateAccountController extends StateNotifier<void> {
     }
   }
 
+  /// This function retrieves the total earnings and returns a response indicating success or failure.
+  ///
+  /// Returns:
+  ///   A `Future` object that will eventually return a `ResponseFailureModel` object.
+  Future<ResponseFailureModel> createChildAccount({required UserModel user}) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _createAccountService.createChildAccount(user: user);
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) {
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de CreateAccountService',
+      );
+    }
+  }
+
   /// This function creates a team by calling the `_createAccountService.createAccount` method with a
   /// user object and returns a `ResponseFailureModel` object indicating success or failure.
   ///

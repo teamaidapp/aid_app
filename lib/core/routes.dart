@@ -6,6 +6,7 @@ import 'package:team_aid/features/home/screens/add_player.screen.dart';
 import 'package:team_aid/features/login/login.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_coach.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_team.screen.dart';
+import 'package:team_aid/features/login/screens/create_account_team_player.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_team_player_parents.screen.dart';
 import 'package:team_aid/features/login/screens/request_demo.screen.dart';
 import 'package:team_aid/features/myAccount/myAccount.screen.dart';
@@ -34,8 +35,11 @@ class AppRoutes {
   /// The create account team route.
   static const String createAccountTeamForCoach = '/createAccountTeam';
 
-  /// The create account team player route.
+  /// The create account team player parents route.
   static const String createAccountParents = '/createAccountParents';
+
+  /// The create account team player route.
+  static const String createAccountTeamPlayer = '/createAccountTeamPlayer';
 
   /// The add player route.
   static const String addPlayer = '/home/addPlayer';
@@ -133,6 +137,13 @@ final routerProvider = Provider((ref) {
       GoRoute(
         path: AppRoutes.addressProfile,
         builder: (context, state) => const AddressScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.createAccountTeamPlayer,
+        name: AppRoutes.createAccountTeamPlayer,
+        builder: (context, state) => CreateAccountTeamPlayerScreen(
+          isCreatingSon: state.queryParameters['isCreatingSon']! == 'true',
+        ),
       ),
     ],
   );

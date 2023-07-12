@@ -29,7 +29,7 @@ class HotelModel {
       startDate: map['startDate'] as String,
       endDate: map['endDate'] as String,
       placeDescription: map['placeDescription'] as String,
-      reservationCode: map['reservationCode'] as String,
+      reservationCode: map['reservation_code'] as String,
       guests: List<Guest>.from(
         (map['guests'] as List<int>).map<Guest>(
           (x) => Guest.fromMap(x as Map<String, dynamic>),

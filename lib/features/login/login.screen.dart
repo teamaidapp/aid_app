@@ -284,7 +284,12 @@ class _CreateAccountPage extends HookWidget {
                     icon: Iconsax.profile_2user,
                     description: 'School sponsored / Elementary / Middle and High School',
                     onTap: () {
-                      context.push(AppRoutes.createAccountParents);
+                      context.pushNamed(
+                        AppRoutes.createAccountTeamPlayer,
+                        queryParameters: {
+                          'isCreatingSon': 'true',
+                        },
+                      );
                     },
                   ),
                   const SizedBox(height: 20),
@@ -293,7 +298,14 @@ class _CreateAccountPage extends HookWidget {
                     title: 'Team player',
                     icon: Iconsax.people,
                     description: 'College / Youth Leagues / Athletic Associations / Professional players',
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed(
+                        AppRoutes.createAccountTeamPlayer,
+                        queryParameters: {
+                          'isCreatingSon': 'false',
+                        },
+                      );
+                    },
                   ),
                 ],
               ),

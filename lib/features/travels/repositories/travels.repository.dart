@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,6 +10,7 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as multi_http;
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/failure.dart';
+import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/features/travels/entities/hotel.model.dart';
 import 'package:team_aid/features/travels/entities/itinerary.model.dart';
@@ -45,6 +47,13 @@ abstract class TravelsRepository {
 
   /// Upload a file
   Future<Either<Failure, Success>> uploadFile({required File file});
+
+  /// Patch a file
+  Future<Either<Failure, Success>> patchFile({
+    required String fileId,
+    required String description,
+    required List<Guest> guests,
+  });
 }
 
 /// This class is responsible for implementing the TravelsRepository
@@ -203,7 +212,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
     try {
       final token = await secureStorage.read(key: TAConstants.accessToken);
       final url = Uri.parse(
-        '${dotenv.env['API_URL']}/itinerary',
+        '${dotenv.env['API_URL']}/hotel',
       );
       final res = await http.get(
         url,
@@ -221,7 +230,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
       final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
 
       for (final hotel in data) {
-        final itineraryModel = HotelModel.fromMap((hotel as Map<String, dynamic>)['itineraryId'] as Map<String, dynamic>);
+        final itineraryModel = HotelModel.fromMap((hotel as Map<String, dynamic>)['hotelId'] as Map<String, dynamic>);
         hotels.add(itineraryModel);
       }
 
@@ -279,11 +288,53 @@ class TravelsRepositoryImpl implements TravelsRepository {
         );
       }
 
-      return Right(Success(ok: true, message: ''));
+      final response = await multi_http.Response.fromStream(res);
+
+      final data = (jsonDecode(response.body) as Map<String, dynamic>)['data'];
+
+      // ignore: avoid_dynamic_calls
+      return Right(Success(ok: true, message: data['id'] as String));
     } catch (e) {
       return Left(
         Failure(
           message: 'Hubo un error en CalendarRepositoyImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> patchFile({
+    required String fileId,
+    required String description,
+    required List<Guest> guests,
+  }) async {
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/file',
+      );
+      final res = await http.patch(
+        url,
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'fileId': fileId,
+          'description': description,
+          'guest': guests.map((e) => e.toMap()).toList(),
+        }),
+      );
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error while uploading the file',
+          ),
+        );
+      }
+      return Right(Success(ok: true, message: 'File uploaded'));
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un error en CalendarRepositoryImpl',
         ),
       );
     }

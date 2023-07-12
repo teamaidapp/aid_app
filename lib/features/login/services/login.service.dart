@@ -57,11 +57,9 @@ class LoginServiceImpl implements LoginService {
               sportId: '',
               cityId: '',
               stateId: '',
-              role: r['role'] as String == 'coach'
-                  ? Role.coach
-                  : r['role'] as String == 'client'
-                      ? Role.client
-                      : Role.support,
+              role: Role.values.firstWhere(
+                (e) => e.toString() == 'Role.${r['role'] as String}',
+              ),
             ),
             token: r['accessToken'] as String,
           );

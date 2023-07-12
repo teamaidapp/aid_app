@@ -20,6 +20,9 @@ abstract class CreateAccountService {
   /// Create account
   Future<Either<Failure, Success>> createAccount({required UserModel user});
 
+  /// Create child account
+  Future<Either<Failure, Success>> createChildAccount({required UserModel user});
+
   /// Create team
   Future<Either<Failure, String>> createTeam({required TeamModel team});
 
@@ -47,6 +50,35 @@ class CreateAccountServiceImpl implements CreateAccountService {
       final token = result.getOrElse(() => '');
 
       await GlobalFunctions().saveUserSession(user: user, token: token);
+
+      return result.fold(
+        (failure) => Left(
+          Failure(
+            message: failure.message,
+          ),
+        ),
+        (success) => Right(
+          Success(
+            ok: true,
+            message: '',
+          ),
+        ),
+      );
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'An error ocurred on CreateAccountServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> createChildAccount({
+    required UserModel user,
+  }) async {
+    try {
+      final result = await createAccountRepository.createAccount(user: user);
 
       return result.fold(
         (failure) => Left(
