@@ -1,3 +1,6 @@
+import 'package:team_aid/core/entities/guest.model.dart';
+import 'package:team_aid/core/entities/user_creator.model.dart';
+
 /// A class representing an event.
 class CalendarEvent {
   /// Creates a new instance of [CalendarEvent].
@@ -37,7 +40,7 @@ class CalendarEvent {
       dateKey: key,
       isOwner: map['isOwner'] as bool,
       status: map['status'] as String,
-      event: EventClass.fromMap(map['event'] as Map<String, dynamic>),
+      event: EventClass.fromMap(map['event'] as Map<String, dynamic>, map['guest'] as List<dynamic>),
     );
   }
 
@@ -76,6 +79,8 @@ class EventClass {
   /// The [location] parameter is required and represents the location of the event.
   ///
   /// The [createdAt] parameter is required and represents the date and time when the event was created.
+  ///
+  /// The [userCreator] parameter is optional and represents the user creator of the event.
   const EventClass({
     required this.id,
     required this.eventName,
@@ -85,10 +90,12 @@ class EventClass {
     required this.status,
     required this.location,
     required this.createdAt,
+    required this.guests,
+    this.userCreator,
   });
 
   /// The fromMap constructor is used to create a new instance of [EventClass] from a map.
-  factory EventClass.fromMap(Map<String, dynamic> map) {
+  factory EventClass.fromMap(Map<String, dynamic> map, List<dynamic> guest) {
     return EventClass(
       id: map['id'] as String,
       eventName: map['eventName'] as String,
@@ -98,6 +105,8 @@ class EventClass {
       status: map['status'] as String,
       location: map['location'] as String,
       createdAt: DateTime.parse(map['createdAt'] as String),
+      userCreator: UserCreator.fromMap(map['userCreator'] as Map<String, dynamic>),
+      guests: guest.map((x) => Guest.fromMap(x as Map<String, dynamic>)).toList(),
     );
   }
 
@@ -124,4 +133,10 @@ class EventClass {
 
   /// The date and time when the event was created.
   final DateTime createdAt;
+
+  /// The list of guests for the itinerary.
+  final List<Guest> guests;
+
+  /// The user creator of the itinerary.
+  final UserCreator? userCreator;
 }

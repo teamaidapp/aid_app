@@ -162,7 +162,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                           const SizedBox(height: 20),
                           EventWidget(
                             eventName: event.event.eventName.capitalizeWord(),
-                            organizerName: 'Coach Felipe',
+                            organizerName: event.event.userCreator?.firstName ?? '',
                             startTime: startTime,
                             endTime: endTime,
                           ),

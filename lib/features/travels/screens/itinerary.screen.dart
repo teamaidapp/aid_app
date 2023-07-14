@@ -504,13 +504,13 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                       }
 
                                       final itinerary = ItineraryModel(
+                                        guests: newGuests,
                                         name: eventName.text.trim(),
+                                        endDate: _toDate.toIso8601String(),
                                         transportation: transportation.value,
                                         startDate: _fromDate.toIso8601String(),
-                                        endDate: _toDate.toIso8601String(),
                                         location: locationController.text.trim(),
                                         locationDescription: locationDescription.value,
-                                        guests: newGuests,
                                       );
 
                                       isLoading.value = true;
@@ -728,44 +728,21 @@ class _ItineraryWidget extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  // Row(
-                  //   children: [
-                  //     const Icon(Iconsax.user_tag),
-                  //     const SizedBox(width: 8),
-                  //     Expanded(
-                  //       child: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           TATypography.subparagraph(
-                  //             text: 'Meeting',
-                  //             color: TAColors.grey1,
-                  //           ),
-                  //           TATypography.paragraph(
-                  //             text: 'Doral Campus Academy',
-                  //             fontWeight: FontWeight.w600,
-                  //           ),
-                  //           TATypography.paragraph(
-                  //             text: '9025 W Cactus Ave, Las Vegas, NV 89178',
-                  //             color: TAColors.grey1,
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //     Container(
-                  //       decoration: BoxDecoration(
-                  //         shape: BoxShape.circle,
-                  //         border: Border.all(
-                  //           color: TAColors.purple,
-                  //         ),
-                  //       ),
-                  //       padding: const EdgeInsets.all(6),
-                  //       child: const Icon(
-                  //         Iconsax.location,
-                  //         color: TAColors.purple,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
+                  if (itinerary.userCreator != null)
+                    Column(
+                      children: [
+                        TATypography.paragraph(
+                          text: 'Organized by ',
+                          color: TAColors.grey1,
+                        ),
+                        TATypography.paragraph(
+                          text: '${itinerary.userCreator!.firstName} ${itinerary.userCreator!.lastName}',
+                          underline: true,
+                          color: TAColors.grey1,
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
                 ],
               ),
             ),

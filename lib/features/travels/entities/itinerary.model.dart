@@ -1,5 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:team_aid/core/entities/guest.model.dart';
+import 'package:team_aid/core/entities/user_creator.model.dart';
 
 /// A class representing an itinerary for an event.
 class ItineraryModel {
@@ -16,6 +16,8 @@ class ItineraryModel {
   /// The [location] parameter is required and represents the location of the itinerary.
   ///
   /// The [guests] parameter is required and represents the list of guests for the itinerary.
+  ///
+  /// The [userCreator] parameter is required and represents the user creator of the itinerary.
   const ItineraryModel({
     required this.name,
     required this.transportation,
@@ -24,12 +26,13 @@ class ItineraryModel {
     required this.location,
     required this.locationDescription,
     required this.guests,
+    this.userCreator,
   });
 
   /// Creates a new instance of [ItineraryModel] from a map.
   ///
   /// The [map] parameter is required and represents the map to convert to an [ItineraryModel] instance.
-  factory ItineraryModel.fromMap(Map<String, dynamic> map) {
+  factory ItineraryModel.fromMap(Map<String, dynamic> map, List<dynamic> guest) {
     return ItineraryModel(
       name: map['name'] as String,
       transportation: map['transportation'] as String,
@@ -37,12 +40,8 @@ class ItineraryModel {
       endDate: map['endDate'] as String,
       location: map['location'] as String,
       locationDescription: map['locationDescription'] as String,
-      guests: [],
-      // guests: List<Guest>.from(
-      //   (map['guests'] as List<int>).map<Guest>(
-      //     (x) => Guest.fromMap(x as Map<String, dynamic>),
-      //   ),
-      // ),
+      userCreator: UserCreator.fromMap(map['userCreator'] as Map<String, dynamic>),
+      guests: guest.map((x) => Guest.fromMap(x as Map<String, dynamic>)).toList(),
     );
   }
 
@@ -67,6 +66,9 @@ class ItineraryModel {
   /// The list of guests for the itinerary.
   final List<Guest> guests;
 
+  /// The user creator of the itinerary.
+  final UserCreator? userCreator;
+
   /// Creates a copy of this [ItineraryModel] instance with the specified properties replaced.
   ///
   /// The [name], [transportation], [startDate], [endDate], [location], and [guests] parameters are optional and represent the properties to replace.
@@ -80,6 +82,7 @@ class ItineraryModel {
     String? endDate,
     String? location,
     List<Guest>? guests,
+    UserCreator? userCreator,
   }) {
     return ItineraryModel(
       name: name ?? this.name,
@@ -89,6 +92,7 @@ class ItineraryModel {
       location: location ?? this.location,
       locationDescription: locationDescription ?? this.locationDescription,
       guests: guests ?? this.guests,
+      userCreator: userCreator ?? this.userCreator,
     );
   }
 

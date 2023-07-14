@@ -25,12 +25,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final requestsExpandableController =
-      ExpandableController(initialExpanded: true);
-  final messagesExpandableController =
-      ExpandableController(initialExpanded: true);
-  final upcomingEventsExpandableController =
-      ExpandableController(initialExpanded: true);
+  final requestsExpandableController = ExpandableController(initialExpanded: true);
+  final messagesExpandableController = ExpandableController(initialExpanded: true);
+  final upcomingEventsExpandableController = ExpandableController(initialExpanded: true);
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -123,7 +120,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Expanded(
                           child: TAPrimaryButton(
                             text: 'CREATE TEAM',
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            mainAxisAlignment: MainAxisAlignment.center,
                             icon: Iconsax.add,
                             onTap: () {
                               context.push(AppRoutes.createAccountTeamForCoach);
@@ -142,8 +140,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       collapsed: const SizedBox(),
                       expanded: const TAContainer(
                         radius: 28,
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -172,8 +169,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       collapsed: const SizedBox(),
                       expanded: const TAContainer(
                         radius: 28,
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -202,8 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       collapsed: const SizedBox(),
                       expanded: const TAContainer(
                         radius: 28,
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [

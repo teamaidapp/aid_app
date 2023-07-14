@@ -84,7 +84,10 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       final result = await _travelsService.getCalendarData();
 
       return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
+        (failure) {
+          state = state.copyWith(calendarEvents: const AsyncValue.data([]));
+          return response = response.copyWith(message: failure.message);
+        },
         (success) {
           state = state.copyWith(calendarEvents: AsyncValue.data(success));
           return response = response.copyWith(ok: true);
@@ -137,7 +140,10 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       state = state.copyWith(contactList: const AsyncValue.loading());
 
       return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
+        (failure) {
+          state = state.copyWith(contactList: const AsyncValue.data([]));
+          return response = response.copyWith(message: failure.message);
+        },
         (list) {
           state = state.copyWith(
             contactList: AsyncValue.data(list),
@@ -165,7 +171,10 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       state = state.copyWith(contactList: const AsyncValue.loading());
 
       return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
+        (failure) {
+          state = state.copyWith(itineraryList: const AsyncValue.data([]));
+          return response = response.copyWith(message: failure.message);
+        },
         (list) {
           state = state.copyWith(
             itineraryList: AsyncValue.data(list),

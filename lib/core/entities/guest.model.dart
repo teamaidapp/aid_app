@@ -18,7 +18,7 @@ class Guest {
   /// of the `Guest` object is
   factory Guest.fromMap(Map<String, dynamic> map) {
     return Guest(
-      userId: map['userId'] as String,
+      userId: (map['userId'] as Map<String, dynamic>?)?['id'] as String? ?? '',
     );
   }
 

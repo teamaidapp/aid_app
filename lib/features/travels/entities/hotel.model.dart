@@ -23,18 +23,14 @@ class HotelModel {
   /// Creates a new instance of [HotelModel] from a map.
   ///
   /// The [map] parameter is required and represents the map to convert to a [HotelModel] instance.
-  factory HotelModel.fromMap(Map<String, dynamic> map) {
+  factory HotelModel.fromMap(Map<String, dynamic> map, List<dynamic> guests) {
     return HotelModel(
       place: map['place'] as String,
       startDate: map['startDate'] as String,
       endDate: map['endDate'] as String,
       placeDescription: map['placeDescription'] as String,
       reservationCode: map['reservation_code'] as String,
-      guests: List<Guest>.from(
-        (map['guests'] as List<int>).map<Guest>(
-          (x) => Guest.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      guests: guests.map((x) => Guest.fromMap(x as Map<String, dynamic>)).toList(),
     );
   }
 

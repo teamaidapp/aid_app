@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -193,7 +192,10 @@ class TravelsRepositoryImpl implements TravelsRepository {
       final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
 
       for (final itinerary in data) {
-        final itineraryModel = ItineraryModel.fromMap((itinerary as Map<String, dynamic>)['itineraryId'] as Map<String, dynamic>);
+        final itineraryModel = ItineraryModel.fromMap(
+          (itinerary as Map<String, dynamic>)['itineraryId'] as Map<String, dynamic>,
+          itinerary['guest'] as List<dynamic>,
+        );
         itineraries.add(itineraryModel);
       }
 
@@ -230,7 +232,10 @@ class TravelsRepositoryImpl implements TravelsRepository {
       final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
 
       for (final hotel in data) {
-        final itineraryModel = HotelModel.fromMap((hotel as Map<String, dynamic>)['hotelId'] as Map<String, dynamic>);
+        final itineraryModel = HotelModel.fromMap(
+          (hotel as Map<String, dynamic>)['hotelId'] as Map<String, dynamic>,
+          hotel['guest'] as List<dynamic>,
+        );
         hotels.add(itineraryModel);
       }
 
