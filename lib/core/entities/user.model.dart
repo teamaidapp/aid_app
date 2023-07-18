@@ -11,7 +11,6 @@ class UserModel {
     required this.lastName,
     required this.email,
     required this.phoneNumber,
-    required this.address,
     required this.password,
     required this.sportId,
     required this.role,
@@ -36,7 +35,6 @@ class UserModel {
       lastName: map['lastName'] as String,
       email: map['email'] as String,
       phoneNumber: map['phoneNumber'] as String,
-      address: map['address'] as String,
       password: map['password'] as String,
       sportId: map['sportId'] as String,
       role: Role.values.firstWhere(
@@ -79,7 +77,6 @@ class UserModel {
     String? lastName,
     String? email,
     String? phoneNumber,
-    String? address,
     String? password,
     String? sportId,
     Role? role,
@@ -93,7 +90,6 @@ class UserModel {
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
       phoneNumber: phoneNumber ?? this.phoneNumber,
-      address: address ?? this.address,
       password: password ?? this.password,
       sportId: sportId ?? this.sportId,
       role: role ?? this.role,
@@ -116,7 +112,6 @@ class UserModel {
       'lastName': lastName,
       'email': email,
       'phoneNumber': phoneNumber,
-      'address': address,
       'password': password,
       'sportId': sportId,
       'cityId': cityId,
@@ -128,7 +123,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(firstName: $firstName, lastName: $lastName, email: $email, phoneNumber: $phoneNumber, address: $address, password: $password, role: $role , sportId: $sportId, cityId: $cityId, stateId: $stateId, biography: $biography)';
+    return 'UserModel(firstName: $firstName, lastName: $lastName, email: $email, phoneNumber: $phoneNumber, password: $password, role: $role , sportId: $sportId, cityId: $cityId, stateId: $stateId, biography: $biography)';
   }
 
   /// The user's first name.
@@ -142,9 +137,6 @@ class UserModel {
 
   /// The user's phone number.
   final String phoneNumber;
-
-  /// The user's address.
-  final String address;
 
   /// The user's password.
   final String password;

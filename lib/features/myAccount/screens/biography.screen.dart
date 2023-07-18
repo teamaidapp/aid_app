@@ -163,7 +163,6 @@ class BiographyScreen extends HookConsumerWidget {
                                   lastName: '',
                                   email: '',
                                   phoneNumber: '',
-                                  address: '',
                                   password: '',
                                   sportId: '',
                                   role: Role.coach,

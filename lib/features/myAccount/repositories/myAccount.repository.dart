@@ -65,10 +65,6 @@ class MyAccountRepositoryImpl implements MyAccountRepository {
 
       final data = <String, dynamic>{};
 
-      if (user.address.isNotEmpty) {
-        data['address'] = user.address;
-      }
-
       if (user.cityId.isNotEmpty) {
         data['city'] = user.cityId;
       }

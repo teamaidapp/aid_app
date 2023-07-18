@@ -70,7 +70,6 @@ class CreateAccountParentsScreen extends StatelessWidget {
                 final lastNameController = useTextEditingController();
                 final emailController = useTextEditingController();
                 final phoneNumberController = useTextEditingController();
-                final addressController = useTextEditingController();
                 final passwordController = useTextEditingController();
                 final agreeToTerms = useState(false);
                 final sport = useState('');
@@ -242,12 +241,6 @@ class CreateAccountParentsScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
-                                label: 'Address',
-                                textEditingController: addressController,
-                                placeholder: 'Enter your address',
-                              ),
-                              const SizedBox(height: 10),
-                              TAPrimaryInput(
                                 label: 'Password',
                                 textEditingController: passwordController,
                                 isPassword: true,
@@ -295,7 +288,6 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                       lastNameController.text.isEmpty ||
                                       emailController.text.isEmpty ||
                                       phoneNumberController.text.isEmpty ||
-                                      addressController.text.isEmpty ||
                                       passwordController.text.isEmpty ||
                                       sport.value.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -322,7 +314,6 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                     lastName: lastNameController.text,
                                     email: emailController.text.toLowerCase(),
                                     phoneNumber: phoneNumberController.text,
-                                    address: addressController.text,
                                     password: passwordController.text,
                                     sportId: sport.value,
                                     role: Role.player,

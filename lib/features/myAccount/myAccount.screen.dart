@@ -1,15 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_aid/core/constants.dart';
+import 'package:team_aid/core/entities/user.model.dart';
+import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/common/widgets/failure.widget.dart';
+import 'package:team_aid/features/common/widgets/success.widget.dart';
+import 'package:team_aid/features/myAccount/controllers/myAccount.controller.dart';
 import 'package:team_aid/main.dart';
 
 /// The statelessWidget that handles the current screen
@@ -26,6 +33,8 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
   @override
   Widget build(BuildContext context) {
     final nameController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.firstName);
+    final originalName = useState(nameController.text);
+    final isLoading = useState(false);
     final prefs = ref.watch(sharedPrefs);
     // final sportController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.sport);
 
@@ -238,7 +247,54 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                               text: 'SAVE',
                               height: 50,
                               mainAxisAlignment: MainAxisAlignment.center,
-                              onTap: () {},
+                              onTap: () async {
+                                if (nameController.text != originalName.value) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('No changes were made'),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                final user = UserModel(
+                                  firstName: nameController.text.trim(),
+                                  lastName: '',
+                                  email: '',
+                                  phoneNumber: '',
+                                  password: '',
+                                  sportId: '',
+
+                                  /// This is not sent to the server
+                                  role: Role.coach,
+                                  cityId: '',
+                                  stateId: '',
+                                );
+
+                                isLoading.value = true;
+                                final res = await ref.read(myAccountControllerProvider.notifier).updateUserData(user: user);
+                                isLoading.value = false;
+
+                                if (res.ok && context.mounted) {
+                                  final prefs = await SharedPreferences.getInstance();
+                                  await prefs.setString(TAConstants.firstName, nameController.text.trim());
+                                  if (context.mounted) {
+                                    await SuccessWidget.build(
+                                      title: 'Hurray!',
+                                      message: 'Your biography has been updated successfully',
+                                      context: context,
+                                    );
+                                    if (context.mounted) {
+                                      context.pop();
+                                    }
+                                  }
+                                } else {
+                                  await FailureWidget.build(
+                                    title: 'Oops',
+                                    message: res.message,
+                                    context: context,
+                                  );
+                                }
+                              },
                             ),
                           ),
                         ],

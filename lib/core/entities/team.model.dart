@@ -11,6 +11,7 @@ class TeamModel {
     required this.state,
     required this.level,
     required this.id,
+    required this.city,
   });
 
   /// Creates a new team from a map of key-value pairs.
@@ -25,6 +26,7 @@ class TeamModel {
       state: map['state'] as String,
       level: map['level'] as String,
       id: map['id'] as String,
+      city: map['city'] as String,
     );
   }
 
@@ -40,6 +42,7 @@ class TeamModel {
     String? state,
     String? level,
     String? id,
+    String? city,
   }) {
     return TeamModel(
       teamName: teamName ?? this.teamName,
@@ -51,6 +54,7 @@ class TeamModel {
       state: state ?? this.state,
       level: level ?? this.level,
       id: id ?? this.id,
+      city: city ?? this.city,
     );
   }
 
@@ -65,12 +69,13 @@ class TeamModel {
       'zipCode': zipCode,
       'state': state,
       'level': level,
+      'city': city,
     };
   }
 
   @override
   String toString() {
-    return 'TeamModel(teamName: $teamName, sport: $sport, gender: $gender, organization: $organization, country: $country, zipCode: $zipCode, state: $state, level: $level, id: $id)';
+    return 'TeamModel(teamName: $teamName, sport: $sport, gender: $gender, organization: $organization, country: $country, zipCode: $zipCode, state: $state, level: $level, city: $city)';
   }
 
   /// The name of the team.
@@ -93,6 +98,9 @@ class TeamModel {
 
   /// The state the team is located in.
   final String state;
+
+  /// The city the team is located in.
+  final String city;
 
   /// The level of the team.
   final String level;

@@ -161,7 +161,6 @@ class PhoneScreen extends HookConsumerWidget {
                                   lastName: '',
                                   email: '',
                                   phoneNumber: phoneController.text.trim(),
-                                  address: '',
                                   password: '',
                                   sportId: '',
                                   role: Role.coach,

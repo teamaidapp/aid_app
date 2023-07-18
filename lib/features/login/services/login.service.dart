@@ -48,7 +48,6 @@ class LoginServiceImpl implements LoginService {
           await GlobalFunctions().saveUserSession(
             user: UserModel(
               email: email,
-              address: r['address'] as String? ?? '',
               password: '',
               biography: r['biography'] as String? ?? '',
               firstName: r['firstName'] as String,

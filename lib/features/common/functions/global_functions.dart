@@ -26,7 +26,6 @@ class GlobalFunctions {
     await prefs.setString(TAConstants.lastName, user.lastName);
     await prefs.setString(TAConstants.email, user.email);
     await prefs.setString(TAConstants.phoneNumber, user.phoneNumber);
-    await prefs.setString(TAConstants.address, user.address);
     await prefs.setString(TAConstants.role, user.role.name);
     await prefs.setString(TAConstants.sport, user.sportId);
     await prefs.setString(TAConstants.biography, user.biography);
