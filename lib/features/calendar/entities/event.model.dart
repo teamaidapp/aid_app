@@ -105,7 +105,7 @@ class EventClass {
       status: map['status'] as String,
       location: map['location'] as String,
       createdAt: DateTime.parse(map['createdAt'] as String),
-      userCreator: UserCreator.fromMap(map['userCreator'] as Map<String, dynamic>),
+      userCreator: UserCreator2.fromMap(map['userCreator'] as Map<String, dynamic>),
       guests: guest.map((x) => Guest.fromMap(x as Map<String, dynamic>)).toList(),
     );
   }
@@ -138,5 +138,5 @@ class EventClass {
   final List<Guest> guests;
 
   /// The user creator of the itinerary.
-  final UserCreator? userCreator;
+  final UserCreator2? userCreator;
 }

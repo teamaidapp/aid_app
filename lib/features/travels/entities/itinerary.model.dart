@@ -100,14 +100,21 @@ class ItineraryModel {
   ///
   /// Returns a map representation of this [ItineraryModel] instance.
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    final guests = this.guests.map((x) => x.toMap()).toList();
+
+    final data = <String, dynamic>{
       'name': name,
       'transportation': transportation,
       'startDate': startDate,
       'endDate': endDate,
       'location': location,
       'locationDescription': locationDescription,
-      'guest': guests.map((x) => x.toMap()).toList(),
     };
+
+    if (guests.isNotEmpty) {
+      data['guest'] = guests;
+    }
+
+    return data;
   }
 }

@@ -402,7 +402,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                                       const SizedBox(width: 10),
                                       Expanded(
                                         child: TATypography.paragraph(
-                                          text: file.fileName,
+                                          text: file.description ?? file.fileName,
                                           color: TAColors.color2,
                                         ),
                                       ),

@@ -61,7 +61,7 @@ class TeamCardWidget extends StatelessWidget {
                   color: TAColors.color1,
                 ),
                 TATypography.paragraph(
-                  text: team.level,
+                  text: team.sport,
                   fontWeight: FontWeight.w600,
                 ),
               ],
@@ -93,7 +93,9 @@ class TeamCardWidget extends StatelessWidget {
                 child: TAPrimaryButton(
                   text: 'SCHEDULE',
                   mainAxisAlignment: MainAxisAlignment.center,
-                  onTap: () {},
+                  onTap: () {
+                    context.push(AppRoutes.calendar);
+                  },
                 ),
               ),
             ],

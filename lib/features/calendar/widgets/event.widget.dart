@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:team_aid/design_system/components/buttons/secondary_button.dart';
 import 'package:team_aid/design_system/design_system.dart';
 
 /// A widget that displays a request
@@ -60,18 +59,17 @@ class EventWidget extends StatelessWidget {
                           ),
                           TATypography.paragraph(
                             text: organizerName,
-                            underline: true,
                             color: TAColors.grey1,
                           ),
                         ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  TASecondaryButton(
-                    text: 'INFORMATION',
-                    onTap: () {},
-                  ),
+                  // const SizedBox(height: 10),
+                  // TASecondaryButton(
+                  //   text: 'INFORMATION',
+                  //   onTap: () {},
+                  // ),
                 ],
               ),
             ),

@@ -362,22 +362,22 @@ class _SearchPlayerWidget extends HookConsumerWidget {
                     }
                   },
                 ),
-                const SizedBox(height: 10),
-                TADropdown(
-                  label: 'Level',
-                  placeholder: 'Select a level',
-                  items: [
-                    TADropdownModel(
-                      item: 'Elite',
-                      id: '',
-                    ),
-                    TADropdownModel(
-                      item: 'Amateur',
-                      id: '',
-                    )
-                  ],
-                  onChange: (selectedValue) {},
-                ),
+                // const SizedBox(height: 10),
+                // TADropdown(
+                //   label: 'Level',
+                //   placeholder: 'Select a level',
+                //   items: [
+                //     TADropdownModel(
+                //       item: 'Elite',
+                //       id: '',
+                //     ),
+                //     TADropdownModel(
+                //       item: 'Amateur',
+                //       id: '',
+                //     )
+                //   ],
+                //   onChange: (selectedValue) {},
+                // ),
                 const SizedBox(height: 20),
                 TADropdown(
                   label: 'Position',

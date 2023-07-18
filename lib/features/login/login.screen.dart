@@ -231,19 +231,19 @@ class _LoginPage extends HookWidget {
             color: TAColors.color2,
           ),
         ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            TATypography.paragraph(
-              text: 'Or login with',
-              color: TAColors.color3,
-            ),
-            const SizedBox(width: 14),
-            Image.asset('assets/login/google.png', height: 36),
-            Image.asset('assets/login/fb.png', height: 36),
-          ],
-        ),
+        // const SizedBox(height: 20),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //   children: [
+        //     TATypography.paragraph(
+        //       text: 'Or login with',
+        //       color: TAColors.color3,
+        //     ),
+        //     const SizedBox(width: 14),
+        //     Image.asset('assets/login/google.png', height: 36),
+        //     Image.asset('assets/login/fb.png', height: 36),
+        //   ],
+        // ),
       ],
     );
   }

@@ -61,14 +61,17 @@ class HotelModel {
   ///
   /// Returns a map representation of this [HotelModel] instance.
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    final guest = guests.map((x) => x.toMap()).toList();
+    final data = <String, dynamic>{
       'place': place,
       'startDate': startDate,
       'endDate': endDate,
       'placeDescription': placeDescription,
       'reservation_code': reservationCode,
-      'guest': guests.map((x) => x.toMap()).toList(),
+      'guest': guest,
     };
+
+    return data;
   }
 
   @override

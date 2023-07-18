@@ -12,11 +12,11 @@ class UserCreator {
     required this.role,
     required this.acceptTermsAndConditions,
     required this.accountVerificationState,
-    required this.avatar,
     required this.biography,
     required this.createdAt,
     required this.updateAt,
     this.otpExpiration,
+    this.avatar,
     this.fatherId,
     this.otpCode,
   });
@@ -37,7 +37,7 @@ class UserCreator {
       otpCode: map['otpCode'] != null ? map['otpCode'] as String : null,
       accountVerificationState: map['accountVerificationState'] as String,
       fatherId: map['fatherId'] != null ? map['fatherId'] as String : null,
-      avatar: map['avatar'] as String,
+      avatar: map['avatar'] as String?,
       biography: map['biography'] as String,
       createdAt: map['createdAt'] as String,
       updateAt: map['updateAt'] as String,
@@ -107,7 +107,7 @@ class UserCreator {
   final String? fatherId;
 
   /// The avatar of the itinerary.
-  final String avatar;
+  final String? avatar;
 
   /// The biography of the itinerary.
   final String biography;
@@ -117,4 +117,41 @@ class UserCreator {
 
   /// The update date of the itinerary.
   final String updateAt;
+}
+
+/// A class representing a guest for an itinerary.
+class UserCreator2 {
+  /// Creates a new instance of [UserCreator].
+  const UserCreator2({
+    required this.firstName,
+    required this.lastName,
+    this.avatar,
+  });
+
+  /// Creates a new instance of [UserCreator] from a map.
+  factory UserCreator2.fromMap(Map<String, dynamic> map) {
+    return UserCreator2(
+      firstName: map['firstName'] as String,
+      lastName: map['lastName'] as String,
+      avatar: map['avatar'] as String?,
+    );
+  }
+
+  /// The id of the user.
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'firstName': firstName,
+      'lastName': lastName,
+      'avatar': avatar,
+    };
+  }
+
+  /// The first name of the itinerary.
+  final String firstName;
+
+  /// The last name of the itinerary.
+  final String lastName;
+
+  /// The avatar of the itinerary.
+  final String? avatar;
 }

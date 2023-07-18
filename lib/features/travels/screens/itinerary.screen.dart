@@ -697,13 +697,13 @@ class _ItineraryWidget extends StatelessWidget {
                               color: TAColors.grey1,
                             ),
                             TATypography.paragraph(
-                              text: 'Rio All Suites',
+                              text: itinerary.locationDescription,
                               fontWeight: FontWeight.w600,
                             ),
-                            TATypography.paragraph(
-                              text: '3700 W Flamingo Rd, Las Vegas, NV 89103',
-                              color: TAColors.grey1,
-                            ),
+                            // TATypography.paragraph(
+                            //   text: itinerary.locationDescription,
+                            //   color: TAColors.grey1,
+                            // ),
                           ],
                         ),
                       ),

@@ -262,7 +262,7 @@ class _TodayWidget extends StatelessWidget {
                     const SizedBox(height: 20),
                     EventWidget(
                       eventName: event.event.eventName.capitalizeWord(),
-                      organizerName: 'Coach Felipe',
+                      organizerName: event.event.userCreator?.firstName ?? '',
                       startTime: startTime,
                       endTime: endTime,
                     ),
