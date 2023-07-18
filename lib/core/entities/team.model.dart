@@ -4,7 +4,6 @@ class TeamModel {
   const TeamModel({
     required this.teamName,
     required this.sport,
-    required this.ageGroup,
     required this.gender,
     required this.organization,
     required this.country,
@@ -19,7 +18,6 @@ class TeamModel {
     return TeamModel(
       teamName: map['teamName'] as String,
       sport: map['sport'] as String,
-      ageGroup: map['ageGroup'] as String,
       gender: map['gender'] as String,
       organization: map['organization'] as String,
       country: map['country'] as String,
@@ -46,7 +44,6 @@ class TeamModel {
     return TeamModel(
       teamName: teamName ?? this.teamName,
       sport: sport ?? this.sport,
-      ageGroup: ageGroup ?? this.ageGroup,
       gender: gender ?? this.gender,
       organization: organization ?? this.organization,
       country: country ?? this.country,
@@ -62,7 +59,6 @@ class TeamModel {
     return <String, dynamic>{
       'teamName': teamName,
       'sport': sport,
-      'ageGroup': ageGroup,
       'gender': gender,
       'organization': organization,
       'country': country,
@@ -74,7 +70,7 @@ class TeamModel {
 
   @override
   String toString() {
-    return 'TeamModel(teamName: $teamName, sport: $sport, ageGroup: $ageGroup, gender: $gender, organization: $organization, country: $country, zipCode: $zipCode, state: $state, level: $level, id: $id)';
+    return 'TeamModel(teamName: $teamName, sport: $sport, gender: $gender, organization: $organization, country: $country, zipCode: $zipCode, state: $state, level: $level, id: $id)';
   }
 
   /// The name of the team.
@@ -82,9 +78,6 @@ class TeamModel {
 
   /// The sport the team plays.
   final String sport;
-
-  /// The age group the team belongs to.
-  final String ageGroup;
 
   /// The gender of the team.
   final String gender;

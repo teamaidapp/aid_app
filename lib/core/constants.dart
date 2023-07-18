@@ -30,6 +30,9 @@ class TAConstants {
   /// The key for the user's sp in shared preferences.
   static const String sport = 'sport';
 
+  /// The key for the user's avatar in shared preferences.
+  static const String avatar = 'avatar';
+
   /// A list of all the sports
   static final sportsList = <TADropdownModel>[
     TADropdownModel(
@@ -40,8 +43,9 @@ class TAConstants {
 
   /// A list of the genders
   static final genderList = <TADropdownModel>[
-    TADropdownModel(item: 'Men', id: ''),
+    TADropdownModel(item: 'Mixed', id: ''),
     TADropdownModel(item: 'Women', id: ''),
+    TADropdownModel(item: 'Men', id: ''),
   ];
 
   /// A list of the transportations
@@ -65,6 +69,9 @@ class TAConstants {
     TADropdownModel(item: 'Elementary', id: ''),
     TADropdownModel(item: 'Middle School', id: ''),
     TADropdownModel(item: 'High School', id: ''),
+    TADropdownModel(item: 'College', id: ''),
+    TADropdownModel(item: 'Young Leagues', id: ''),
+    TADropdownModel(item: 'Professional', id: ''),
   ];
 
   /// A list of all the states in the US

@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/teams/widgets/team_card.widget.dart';
+import 'package:team_aid/main.dart';
 
 /// The statelessWidget that handles the current screen
 class TeamsScreen extends StatefulHookConsumerWidget {
@@ -29,6 +31,7 @@ class _TeamsScreenState extends ConsumerState<TeamsScreen> {
   @override
   Widget build(BuildContext context) {
     final teamsScreen = useState(true);
+    final prefsProvider = ref.watch(sharedPrefs);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -140,13 +143,25 @@ class _TeamsScreenState extends ConsumerState<TeamsScreen> {
               child: teamsScreen.value ? const TeamsListWidget() : const MyInvitationsWidget(),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: TAPrimaryButton(
-              text: 'ADD NEW TEAM',
-              mainAxisAlignment: MainAxisAlignment.center,
-              onTap: () {},
-            ),
+          prefsProvider.when(
+            data: (prefs) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TAPrimaryButton(
+                  text: 'ADD NEW TEAM',
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  onTap: () {
+                    context.push(AppRoutes.createAccountTeamForCoach);
+                  },
+                ),
+              );
+            },
+            error: (_, __) {
+              return const SizedBox();
+            },
+            loading: () {
+              return const SizedBox();
+            },
           ),
           const SizedBox(height: 20),
         ],

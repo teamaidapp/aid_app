@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
@@ -531,8 +532,9 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                             context: context,
                                           ),
                                         );
-                                        if (!mounted) return;
-                                        Navigator.pop(context);
+                                        if (context.mounted) {
+                                          context.pop();
+                                        }
                                       } else {
                                         unawaited(
                                           FailureWidget.build(

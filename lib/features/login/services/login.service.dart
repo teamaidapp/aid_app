@@ -57,6 +57,7 @@ class LoginServiceImpl implements LoginService {
               sportId: '',
               cityId: '',
               stateId: '',
+              avatar: r['avatar'] as String? ?? '',
               role: Role.values.firstWhere(
                 (e) => e.toString() == 'Role.${r['role'] as String}',
               ),

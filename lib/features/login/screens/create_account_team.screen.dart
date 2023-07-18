@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/constants.dart';
+import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
@@ -59,13 +60,12 @@ class CreateAccountTeamScreen extends StatelessWidget {
               builder: (context) {
                 final teamNameController = useTextEditingController();
                 final sportController = useTextEditingController();
-                final ageGroupController = useTextEditingController();
+                final levelController = useTextEditingController();
                 final genderController = useTextEditingController();
                 final organizationController = useTextEditingController();
                 final countryController = useTextEditingController();
                 final zipCodeController = useTextEditingController();
                 final stateController = useTextEditingController();
-                final levelController = useTextEditingController();
 
                 return Container(
                   width: double.infinity,
@@ -106,13 +106,12 @@ class CreateAccountTeamScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
-                                label: 'Age group',
-                                placeholder: 'Select age group',
+                                label: 'Level',
+                                placeholder: 'Select level',
                                 items: TAConstants.ageGroupList,
                                 onChange: (selectedValue) {
                                   if (selectedValue != null) {
-                                    ageGroupController.text =
-                                        selectedValue.item;
+                                    levelController.text = selectedValue.item;
                                   }
                                 },
                               ),
@@ -146,16 +145,21 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                 placeholder: 'Enter the zipcode',
                               ),
                               const SizedBox(height: 10),
-                              TAPrimaryInput(
+                              TADropdown(
                                 label: 'State',
-                                textEditingController: stateController,
-                                placeholder: 'Enter the state',
-                              ),
-                              const SizedBox(height: 10),
-                              TAPrimaryInput(
-                                label: 'Level',
-                                textEditingController: levelController,
-                                placeholder: 'Enter the level',
+                                placeholder: 'Select a state',
+                                items: List.generate(
+                                  TAConstants.statesList.length,
+                                  (index) => TADropdownModel(
+                                    item: TAConstants.statesList[index].name,
+                                    id: TAConstants.statesList[index].id,
+                                  ),
+                                ),
+                                onChange: (selectedValue) {
+                                  if (selectedValue != null) {
+                                    stateController.text = selectedValue.id;
+                                  }
+                                },
                               ),
                               const SizedBox(height: 10),
                             ],
@@ -193,35 +197,30 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                       text: 'CREATE TEAM',
                                       height: 50,
                                       isLoading: isLoading.value,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       onTap: () async {
                                         isLoading.value = true;
                                         final team = TeamModel(
                                           id: '',
                                           teamName: teamNameController.text,
                                           sport: sportController.text,
-                                          ageGroup: ageGroupController.text,
+                                          level: levelController.text,
                                           gender: genderController.text,
-                                          organization:
-                                              organizationController.text,
+                                          organization: organizationController.text,
                                           country: countryController.text,
                                           zipCode: zipCodeController.text,
                                           state: stateController.text,
-                                          level: levelController.text,
                                         );
                                         final res = await ref
                                             .read(
-                                              createAccountControllerProvider
-                                                  .notifier,
+                                              createAccountControllerProvider.notifier,
                                             )
                                             .createTeam(team: team);
                                         isLoading.value = false;
                                         if (res.ok && context.mounted) {
                                           context.go(AppRoutes.home);
                                         } else {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
+                                          ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
                                               content: Text(res.message),
                                             ),

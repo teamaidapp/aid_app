@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
@@ -130,9 +131,14 @@ class PhoneScreen extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Flexible(
-                            child: TATypography.paragraph(
-                              text: 'Cancel',
-                              underline: true,
+                            child: GestureDetector(
+                              onTap: () {
+                                context.pop();
+                              },
+                              child: TATypography.paragraph(
+                                text: 'Cancel',
+                                underline: true,
+                              ),
                             ),
                           ),
                           Flexible(
@@ -168,13 +174,17 @@ class PhoneScreen extends HookConsumerWidget {
                                 isLoading.value = false;
 
                                 if (res.ok && context.mounted) {
-                                  await SuccessWidget.build(
-                                    title: 'Hurray!',
-                                    message: 'Your phone number has been updated successfully',
-                                    context: context,
-                                  );
+                                  final prefs = await SharedPreferences.getInstance();
+                                  await prefs.setString(TAConstants.phoneNumber, phoneController.text.trim());
                                   if (context.mounted) {
-                                    context.pop();
+                                    await SuccessWidget.build(
+                                      title: 'Hurray!',
+                                      message: 'Your phone number has been updated successfully',
+                                      context: context,
+                                    );
+                                    if (context.mounted) {
+                                      context.pop();
+                                    }
                                   }
                                 } else {
                                   await FailureWidget.build(

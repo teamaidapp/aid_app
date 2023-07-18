@@ -247,6 +247,32 @@ class _AddPlayerWidget extends HookConsumerWidget {
             isLoading: isLoading.value,
             mainAxisAlignment: MainAxisAlignment.center,
             onTap: () async {
+              if (teamId.value.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please select the team'),
+                  ),
+                );
+                return;
+              }
+              if (emailController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please fill the email'),
+                  ),
+                );
+                return;
+              }
+
+              if (phoneController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please fill the phone number'),
+                  ),
+                );
+                return;
+              }
+
               isLoading.value = true;
               final res = await ref.read(addPlayerControllerProvider.notifier).sendPlayerInvitation(
                     email: emailController.text,

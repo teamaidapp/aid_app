@@ -98,6 +98,7 @@ class MyAccountRepositoryImpl implements MyAccountRepository {
         body: jsonEncode(data),
         headers: {
           'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
         },
       );
 

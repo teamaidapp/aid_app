@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/constants.dart';
+import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/drawer.widget.dart';
@@ -39,6 +40,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final prefsProvider = ref.watch(sharedPrefs);
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
@@ -60,28 +62,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Spacer(),
-                    ref.watch(sharedPrefs).when(
-                          data: (prefs) {
-                            final name = prefs.getString(TAConstants.firstName);
-                            return TATypography.h3(
-                              text: 'Hi $name',
-                              color: TAColors.textColor,
-                              fontWeight: FontWeight.w700,
-                            );
-                          },
-                          error: (error, stackTrace) => TATypography.h3(
-                            text: 'Hi',
-                            color: TAColors.textColor,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          loading: () {
-                            return TATypography.h3(
-                              text: 'Hi',
-                              color: TAColors.textColor,
-                              fontWeight: FontWeight.w700,
-                            );
-                          },
-                        ),
+                    prefsProvider.when(
+                      data: (prefs) {
+                        final name = prefs.getString(TAConstants.firstName);
+                        return TATypography.h3(
+                          text: 'Hi $name',
+                          color: TAColors.textColor,
+                          fontWeight: FontWeight.w700,
+                        );
+                      },
+                      error: (error, stackTrace) => TATypography.h3(
+                        text: 'Hi',
+                        color: TAColors.textColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      loading: () {
+                        return TATypography.h3(
+                          text: 'Hi',
+                          color: TAColors.textColor,
+                          fontWeight: FontWeight.w700,
+                        );
+                      },
+                    ),
                     const Spacer(),
                     GestureDetector(
                       onTap: () {
@@ -117,16 +119,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         TodayWidget(),
                         const SizedBox(width: 80),
-                        Expanded(
-                          child: TAPrimaryButton(
-                            text: 'CREATE TEAM',
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            icon: Iconsax.add,
-                            onTap: () {
-                              context.push(AppRoutes.createAccountTeamForCoach);
-                            },
-                          ),
+                        prefsProvider.when(
+                          data: (prefs) {
+                            final role = prefs.getString(TAConstants.role);
+                            if (role == Role.coach.name) {
+                              return Expanded(
+                                child: TAPrimaryButton(
+                                  text: 'CREATE TEAM',
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  icon: Iconsax.add,
+                                  onTap: () {
+                                    context.push(AppRoutes.createAccountTeamForCoach);
+                                  },
+                                ),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                          error: (error, stackTrace) {
+                            return const SizedBox();
+                          },
+                          loading: () {
+                            return const SizedBox();
+                          },
                         ),
                       ],
                     ),
