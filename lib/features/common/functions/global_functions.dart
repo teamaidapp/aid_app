@@ -30,6 +30,11 @@ class GlobalFunctions {
     await prefs.setString(TAConstants.sport, user.sportId);
     await prefs.setString(TAConstants.biography, user.biography);
     await prefs.setString(TAConstants.avatar, user.avatar ?? '');
+    await prefs.setBool(TAConstants.isEmailVisible, user.isEmailVisible ?? false);
+    await prefs.setBool(TAConstants.isPhoneVisible, user.isPhoneVisible ?? false);
+    await prefs.setBool(TAConstants.isFatherVisible, user.isFatherVisible ?? false);
+    await prefs.setBool(TAConstants.isAvatarVisible, user.isAvatarVisible ?? false);
+    await prefs.setBool(TAConstants.isBiographyVisible, user.isBiographyVisible ?? false);
   }
 
   /// The function generates a list of HourModel objects representing hours and minutes in both AM and PM

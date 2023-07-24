@@ -13,6 +13,7 @@ import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
 import 'package:team_aid/features/myAccount/controllers/myAccount.controller.dart';
+import 'package:team_aid/main.dart';
 
 /// The statelessWidget that handles the current screen
 class PhoneScreen extends HookConsumerWidget {
@@ -22,8 +23,8 @@ class PhoneScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final phoneController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.phoneNumber);
-
     final isLoading = useState(false);
+    final isVisible = useState(false);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -98,6 +99,33 @@ class PhoneScreen extends HookConsumerWidget {
                                 textEditingController: phoneController,
                               ),
                               const SizedBox(height: 20),
+                              ref.watch(sharedPrefs).when(
+                                    data: (prefs) {
+                                      isVisible.value = prefs.getBool(TAConstants.isPhoneVisible) ?? false;
+                                      return Row(
+                                        children: [
+                                          Switch.adaptive(
+                                            value: isVisible.value,
+                                            activeColor: const Color(0xff586DF4),
+                                            onChanged: (v) {
+                                              debugPrint(v.toString());
+                                              isVisible.value = v;
+                                              prefs.setBool(TAConstants.isPhoneVisible, v);
+                                            },
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: TATypography.paragraph(
+                                              text: 'Visible to public',
+                                              color: TAColors.grey1,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                    error: (_, __) => const SizedBox(),
+                                    loading: () => const SizedBox(),
+                                  ),
                               const SizedBox(height: 20),
                             ],
                           ),
@@ -160,12 +188,17 @@ class PhoneScreen extends HookConsumerWidget {
                                   firstName: '',
                                   lastName: '',
                                   email: '',
-                                  phoneNumber: phoneController.text.trim(),
+                                  phoneNumber: '',
                                   password: '',
                                   sportId: '',
                                   role: Role.coach,
                                   cityId: '',
                                   stateId: '',
+                                  isBiographyVisible: null,
+                                  isAvatarVisible: null,
+                                  isEmailVisible: null,
+                                  isFatherVisible: null,
+                                  isPhoneVisible: isVisible.value,
                                 );
 
                                 isLoading.value = true;

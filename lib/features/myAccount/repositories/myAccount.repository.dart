@@ -89,6 +89,26 @@ class MyAccountRepositoryImpl implements MyAccountRepository {
         data['biography'] = user.biography;
       }
 
+      if (user.isBiographyVisible != null) {
+        data['isBiographyVisible'] = user.isBiographyVisible;
+      }
+
+      if (user.isAvatarVisible != null) {
+        data['isAvatarVisible'] = user.isAvatarVisible;
+      }
+
+      if (user.isEmailVisible != null) {
+        data['isEmailVisible'] = user.isEmailVisible;
+      }
+
+      if (user.isFatherVisible != null) {
+        data['isFatherVisible'] = user.isFatherVisible;
+      }
+
+      if (user.isPhoneVisible != null) {
+        data['isPhoneVisible'] = user.isPhoneVisible;
+      }
+
       final res = await http.patch(
         url,
         body: jsonEncode(data),

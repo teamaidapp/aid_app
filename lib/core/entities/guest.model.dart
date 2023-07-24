@@ -3,6 +3,9 @@ class Guest {
   /// This is the constructor of the Guest class.
   const Guest({
     required this.userId,
+    this.firstName = '',
+    this.lastName = '',
+    this.avatar,
   });
 
   /// This is a factory constructor in Dart that creates a Guest object from a map of key-value pairs.
@@ -19,6 +22,9 @@ class Guest {
   factory Guest.fromMap(Map<String, dynamic> map) {
     return Guest(
       userId: (map['userId'] as Map<String, dynamic>?)?['id'] as String? ?? '',
+      firstName: (map['userId'] as Map<String, dynamic>?)?['firstName'] as String? ?? '',
+      lastName: (map['userId'] as Map<String, dynamic>?)?['lastName'] as String? ?? '',
+      avatar: (map['userId'] as Map<String, dynamic>?)?['avatar'] as String?,
     );
   }
 
@@ -35,4 +41,13 @@ class Guest {
 
   /// The user id
   final String userId;
+
+  /// The user first name
+  final String firstName;
+
+  /// The user last name
+  final String lastName;
+
+  /// The user avatar
+  final String? avatar;
 }

@@ -639,7 +639,7 @@ class _ItineraryWidget extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Iconsax.airplane),
+                          Icon(itinerary.transportation == 'Airport' ? Iconsax.airplane5 : Iconsax.bus),
                           const SizedBox(width: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -663,7 +663,7 @@ class _ItineraryWidget extends StatelessWidget {
                       const SizedBox(width: 60),
                       Row(
                         children: [
-                          const Icon(Iconsax.airplane),
+                          Icon(itinerary.transportation == 'Airport' ? Iconsax.airplane5 : Iconsax.bus),
                           const SizedBox(width: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -689,6 +689,33 @@ class _ItineraryWidget extends StatelessWidget {
                   const SizedBox(height: 20),
                   Row(
                     children: [
+                      const Icon(Iconsax.people),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TATypography.subparagraph(
+                              text: 'Assistants',
+                              color: TAColors.grey1,
+                            ),
+                            ...List.generate(
+                              itinerary.guests.length,
+                              (index) {
+                                return TATypography.paragraph(
+                                  text: '${itinerary.guests[index].firstName} ${itinerary.guests[index].lastName}',
+                                  fontWeight: FontWeight.w600,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
                       const Icon(Iconsax.building_4),
                       const SizedBox(width: 8),
                       Expanded(
@@ -696,7 +723,7 @@ class _ItineraryWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TATypography.subparagraph(
-                              text: 'Hotel',
+                              text: 'Location',
                               color: TAColors.grey1,
                             ),
                             TATypography.paragraph(

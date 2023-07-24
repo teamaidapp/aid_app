@@ -16,6 +16,11 @@ class UserModel {
     required this.role,
     required this.cityId,
     required this.stateId,
+    this.isEmailVisible = false,
+    this.isPhoneVisible = false,
+    this.isFatherVisible = false,
+    this.isAvatarVisible = false,
+    this.isBiographyVisible = false,
     this.biography = '',
     this.avatar,
   });
@@ -44,6 +49,11 @@ class UserModel {
       stateId: map['stateId'] as String,
       biography: map['biography'] as String,
       avatar: map['avatar'] as String?,
+      isEmailVisible: map['isEmailVisible'] as bool,
+      isPhoneVisible: map['isPhoneVisible'] as bool,
+      isFatherVisible: map['isFatherVisible'] as bool,
+      isAvatarVisible: map['isAvatarVisible'] as bool,
+      isBiographyVisible: map['isBiographyVisible'] as bool,
     );
   }
 
@@ -84,6 +94,11 @@ class UserModel {
     String? stateId,
     String? biography,
     String? avatar,
+    bool? isEmailVisible,
+    bool? isPhoneVisible,
+    bool? isFatherVisible,
+    bool? isAvatarVisible,
+    bool? isBiographyVisible,
   }) {
     return UserModel(
       firstName: firstName ?? this.firstName,
@@ -96,6 +111,11 @@ class UserModel {
       cityId: cityId ?? this.cityId,
       stateId: stateId ?? this.stateId,
       biography: biography ?? this.biography,
+      isEmailVisible: isEmailVisible ?? this.isEmailVisible,
+      isPhoneVisible: isPhoneVisible ?? this.isPhoneVisible,
+      isFatherVisible: isFatherVisible ?? this.isFatherVisible,
+      isAvatarVisible: isAvatarVisible ?? this.isAvatarVisible,
+      isBiographyVisible: isBiographyVisible ?? this.isBiographyVisible,
     );
   }
 
@@ -157,6 +177,21 @@ class UserModel {
   final String biography;
 
   final String? avatar;
+
+  /// Determines if the Email is visible or not.
+  final bool? isEmailVisible;
+
+  /// Determines if the Phone is visible or not.
+  final bool? isPhoneVisible;
+
+  /// Determines if the Father is visible or not.
+  final bool? isFatherVisible;
+
+  /// Determines if the Avatar is visible or not.
+  final bool? isAvatarVisible;
+
+  /// Determines if the Biography is visible or not.
+  final bool? isBiographyVisible;
 
   String toJson() => json.encode(toMap());
 

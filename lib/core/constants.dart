@@ -33,6 +33,21 @@ class TAConstants {
   /// The key for the user's avatar in shared preferences.
   static const String avatar = 'avatar';
 
+  /// The key for the user's email visibility
+  static const String isEmailVisible = 'isEmailVisible';
+
+  /// The key for the user's phone visibility
+  static const String isPhoneVisible = 'isPhoneVisible';
+
+  /// The key for the user's father visibility
+  static const String isFatherVisible = 'isFatherVisible';
+
+  /// The key for the user's avatar visibility
+  static const String isAvatarVisible = 'isAvatarVisible';
+
+  /// The key for the user's biography visibility
+  static const String isBiographyVisible = 'isBiographyVisible';
+
   /// A list of all the sports
   static final sportsList = <TADropdownModel>[
     TADropdownModel(

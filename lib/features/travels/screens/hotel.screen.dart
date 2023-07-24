@@ -600,7 +600,7 @@ class _HotelWidget extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Iconsax.airplane),
+                          const Icon(Iconsax.house),
                           const SizedBox(width: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -624,7 +624,7 @@ class _HotelWidget extends StatelessWidget {
                       const SizedBox(width: 60),
                       Row(
                         children: [
-                          const Icon(Iconsax.airplane),
+                          const Icon(Iconsax.house),
                           const SizedBox(width: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -650,6 +650,33 @@ class _HotelWidget extends StatelessWidget {
                   const SizedBox(height: 20),
                   Row(
                     children: [
+                      const Icon(Iconsax.people),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TATypography.subparagraph(
+                              text: 'Assistants',
+                              color: TAColors.grey1,
+                            ),
+                            ...List.generate(
+                              hotel.guests.length,
+                              (index) {
+                                return TATypography.paragraph(
+                                  text: '${hotel.guests[index].firstName} ${hotel.guests[index].lastName}',
+                                  fontWeight: FontWeight.w600,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
                       const Icon(Iconsax.building_4),
                       const SizedBox(width: 8),
                       Expanded(
@@ -657,16 +684,12 @@ class _HotelWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TATypography.subparagraph(
-                              text: 'Hotel',
+                              text: 'Location',
                               color: TAColors.grey1,
                             ),
                             TATypography.paragraph(
-                              text: 'Rio All Suites',
+                              text: hotel.placeDescription,
                               fontWeight: FontWeight.w600,
-                            ),
-                            TATypography.paragraph(
-                              text: '3700 W Flamingo Rd, Las Vegas, NV 89103',
-                              color: TAColors.grey1,
                             ),
                           ],
                         ),

@@ -8,7 +8,6 @@ class UserCreator {
     required this.email,
     required this.phoneNumber,
     required this.address,
-    required this.password,
     required this.role,
     required this.acceptTermsAndConditions,
     required this.accountVerificationState,
@@ -29,18 +28,17 @@ class UserCreator {
       lastName: map['lastName'] as String,
       email: map['email'] as String,
       phoneNumber: map['phoneNumber'] as String,
-      address: map['address'] as String,
-      password: map['password'] as String,
+      address: map['address'] as String? ?? '',
       role: map['role'] as String,
-      acceptTermsAndConditions: map['acceptTermsAndConditions'] as bool,
+      acceptTermsAndConditions: map['acceptTermsAndConditions'] as bool?,
       otpExpiration: map['otpExpiration'] != null ? map['otpExpiration'] as String : null,
       otpCode: map['otpCode'] != null ? map['otpCode'] as String : null,
       accountVerificationState: map['accountVerificationState'] as String,
       fatherId: map['fatherId'] != null ? map['fatherId'] as String : null,
       avatar: map['avatar'] as String?,
-      biography: map['biography'] as String,
+      biography: map['biography'] as String? ?? '',
       createdAt: map['createdAt'] as String,
-      updateAt: map['updateAt'] as String,
+      updateAt: map['updateAt'] as String? ?? '',
     );
   }
 
@@ -53,7 +51,6 @@ class UserCreator {
       'email': email,
       'phoneNumber': phoneNumber,
       'address': address,
-      'password': password,
       'role': role,
       'acceptTermsAndConditions': acceptTermsAndConditions,
       'otpExpiration': otpExpiration,
@@ -83,16 +80,13 @@ class UserCreator {
   final String phoneNumber;
 
   /// The address of the itinerary.
-  final String address;
-
-  /// The password of the itinerary.
-  final String password;
+  final String? address;
 
   /// The role of the itinerary.
   final String role;
 
   /// The acceptance of terms and conditions of the itinerary.
-  final bool acceptTermsAndConditions;
+  final bool? acceptTermsAndConditions;
 
   /// The OTP expiration date of the itinerary.
   final String? otpExpiration;

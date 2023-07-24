@@ -26,7 +26,7 @@ class TeamModel {
       state: map['state'] as String,
       level: map['level'] as String,
       id: map['id'] as String,
-      city: map['city'] as String,
+      city: map['city'] as String? ?? '',
     );
   }
 
@@ -100,7 +100,7 @@ class TeamModel {
   final String state;
 
   /// The city the team is located in.
-  final String city;
+  final String? city;
 
   /// The level of the team.
   final String level;
