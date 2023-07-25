@@ -42,6 +42,7 @@ dev_dependencies:
     sdk: flutter
   mocktail: ^0.3.0
   riverpod_lint: ^1.3.2
+  scroll_to_index: ^3.0.1
   very_good_analysis: ^5.0.0
 
 flutter:

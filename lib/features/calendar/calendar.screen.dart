@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/extensions.dart';
@@ -17,6 +18,7 @@ import 'package:team_aid/design_system/components/inputs/multi_dropdown.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/controllers/calendar.controller.dart';
 import 'package:team_aid/features/calendar/entities/event.model.dart';
+import 'package:team_aid/features/calendar/entities/event_hour.model.dart';
 import 'package:team_aid/features/calendar/entities/hour.model.dart';
 import 'package:team_aid/features/calendar/entities/schedule.model.dart';
 import 'package:team_aid/features/calendar/widgets/event.widget.dart';
@@ -200,12 +202,16 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         const SizedBox(width: 80),
                         Expanded(
                           child: TAPrimaryButton(
-                            text: 'SCHEDULE',
+                            text: createSchedule.value ? 'BACK' : 'SCHEDULE',
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             padding: const EdgeInsets.symmetric(horizontal: 10),
-                            icon: Iconsax.add,
+                            icon: createSchedule.value ? null : Iconsax.add,
                             onTap: () {
-                              createSchedule.value = true;
+                              if (createSchedule.value) {
+                                createSchedule.value = false;
+                              } else {
+                                createSchedule.value = true;
+                              }
                             },
                           ),
                         ),
@@ -239,46 +245,320 @@ class _TodayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18),
-      child: events.when(
-        data: (data) {
-          // Filter events by dateKey
-          final filteredEvents = data.where((event) {
-            return event.dateKey.split('T')[0] == DateTime.now().toIso8601String().split('T')[0];
-          }).toList();
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        child: events.when(
+          data: (data) {
+            // Filter events by dateKey
+            final filteredEvents = data.where((event) {
+              return event.dateKey.split('T')[0] == DateTime.now().toIso8601String().split('T')[0];
+            }).toList();
 
-          if (filteredEvents.isNotEmpty) {
-            return ListView.builder(
-              itemCount: filteredEvents.length,
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final event = filteredEvents[index];
-                final startTime = DateFormat('hh:mm a').format(event.event.startDate).toUpperCase();
-                final endTime = DateFormat('hh:mm a').format(event.event.endDate).toUpperCase();
-                return Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    EventWidget(
-                      eventName: event.event.eventName.capitalizeWord(),
-                      organizerName: event.event.userCreator?.firstName ?? '',
-                      startTime: startTime,
-                      endTime: endTime,
-                    ),
-                  ],
-                );
-              },
-            );
-          } else {
-            return Center(
-              child: TATypography.paragraph(
-                text: 'Hurrah! You have no events :)',
-                color: TAColors.textColor,
-                fontWeight: FontWeight.w600,
+            if (filteredEvents.isNotEmpty) {
+              return ListView.builder(
+                itemCount: filteredEvents.length,
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  final event = filteredEvents[index];
+                  final startTime = DateFormat('hh:mm a').format(event.event.startDate).toUpperCase();
+                  final endTime = DateFormat('hh:mm a').format(event.event.endDate).toUpperCase();
+                  return Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      EventWidget(
+                        eventName: event.event.eventName.capitalizeWord(),
+                        organizerName: event.event.userCreator?.firstName ?? '',
+                        startTime: startTime,
+                        endTime: endTime,
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else {
+              return Center(
+                child: TATypography.paragraph(
+                  text: 'Hurrah! You have no events :)',
+                  color: TAColors.textColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              );
+            }
+          },
+          error: (error, stackTrace) {
+            return const SizedBox();
+          },
+          loading: () {
+            return const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  TAColors.purple,
+                ),
               ),
             );
-          }
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _FullCalendarWidget extends ConsumerStatefulWidget {
+  const _FullCalendarWidget({required this.events});
+
+  final AsyncValue<List<CalendarEvent>> events;
+
+  @override
+  ConsumerState<_FullCalendarWidget> createState() => _FullCalendarWidgetState();
+}
+
+class _FullCalendarWidgetState extends ConsumerState<_FullCalendarWidget> {
+  late String currentMonth;
+  late String nextMonth;
+  late String previousMonth;
+  final currentMonthDays = <DateTime>[];
+  // final hours = <EventHourModel>[];
+  // final todayHours = <EventHourModel>[];
+  final calendar = <CalendarModel>[];
+
+  var _initialDate = DateTime.now();
+
+  final _scrollController = AutoScrollController();
+
+  @override
+  void initState() {
+    getMonths();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final todayDay = DateTime.now().day - 1;
+      await _scrollController.scrollToIndex(todayDay, preferPosition: AutoScrollPosition.begin);
+    });
+    super.initState();
+  }
+
+  void getMonths() {
+    currentMonth = getCurrentMonth(_initialDate);
+    nextMonth = getNextMonth(_initialDate);
+    previousMonth = getPreviousMonth(_initialDate);
+    currentMonthDays
+      ..clear()
+      ..addAll(getDaysInCurrentMonth(_initialDate));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: widget.events.when(
+        data: (events) {
+          // todayHours.addAll(generateHourListFromCurrentHour(events: events));
+          // hours.addAll(generateHourList(events: events));
+          calendar.addAll(generateCalendar(events: events));
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TATypography.h3(
+                    text: previousMonth.toUpperCase(),
+                    color: TAColors.textColor.withOpacity(0.25),
+                  ),
+                  const SizedBox(width: 20),
+                  GestureDetector(
+                    onTap: () {
+                      _initialDate = _initialDate.subtract(const Duration(days: 30));
+                      setState(getMonths);
+                    },
+                    behavior: HitTestBehavior.translucent,
+                    child: const Icon(
+                      Iconsax.arrow_left_2,
+                      size: 20,
+                      color: TAColors.textColor,
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  TATypography.h3(
+                    text: currentMonth.toUpperCase(),
+                    color: TAColors.textColor,
+                  ),
+                  const SizedBox(width: 20),
+                  GestureDetector(
+                    onTap: () {
+                      _initialDate = _initialDate.add(const Duration(days: 30));
+                      setState(getMonths);
+                    },
+                    behavior: HitTestBehavior.translucent,
+                    child: const Icon(
+                      Iconsax.arrow_right_3,
+                      size: 20,
+                      color: TAColors.textColor,
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  TATypography.h3(
+                    text: nextMonth.toUpperCase(),
+                    color: TAColors.textColor.withOpacity(0.25),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: currentMonthDays.length,
+                  controller: _scrollController,
+                  itemBuilder: (context, index) {
+                    final dayName = calendar[index].dayLabel;
+                    final dayNumber = calendar[index].dayNumber;
+                    final monthName = getMonthName(currentMonthDays[index]);
+
+                    return AutoScrollTag(
+                      key: ValueKey(index),
+                      index: index,
+                      controller: _scrollController,
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final hoursWidth = calendar[index].hours.length * 120.0;
+                          return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.only(left: 10),
+                            child: SizedBox(
+                              width: hoursWidth,
+                              child: Column(
+                                children: [
+                                  TAContainer(
+                                    radius: 28,
+                                    child: Row(
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            TATypography.subparagraph(
+                                              text: dayName,
+                                              color: TAColors.color3,
+                                            ),
+                                            Row(
+                                              children: [
+                                                TATypography.paragraph(
+                                                  text: dayNumber.toString(),
+                                                  fontWeight: FontWeight.w600,
+                                                  color: TAColors.textColor,
+                                                ),
+                                                const SizedBox(width: 10),
+                                                TATypography.paragraph(
+                                                  text: monthName,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: TAColors.textColor,
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 6),
+                                            SizedBox(
+                                              width: 76,
+                                              child: TASecondaryButton(
+                                                text: 'VIEW',
+                                                padding: EdgeInsets.zero,
+                                                onTap: () {},
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(width: 20),
+                                        const SizedBox(
+                                          height: 80,
+                                          child: VerticalDivider(),
+                                        ),
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: 100,
+                                            child: ListView.builder(
+                                              itemCount: calendar[index].hours.length,
+                                              // shrinkWrap: true,
+                                              physics: const NeverScrollableScrollPhysics(),
+                                              scrollDirection: Axis.horizontal,
+                                              itemBuilder: (context, hoursIndex) {
+                                                return SizedBox(
+                                                  width: 110,
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          const SizedBox(
+                                                            height: 20,
+                                                            child: VerticalDivider(),
+                                                          ),
+                                                          TATypography.paragraph(
+                                                            text: calendar[index].hours[hoursIndex].label,
+                                                            color: TAColors.textColor.withOpacity(0.25),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(height: 10),
+                                                      if (calendar[index].hours[hoursIndex].event != null)
+                                                        Expanded(
+                                                          child: ListView.builder(
+                                                            itemCount: calendar[index].hours[hoursIndex].event!.length,
+                                                            itemBuilder: (context, indexFromVerticalList) {
+                                                              return Container(
+                                                                decoration: BoxDecoration(
+                                                                  color: TAColors.purple,
+                                                                  borderRadius: BorderRadius.circular(28),
+                                                                ),
+                                                                padding: const EdgeInsets.all(10),
+                                                                margin: const EdgeInsets.only(bottom: 4),
+                                                                child: TATypography.subparagraph(
+                                                                  color: Colors.white,
+                                                                  text:
+                                                                      calendar[index].hours[hoursIndex].event![indexFromVerticalList].event.eventName,
+                                                                  fontWeight: FontWeight.w600,
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        )
+                                                      // else if (hours[index].event != null)
+                                                      //   Expanded(
+                                                      //     child: ListView.builder(
+                                                      //       itemCount: hours[index].event!.length,
+                                                      //       itemBuilder: (context, indexFromVerticalList) {
+                                                      //         return Container(
+                                                      //           decoration: BoxDecoration(
+                                                      //             color: TAColors.purple,
+                                                      //             borderRadius: BorderRadius.circular(28),
+                                                      //           ),
+                                                      //           padding: const EdgeInsets.all(10),
+                                                      //           margin: const EdgeInsets.only(bottom: 4),
+                                                      //           child: TATypography.subparagraph(
+                                                      //             color: Colors.white,
+                                                      //             text: hours[index].event![indexFromVerticalList].event.eventName,
+                                                      //             fontWeight: FontWeight.w600,
+                                                      //           ),
+                                                      //         );
+                                                      //       },
+                                                      //     ),
+                                                      //   )
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
         },
         error: (error, stackTrace) {
           return const SizedBox();
@@ -296,222 +576,102 @@ class _TodayWidget extends StatelessWidget {
       ),
     );
   }
-}
 
-class _FullCalendarWidget extends StatefulWidget {
-  const _FullCalendarWidget({required this.events});
+  // List<EventHourModel> generateHourListFromCurrentHour({required List<CalendarEvent> events}) {
+  //   todayHours.clear();
+  //   final currentHour = DateTime.now().hour;
 
-  final AsyncValue<List<CalendarEvent>> events;
+  //   final hourList = List<EventHourModel>.generate(
+  //     24 - currentHour,
+  //     (index) {
+  //       final hour = '${currentHour + index}';
+  //       final label = '${currentHour + index} ${currentHour + index >= 12 ? 'PM' : 'AM'}';
+  //       final event = events.where((event) => event.event.startDate.hour == currentHour + index).toList();
 
-  @override
-  State<_FullCalendarWidget> createState() => _FullCalendarWidgetState();
-}
+  //       return EventHourModel(
+  //         hour: hour,
+  //         label: label,
+  //         event: event,
+  //       );
+  //     },
+  //   );
 
-class _FullCalendarWidgetState extends State<_FullCalendarWidget> {
-  late String currentMonth;
-  late String nextMonth;
-  late String previousMonth;
-  final currentMonthDays = <DateTime>[];
-  final hours = <String>[];
-  final todayHours = <String>[];
+  //   return hourList;
+  // }
 
-  var _initialDate = DateTime.now();
+  // List<EventHourModel> generateHourList({required List<CalendarEvent> events}) {
+  //   hours.clear();
+  //   final currentEventFromEvents = events.where((event) {
+  //     return currentMonthDays.any((day) => event.dateKey.split('T')[0] == day.toIso8601String().split('T')[0]);
+  //   }).toList();
 
-  @override
-  void initState() {
-    getMonths();
-    todayHours.addAll(generateHourListFromCurrentHour());
-    hours.addAll(generateHourList());
-    super.initState();
-  }
+  //   final currentDateEvents = currentEventFromEvents.where((event) {
+  //     return event.dateKey.split('T')[0] == DateTime.now().toIso8601String().split('T')[0];
+  //   }).toList();
 
-  void getMonths() {
-    currentMonth = getCurrentMonth(_initialDate);
-    nextMonth = getNextMonth(_initialDate);
-    previousMonth = getPreviousMonth(_initialDate);
-    currentMonthDays
-      ..clear()
-      ..addAll(getDaysInCurrentMonth(_initialDate));
-  }
+  //   final hourList = List<EventHourModel>.generate(
+  //     17,
+  //     (index) {
+  //       final hour = '${index + 8}';
+  //       final label = '${index + 8} ${index + 8 >= 12 && index + 8 < 24 ? 'PM' : 'AM'}';
+  //       final event = currentDateEvents.where((event) => event.event.startDate.hour == index + 8).toList();
 
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TATypography.h3(
-                text: previousMonth.toUpperCase(),
-                color: TAColors.textColor.withOpacity(0.25),
-              ),
-              const SizedBox(width: 20),
-              GestureDetector(
-                onTap: () {
-                  _initialDate = _initialDate.subtract(const Duration(days: 30));
-                  setState(getMonths);
-                },
-                behavior: HitTestBehavior.translucent,
-                child: const Icon(
-                  Iconsax.arrow_left_2,
-                  size: 20,
-                  color: TAColors.textColor,
-                ),
-              ),
-              const SizedBox(width: 20),
-              TATypography.h3(
-                text: currentMonth.toUpperCase(),
-                color: TAColors.textColor,
-              ),
-              const SizedBox(width: 20),
-              GestureDetector(
-                onTap: () {
-                  _initialDate = _initialDate.add(const Duration(days: 30));
-                  setState(getMonths);
-                },
-                behavior: HitTestBehavior.translucent,
-                child: const Icon(
-                  Iconsax.arrow_right_3,
-                  size: 20,
-                  color: TAColors.textColor,
-                ),
-              ),
-              const SizedBox(width: 20),
-              TATypography.h3(
-                text: nextMonth.toUpperCase(),
-                color: TAColors.textColor.withOpacity(0.25),
-              ),
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: currentMonthDays.length,
-              itemBuilder: (context, index) {
-                final dayName = getDayName(currentMonthDays[index]);
-                final dayNumber = currentMonthDays[index].day;
-                final monthName = getMonthName(currentMonthDays[index]);
-                final isToday = currentMonthDays[index].day == DateTime.now().day;
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    final hoursWidth = isToday ? todayHours.length * 120.0 : hours.length * 120.0;
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.only(left: 10),
-                      child: SizedBox(
-                        width: hoursWidth,
-                        child: Column(
-                          children: [
-                            TAContainer(
-                              radius: 28,
-                              child: Row(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      TATypography.subparagraph(
-                                        text: dayName,
-                                        color: TAColors.color3,
-                                      ),
-                                      Row(
-                                        children: [
-                                          TATypography.paragraph(
-                                            text: dayNumber.toString(),
-                                            fontWeight: FontWeight.w600,
-                                            color: TAColors.textColor,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          TATypography.paragraph(
-                                            text: monthName,
-                                            fontWeight: FontWeight.w600,
-                                            color: TAColors.textColor,
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 6),
-                                      SizedBox(
-                                        width: 76,
-                                        child: TASecondaryButton(
-                                          text: 'VIEW',
-                                          padding: EdgeInsets.zero,
-                                          onTap: () {},
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(width: 20),
-                                  const SizedBox(
-                                    height: 80,
-                                    child: VerticalDivider(),
-                                  ),
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: 80,
-                                      child: ListView.builder(
-                                        itemCount: isToday ? todayHours.length : hours.length,
-                                        shrinkWrap: true,
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        scrollDirection: Axis.horizontal,
-                                        itemBuilder: (context, index) {
-                                          return SizedBox(
-                                            width: 110,
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    const SizedBox(
-                                                      height: 20,
-                                                      child: VerticalDivider(),
-                                                    ),
-                                                    TATypography.paragraph(
-                                                      text: isToday ? todayHours[index] : hours[index],
-                                                      color: TAColors.textColor.withOpacity(0.25),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  //       return EventHourModel(
+  //         hour: hour,
+  //         label: label,
+  //         event: event,
+  //       );
+  //     },
+  //   );
 
-  List<String> generateHourListFromCurrentHour() {
-    final currentHour = DateTime.now().hour;
+  //   return hourList;
+  // }
 
-    final hourList = List<String>.generate(
-      24 - currentHour,
-      (index) => '${currentHour + index} ${currentHour + index >= 12 ? 'PM' : 'AM'}',
-    );
+  List<CalendarModel> generateCalendar({
+    required List<CalendarEvent> events,
+    int startHour = 8,
+    int endHour = 23,
+  }) {
+    calendar.clear();
 
-    return hourList;
-  }
+    final currentEventFromEvents = events.where((event) {
+      return currentMonthDays.any((day) => event.dateKey.split('T')[0] == day.toIso8601String().split('T')[0]);
+    }).toList();
 
-  List<String> generateHourList() {
-    final hourList = List<String>.generate(
-      24,
-      (index) => '${index + 1} ${index + 1 >= 12 ? 'PM' : 'AM'}',
-    );
+    final calendarDays = <CalendarModel>[];
 
-    return hourList;
+    for (var i = 0; i < currentMonthDays.length; i++) {
+      final currentDay = currentMonthDays[i];
+      final currentDayEvents = currentEventFromEvents.where((event) {
+        final eventDate = event.event.startDate;
+        return eventDate.year == currentDay.year && eventDate.month == currentDay.month && eventDate.day == currentDay.day;
+      }).toList();
+
+      final dayHours = List<EventHourModel>.generate(
+        endHour - startHour + 1,
+        (index) {
+          final hour = '${index + startHour}';
+          final label = '${index + startHour} ${index + startHour >= 12 && index + startHour < 24 ? 'PM' : 'AM'}';
+          final events = currentDayEvents.where((event) => event.event.startDate.hour == index + startHour).toList();
+
+          return EventHourModel(
+            hour: hour,
+            label: label,
+            event: events.isEmpty ? null : events,
+          );
+        },
+      );
+
+      calendarDays.add(
+        CalendarModel(
+          dayLabel: DateFormat('EEEE').format(currentDay),
+          dayNumber: currentDay.day,
+          hours: dayHours,
+        ),
+      );
+    }
+
+    return calendarDays;
   }
 
   String getDayName(DateTime dateTime) {
@@ -567,7 +727,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
   final days = <DateTime>[];
   final months = <String>[];
   final years = <String>[];
-  final currentDay = DateTime.now().day;
+  var _currentDay = DateTime.now().day;
   var _currentSelectedMonth = DateTime.now().month;
   var _currentSelectedYear = DateTime.now().year;
 
@@ -668,8 +828,8 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                       child: TADropdown(
                         label: 'Day',
                         selectedValue: TADropdownModel(
-                          item: currentDay.toString(),
-                          id: currentDay.toString(),
+                          item: _currentDay.toString(),
+                          id: _currentDay.toString(),
                         ),
                         items: List.generate(
                           days.length,
@@ -683,11 +843,16 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                         ),
                         placeholder: '',
                         onChange: (v) {
-                          _fromDate = DateTime(
-                            _currentSelectedYear,
-                            _currentSelectedMonth,
-                            currentDay,
-                          );
+                          if (v != null) {
+                            setState(() {
+                              _currentDay = int.parse(v.item);
+                              _fromDate = DateTime(
+                                _currentSelectedYear,
+                                _currentSelectedMonth,
+                                _currentDay,
+                              );
+                            });
+                          }
                         },
                       ),
                     ),
@@ -718,7 +883,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                               _fromDate = DateTime(
                                 _currentSelectedYear,
                                 _currentSelectedMonth,
-                                currentDay,
+                                _currentDay,
                               );
 
                               days
@@ -759,7 +924,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                               _fromDate = DateTime(
                                 _currentSelectedYear,
                                 _currentSelectedMonth,
-                                currentDay,
+                                _currentDay,
                               );
                               _currentSelectedYear = int.parse(v.id);
                             });
@@ -792,7 +957,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                               _fromDate = DateTime(
                                 _currentSelectedYear,
                                 _currentSelectedMonth,
-                                currentDay,
+                                _currentDay,
                                 int.parse(
                                   v.id.split('hour:')[1].split('minute:')[0],
                                 ),
@@ -826,7 +991,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                               _toDate = DateTime(
                                 _currentSelectedYear,
                                 _currentSelectedMonth,
-                                currentDay,
+                                _currentDay,
                                 int.parse(
                                   v.id.split('hour:')[1].split('minute:')[0],
                                 ),
@@ -845,12 +1010,14 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                 TADropdown(
                   label: 'Repeat',
                   items: [
+                    TADropdownModel(item: 'Once', id: 'once'),
                     TADropdownModel(item: 'Daily', id: 'daily'),
                     TADropdownModel(item: 'Weekly', id: 'weekly'),
                     TADropdownModel(item: 'Monthly', id: 'monthly'),
                     TADropdownModel(item: 'Yearly', id: 'yearly'),
                   ],
                   placeholder: '',
+                  selectedValue: TADropdownModel(item: 'Once', id: 'once'),
                   onChange: (v) {
                     if (v != null) {
                       setState(() {

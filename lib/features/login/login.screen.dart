@@ -257,22 +257,30 @@ class _CreateAccountPage extends HookWidget {
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TATypography.h3(
-                      text: 'Team player',
-                      color: TAColors.textColor,
-                    ),
-                    const SizedBox(height: 8),
-                    TATypography.paragraph(
-                      text: 'Choose your profile',
-                      color: TAColors.color3,
-                    ),
-                  ],
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TATypography.h3(
+                        text: 'Team player',
+                        color: TAColors.textColor,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          teamPlayerSelected.value = false;
+                        },
+                        child: const Icon(Iconsax.close_circle),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  TATypography.paragraph(
+                    text: 'Choose your profile',
+                    color: TAColors.color3,
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
               Column(
