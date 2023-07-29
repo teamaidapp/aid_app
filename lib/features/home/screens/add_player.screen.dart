@@ -107,7 +107,7 @@ class AddPlayerScreen extends HookWidget {
                   },
                   child: Container(
                     height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
                       color: !addPlayerScreen.value ? const Color(0xffF5F8FB) : Colors.transparent,
                       borderRadius: const BorderRadius.only(

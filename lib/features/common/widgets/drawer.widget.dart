@@ -59,12 +59,17 @@ class DrawerWidget extends HookConsumerWidget {
                           context.push(AppRoutes.addPlayer);
                         },
                       ),
+                    if (role == Role.coach.name || role == Role.parent.name) const SizedBox(height: 30),
+                    if (role == Role.coach.name || role == Role.parent.name)
+                      _DrawerOptionWidget(
+                        icon: Iconsax.home,
+                        title: 'Household',
+                        onTap: () {
+                          context.push(AppRoutes.household);
+                        },
+                      ),
                     // const SizedBox(height: spaceBetweenItems),
-                    // _DrawerOptionWidget(
-                    //   icon: Iconsax.home,
-                    //   title: 'Household',
-                    //   onTap: () {},
-                    // ),
+
                     const SizedBox(height: spaceBetweenItems),
                     _DrawerOptionWidget(
                       icon: Iconsax.people,

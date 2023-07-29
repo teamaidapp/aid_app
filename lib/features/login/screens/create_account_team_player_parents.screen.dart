@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -35,30 +36,25 @@ class CreateAccountParentsScreen extends StatelessWidget {
             bottom: false,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: GestureDetector(
-                onTap: () {
-                  context.pop();
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Icon(
-                      Iconsax.arrow_left_2,
-                      color: TAColors.textColor,
-                    ),
-                    const Spacer(),
-                    TATypography.h3(
-                      text: 'Create child account',
-                      color: TAColors.textColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    const Spacer(),
-                    // const Icon(
-                    //   Iconsax.menu_1,
-                    //   color: TAColors.textColor,
-                    // ),
-                  ],
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // const Icon(
+                  //   Iconsax.arrow_left_2,
+                  //   color: TAColors.textColor,
+                  // ),
+                  const Spacer(),
+                  TATypography.h3(
+                    text: 'Create child account',
+                    color: TAColors.textColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  const Spacer(),
+                  // const Icon(
+                  //   Iconsax.menu_1,
+                  //   color: TAColors.textColor,
+                  // ),
+                ],
               ),
             ),
           ),
@@ -112,6 +108,11 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                 label: 'E-mail',
                                 textEditingController: emailController,
                                 placeholder: 'Enter your email',
+                                inputListFormatter: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp('[a-zA-Z0-9.@_-]'),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
@@ -238,6 +239,10 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                 label: 'Phone number',
                                 textEditingController: phoneNumberController,
                                 placeholder: 'Enter your phone number',
+                                inputListFormatter: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                ],
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
@@ -289,7 +294,8 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                       emailController.text.isEmpty ||
                                       phoneNumberController.text.isEmpty ||
                                       passwordController.text.isEmpty ||
-                                      sport.value.isEmpty) {
+                                      sport.value.isEmpty ||
+                                      currentSelectedState.value.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('Please fill all fields'),

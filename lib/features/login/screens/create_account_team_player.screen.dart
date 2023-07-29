@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -244,6 +245,10 @@ class CreateAccountTeamPlayerScreen extends StatelessWidget {
                                 label: 'Phone number',
                                 textEditingController: phoneNumberController,
                                 placeholder: 'Enter your phone number',
+                                inputListFormatter: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                ],
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
@@ -322,7 +327,7 @@ class CreateAccountTeamPlayerScreen extends StatelessWidget {
                                     phoneNumber: phoneNumberController.text,
                                     password: passwordController.text,
                                     sportId: sport.value,
-                                    role: Role.player,
+                                    role: Role.parent,
                                     cityId: cityState.value,
                                     stateId: currentSelectedState.value,
                                   );

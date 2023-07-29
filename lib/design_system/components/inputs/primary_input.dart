@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/design_system/components/typography/typography.dart';
@@ -15,6 +16,7 @@ class TAPrimaryInput extends StatefulWidget {
     this.textEditingController,
     this.isPassword = false,
     this.maxLines,
+    this.inputListFormatter = const [],
   });
 
   /// The controller for the text field.
@@ -31,6 +33,9 @@ class TAPrimaryInput extends StatefulWidget {
 
   /// The maximum number of lines for the text field.
   final int? maxLines;
+
+  /// Formatter
+  final List<TextInputFormatter> inputListFormatter;
 
   @override
   State<TAPrimaryInput> createState() => _TAPrimaryInputState();
@@ -61,6 +66,7 @@ class _TAPrimaryInputState extends State<TAPrimaryInput> {
           cursorColor: TAColors.color2,
           controller: textEditingController,
           obscureText: obscureText,
+          inputFormatters: widget.inputListFormatter,
           // maxLines: widget.maxLines,
           decoration: InputDecoration(
             filled: true,

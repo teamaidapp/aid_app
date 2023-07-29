@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -116,6 +117,10 @@ class RequestDemoScreen extends StatelessWidget {
                                     label: 'Phone number',
                                     textEditingController: phoneController,
                                     placeholder: 'Enter your phone number',
+                                    inputListFormatter: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                    ],
                                   ),
                                   const SizedBox(height: 10),
                                   TAPrimaryInput(
@@ -164,8 +169,7 @@ class RequestDemoScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: TATypography.subparagraph(
-                                  text:
-                                      'I agree to terms of service and privacy policy',
+                                  text: 'I agree to terms of service and privacy policy',
                                   color: TAColors.grey1,
                                 ),
                               ),
@@ -209,8 +213,7 @@ class RequestDemoScreen extends StatelessWidget {
                                     unawaited(
                                       FailureWidget.build(
                                         title: 'Missing field',
-                                        message:
-                                            'Please enter your phone number.',
+                                        message: 'Please enter your phone number.',
                                         context: context,
                                       ),
                                     );
@@ -221,8 +224,7 @@ class RequestDemoScreen extends StatelessWidget {
                                     unawaited(
                                       FailureWidget.build(
                                         title: 'Missing field',
-                                        message:
-                                            'Please enter your league or club.',
+                                        message: 'Please enter your league or club.',
                                         context: context,
                                       ),
                                     );
@@ -232,8 +234,7 @@ class RequestDemoScreen extends StatelessWidget {
                                     unawaited(
                                       FailureWidget.build(
                                         title: 'Agree to terms of service',
-                                        message:
-                                            'Please agree to terms of service and privacy policy.',
+                                        message: 'Please agree to terms of service and privacy policy.',
                                         context: context,
                                       ),
                                     );
@@ -248,8 +249,7 @@ class RequestDemoScreen extends StatelessWidget {
                                   );
                                   final res = await ref
                                       .read(
-                                        createAccountControllerProvider
-                                            .notifier,
+                                        createAccountControllerProvider.notifier,
                                       )
                                       .requestDemo(demo: demo);
                                   isLoading.value = false;
@@ -258,8 +258,7 @@ class RequestDemoScreen extends StatelessWidget {
                                     unawaited(
                                       SuccessWidget.build(
                                         title: 'Thank you!',
-                                        message:
-                                            'Your request has been sent successfully.',
+                                        message: 'Your request has been sent successfully.',
                                         context: context,
                                       ),
                                     );
@@ -267,8 +266,7 @@ class RequestDemoScreen extends StatelessWidget {
                                     unawaited(
                                       FailureWidget.build(
                                         title: 'Something went wrong!',
-                                        message:
-                                            'There was an error while sending your request. Please try again.',
+                                        message: 'There was an error while sending your request. Please try again.',
                                         context: context,
                                       ),
                                     );

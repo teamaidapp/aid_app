@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/features/calendar/calendar.screen.dart';
 import 'package:team_aid/features/home/home.screen.dart';
 import 'package:team_aid/features/home/screens/add_player.screen.dart';
+import 'package:team_aid/features/household/household.screen.dart';
 import 'package:team_aid/features/login/login.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_coach.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_team.screen.dart';
@@ -67,6 +68,9 @@ class AppRoutes {
 
   /// Address profile route
   static const String addressProfile = '/account/address';
+
+  /// Household route
+  static const String household = '/household';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -144,6 +148,10 @@ final routerProvider = Provider((ref) {
         builder: (context, state) => CreateAccountTeamPlayerScreen(
           isCreatingSon: state.queryParameters['isCreatingSon']! == 'true',
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.household,
+        builder: (context, state) => const HouseholdScreen(),
       ),
     ],
   );

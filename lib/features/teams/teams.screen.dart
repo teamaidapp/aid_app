@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:team_aid/core/constants.dart';
+import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
@@ -145,16 +147,21 @@ class _TeamsScreenState extends ConsumerState<TeamsScreen> {
           ),
           prefsProvider.when(
             data: (prefs) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TAPrimaryButton(
-                  text: 'ADD NEW TEAM',
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  onTap: () {
-                    context.push(AppRoutes.createAccountTeamForCoach);
-                  },
-                ),
-              );
+              final role = prefs.getString(TAConstants.role);
+              if (role == Role.coach.name) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TAPrimaryButton(
+                    text: 'ADD NEW TEAM',
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    onTap: () {
+                      context.push(AppRoutes.createAccountTeamForCoach);
+                    },
+                  ),
+                );
+              } else {
+                return const SizedBox();
+              }
             },
             error: (_, __) {
               return const SizedBox();
@@ -188,7 +195,16 @@ class TeamsListWidget extends ConsumerWidget {
       child: teams.when(
         data: (data) {
           if (data.isEmpty) {
-            return const SizedBox();
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Center(
+                child: TATypography.paragraph(
+                  text: 'No teams added yet, please add a team to get started.',
+                  color: TAColors.purple,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            );
           } else {
             return ListView.builder(
               shrinkWrap: true,
