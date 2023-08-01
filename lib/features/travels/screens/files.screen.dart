@@ -229,7 +229,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                         final item = guests.valueOrNull?[index];
                         return TADropdownModel(
                           item: item != null ? item.user.firstName : '',
-                          id: item != null ? item.id : '',
+                          id: item != null ? item.user.id : '',
                         );
                       },
                     ),

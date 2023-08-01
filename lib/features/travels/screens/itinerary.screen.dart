@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
@@ -442,7 +443,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                               final item = guests.valueOrNull?[index];
                               return TADropdownModel(
                                 item: item != null ? item.user.firstName : '',
-                                id: item != null ? item.id : '',
+                                id: item != null ? item.user.id : '',
                               );
                             },
                           ),
@@ -513,29 +514,30 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                         location: locationController.text.trim(),
                                         locationDescription: locationDescription.value,
                                       );
+                                      inspect(itinerary);
 
-                                      isLoading.value = true;
-                                      final res = await ref.read(travelsControllerProvider.notifier).addItinerary(itinerary: itinerary);
-                                      isLoading.value = false;
+                                      // isLoading.value = true;
+                                      // final res = await ref.read(travelsControllerProvider.notifier).addItinerary(itinerary: itinerary);
+                                      // isLoading.value = false;
 
-                                      if (res.ok && mounted) {
-                                        await SuccessWidget.build(
-                                          title: 'Success!',
-                                          message: 'Itinerary has been added successfully.',
-                                          context: context,
-                                        );
-                                        if (context.mounted) {
-                                          context.pop();
-                                        }
-                                      } else {
-                                        unawaited(
-                                          FailureWidget.build(
-                                            title: 'Something went wrong!',
-                                            message: 'There was an error adding the Itinerary.',
-                                            context: context,
-                                          ),
-                                        );
-                                      }
+                                      // if (res.ok && mounted) {
+                                      //   await SuccessWidget.build(
+                                      //     title: 'Success!',
+                                      //     message: 'Itinerary has been added successfully.',
+                                      //     context: context,
+                                      //   );
+                                      //   if (context.mounted) {
+                                      //     context.pop();
+                                      //   }
+                                      // } else {
+                                      //   unawaited(
+                                      //     FailureWidget.build(
+                                      //       title: 'Something went wrong!',
+                                      //       message: 'There was an error adding the Itinerary.',
+                                      //       context: context,
+                                      //     ),
+                                      //   );
+                                      // }
                                     },
                                   );
                                 },

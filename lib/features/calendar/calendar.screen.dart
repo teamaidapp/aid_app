@@ -755,7 +755,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
   @override
   Widget build(BuildContext context) {
     final teamId = useState('');
-    final periodicity = useState('');
+    final periodicity = useState('once');
     final isLoading = useState(false);
     final locationDescription = useState('');
     final eventName = useTextEditingController();
@@ -1048,7 +1048,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                             final item = guests.valueOrNull?[index];
                             return TADropdownModel(
                               item: item != null ? item.user.firstName : '',
-                              id: item != null ? item.id : '',
+                              id: item != null ? item.user.id : '',
                             );
                           },
                         ),
