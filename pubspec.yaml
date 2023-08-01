@@ -1,7 +1,7 @@
 name: team_aid
 description: A new Flutter project.
 publish_to: "none"
-version: 0.1.1
+version: 0.1.2+2
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -13,7 +13,7 @@ dependencies:
   dropdown_search: ^5.0.6
   expandable: ^5.0.1
   file_picker:
-    git: 
+    git:
       url: https://github.com/miguelpruivo/flutter_file_picker.git
       ref: c724ec05589c683cf0e2d8da4e231d6ff97b648f
   flutter:
@@ -37,6 +37,7 @@ dependencies:
 
 dev_dependencies:
   custom_lint:
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
@@ -44,6 +45,11 @@ dev_dependencies:
   riverpod_lint: ^1.3.2
   scroll_to_index: ^3.0.1
   very_good_analysis: ^5.0.0
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/app_icon/icon.png"
 
 flutter:
   uses-material-design: true
@@ -53,3 +59,4 @@ flutter:
     - .env.staging
     - assets/
     - assets/login/
+    - assets/app_icon/
