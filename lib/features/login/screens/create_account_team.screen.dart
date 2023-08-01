@@ -299,6 +299,23 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                       isLoading: isLoading.value,
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       onTap: () async {
+                                        if (teamNameController.text.isEmpty ||
+                                            sportController.text.isEmpty ||
+                                            levelController.text.isEmpty ||
+                                            genderController.text.isEmpty ||
+                                            organizationController.text.isEmpty ||
+                                            countryController.text.isEmpty ||
+                                            zipCodeController.text.isEmpty ||
+                                            stateController.text.isEmpty ||
+                                            cityState.value.isEmpty) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Please fill all the fields'),
+                                            ),
+                                          );
+                                          return;
+                                        }
+
                                         isLoading.value = true;
                                         final team = TeamModel(
                                           id: '',

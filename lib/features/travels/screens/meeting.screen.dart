@@ -36,20 +36,23 @@ class MeetingTravelScreen extends StatefulHookConsumerWidget {
 }
 
 class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
-  final hours = <HourModel>[];
+  final fromHours = <HourModel>[];
+  final tohours = <HourModel>[];
   final days = <DateTime>[];
   final months = <String>[];
   final years = <String>[];
   final currentDay = DateTime.now().day;
   var _currentSelectedMonth = DateTime.now().month;
   var _currentSelectedYear = DateTime.now().year;
+  var _selectedRepeat = TADropdownModel(item: 'Once', id: 'once');
 
   late DateTime _fromDate;
   late DateTime _toDate;
 
   @override
   void initState() {
-    hours.addAll(GlobalFunctions.generateHourModels());
+    fromHours.addAll(GlobalFunctions.generateHourModels(8));
+    tohours.addAll(GlobalFunctions.generateHourModels(8));
     days.addAll(
       GlobalFunctions.getDaysInMonth(
         year: _currentSelectedYear,
@@ -359,9 +362,9 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                               child: TADropdown(
                                 label: 'From',
                                 items: List.generate(
-                                  hours.length,
+                                  fromHours.length,
                                   (index) {
-                                    final item = hours[index];
+                                    final item = fromHours[index];
                                     return TADropdownModel(
                                       item: item.description,
                                       id: 'hour:${item.hour}minute:${item.minute}',
@@ -371,18 +374,19 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                 placeholder: '',
                                 onChange: (v) {
                                   if (v != null) {
+                                    final hour = v.id.split('hour:')[1].split('minute:')[0];
+                                    final minute = v.id.split('hour:')[1].split('minute:')[1];
                                     setState(() {
                                       _fromDate = DateTime(
                                         _currentSelectedYear,
                                         _currentSelectedMonth,
                                         currentDay,
-                                        int.parse(
-                                          v.id.split('hour:')[1].split('minute:')[0],
-                                        ),
-                                        int.parse(
-                                          v.id.split('hour:')[1].split('minute:')[1],
-                                        ),
+                                        int.parse(hour),
+                                        int.parse(minute),
                                       );
+                                      tohours
+                                        ..clear()
+                                        ..addAll(GlobalFunctions.generateHourModels(int.parse(hour) + 1));
                                     });
                                   }
                                 },
@@ -393,9 +397,9 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                               child: TADropdown(
                                 label: 'To',
                                 items: List.generate(
-                                  hours.length,
+                                  tohours.length,
                                   (index) {
-                                    final item = hours[index];
+                                    final item = tohours[index];
                                     return TADropdownModel(
                                       item: item.description,
                                       id: 'hour:${item.hour}minute:${item.minute}',
@@ -405,17 +409,15 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                 placeholder: '',
                                 onChange: (v) {
                                   if (v != null) {
+                                    final hour = v.id.split('hour:')[1].split('minute:')[0];
+                                    final minute = v.id.split('hour:')[1].split('minute:')[1];
                                     setState(() {
                                       _toDate = DateTime(
                                         _currentSelectedYear,
                                         _currentSelectedMonth,
                                         currentDay,
-                                        int.parse(
-                                          v.id.split('hour:')[1].split('minute:')[0],
-                                        ),
-                                        int.parse(
-                                          v.id.split('hour:')[1].split('minute:')[1],
-                                        ),
+                                        int.parse(hour),
+                                        int.parse(minute),
                                       );
                                     });
                                   }
@@ -434,10 +436,12 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                             TADropdownModel(item: 'Yearly', id: 'yearly'),
                           ],
                           placeholder: '',
+                          selectedValue: _selectedRepeat,
                           onChange: (v) {
                             if (v != null) {
                               setState(() {
                                 periodicity.value = v.id;
+                                _selectedRepeat = TADropdownModel(item: v.item, id: v.id);
                               });
                             }
                           },

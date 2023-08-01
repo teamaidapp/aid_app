@@ -42,21 +42,20 @@ class GlobalFunctions {
   ///
   /// Returns:
   ///   The function `generateHourModels()` returns a list of `HourModel` objects.
-  static List<HourModel> generateHourModels() {
-    final hourModels = <HourModel>[];
-
-    for (var i = 1; i <= 12; i++) {
-      final hour = i.toString().padLeft(2, '0');
-      hourModels
-        ..add(HourModel(hour: hour, description: '$hour:00AM', minute: '00'))
-        ..add(HourModel(hour: hour, description: '$hour:30AM', minute: '30'));
+  static List<HourModel> generateHourModels(int startHour) {
+    if (startHour < 1 || startHour > 12) {
+      throw ArgumentError('The startHour should be between 1 and 12 (inclusive).');
     }
 
-    for (var i = 1; i <= 12; i++) {
-      final hour = (i + 12).toString().padLeft(2, '0');
+    final hourModels = <HourModel>[];
+
+    for (var i = startHour; i <= startHour + 11; i++) {
+      final isAM = i <= 12;
+      final hour = (isAM ? i : i - 12).toString().padLeft(2, '0');
+      final meridiem = isAM ? 'AM' : 'PM';
       hourModels
-        ..add(HourModel(hour: hour, description: '$hour:00PM', minute: '00'))
-        ..add(HourModel(hour: hour, description: '$hour:30PM', minute: '30'));
+        ..add(HourModel(hour: hour, description: '$hour:00$meridiem', minute: '00'))
+        ..add(HourModel(hour: hour, description: '$hour:30$meridiem', minute: '30'));
     }
 
     return hourModels;
@@ -85,5 +84,38 @@ class GlobalFunctions {
     }
 
     return daysInMonth;
+  }
+
+  /// This function generates a list of months starting from the current month and year up to December of the given year.
+  ///
+  /// Args:
+  ///   year (int): The year up to which we want to generate the list of months. It is a required parameter and
+  /// must be provided while calling the function.
+  ///
+  /// Returns:
+  ///   a list of strings representing the months from the current month and year up to December of the given year.
+  ///   The month numbers are represented as strings.
+  ///
+  /// Throws:
+  ///   ArgumentError: If the year is less than the current year.
+  static List<String> aheadMonths(int year) {
+    final now = DateTime.now();
+    final currentYear = now.year;
+    final currentMonth = now.month;
+    final months = <String>[];
+
+    if (year == currentYear) {
+      for (var month = currentMonth; month <= 12; month++) {
+        months.add(month.toString());
+      }
+    } else if (year > currentYear) {
+      for (var month = 1; month <= 12; month++) {
+        months.add(month.toString());
+      }
+    } else {
+      throw ArgumentError('The year should be greater than or equal to the current year.');
+    }
+
+    return months;
   }
 }

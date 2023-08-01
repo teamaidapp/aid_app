@@ -75,11 +75,7 @@ class CalendarRepositoryImpl implements CalendarRepository {
       });
       return Right(list);
     } catch (e) {
-      return Left(
-        Failure(
-          message: 'Hubo un error en CalendarRepositoyImpl',
-        ),
-      );
+      return const Right([]);
     }
   }
 
@@ -94,10 +90,7 @@ class CalendarRepositoryImpl implements CalendarRepository {
       );
       final res = await http.post(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json'
-        },
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode(schedule.toMap()),
       );
       if (res.statusCode != 200 && res.statusCode != 201) {

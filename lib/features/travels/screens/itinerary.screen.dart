@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +39,8 @@ class ItineraryTravelScreen extends StatefulHookConsumerWidget {
 }
 
 class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
-  final hours = <HourModel>[];
+  final fromHours = <HourModel>[];
+  final tohours = <HourModel>[];
   final days = <DateTime>[];
   final months = <String>[];
   final years = <String>[];
@@ -53,19 +53,18 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
 
   @override
   void initState() {
-    hours.addAll(GlobalFunctions.generateHourModels());
+    fromHours.addAll(GlobalFunctions.generateHourModels(8));
+    tohours.addAll(GlobalFunctions.generateHourModels(8));
     days.addAll(
       GlobalFunctions.getDaysInMonth(
         year: _currentSelectedYear,
         month: _currentSelectedMonth,
       ),
     );
-    months.addAll(
-      ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-    );
     years.addAll(
       ['2023', '2024', '2025', '2026', '2027'],
     );
+    months.addAll(GlobalFunctions.aheadMonths(_currentSelectedYear));
     super.initState();
   }
 
@@ -328,6 +327,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                 placeholder: '',
                                 onChange: (v) {
                                   if (v != null) {
+                                    months.clear();
                                     setState(() {
                                       _fromDate = DateTime(
                                         _currentSelectedYear,
@@ -335,6 +335,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                         currentDay,
                                       );
                                       _currentSelectedYear = int.parse(v.id);
+                                      months.addAll(GlobalFunctions.aheadMonths(_currentSelectedYear));
                                     });
                                   }
                                 },
@@ -349,9 +350,9 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                               child: TADropdown(
                                 label: 'From',
                                 items: List.generate(
-                                  hours.length,
+                                  fromHours.length,
                                   (index) {
-                                    final item = hours[index];
+                                    final item = fromHours[index];
                                     return TADropdownModel(
                                       item: item.description,
                                       id: 'hour:${item.hour}minute:${item.minute}',
@@ -361,18 +362,19 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                 placeholder: '',
                                 onChange: (v) {
                                   if (v != null) {
+                                    final hour = v.id.split('hour:')[1].split('minute:')[0];
+                                    final minute = v.id.split('hour:')[1].split('minute:')[1];
                                     setState(() {
                                       _fromDate = DateTime(
                                         _currentSelectedYear,
                                         _currentSelectedMonth,
                                         currentDay,
-                                        int.parse(
-                                          v.id.split('hour:')[1].split('minute:')[0],
-                                        ),
-                                        int.parse(
-                                          v.id.split('hour:')[1].split('minute:')[1],
-                                        ),
+                                        int.parse(hour),
+                                        int.parse(minute),
                                       );
+                                      tohours
+                                        ..clear()
+                                        ..addAll(GlobalFunctions.generateHourModels(int.parse(hour) + 1));
                                     });
                                   }
                                 },
@@ -383,9 +385,9 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                               child: TADropdown(
                                 label: 'To',
                                 items: List.generate(
-                                  hours.length,
+                                  tohours.length,
                                   (index) {
-                                    final item = hours[index];
+                                    final item = tohours[index];
                                     return TADropdownModel(
                                       item: item.description,
                                       id: 'hour:${item.hour}minute:${item.minute}',
@@ -395,17 +397,15 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                 placeholder: '',
                                 onChange: (v) {
                                   if (v != null) {
+                                    final hour = v.id.split('hour:')[1].split('minute:')[0];
+                                    final minute = v.id.split('hour:')[1].split('minute:')[1];
                                     setState(() {
                                       _toDate = DateTime(
                                         _currentSelectedYear,
                                         _currentSelectedMonth,
                                         currentDay,
-                                        int.parse(
-                                          v.id.split('hour:')[1].split('minute:')[0],
-                                        ),
-                                        int.parse(
-                                          v.id.split('hour:')[1].split('minute:')[1],
-                                        ),
+                                        int.parse(hour),
+                                        int.parse(minute),
                                       );
                                     });
                                   }
@@ -514,30 +514,29 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                         location: locationController.text.trim(),
                                         locationDescription: locationDescription.value,
                                       );
-                                      inspect(itinerary);
 
-                                      // isLoading.value = true;
-                                      // final res = await ref.read(travelsControllerProvider.notifier).addItinerary(itinerary: itinerary);
-                                      // isLoading.value = false;
+                                      isLoading.value = true;
+                                      final res = await ref.read(travelsControllerProvider.notifier).addItinerary(itinerary: itinerary);
+                                      isLoading.value = false;
 
-                                      // if (res.ok && mounted) {
-                                      //   await SuccessWidget.build(
-                                      //     title: 'Success!',
-                                      //     message: 'Itinerary has been added successfully.',
-                                      //     context: context,
-                                      //   );
-                                      //   if (context.mounted) {
-                                      //     context.pop();
-                                      //   }
-                                      // } else {
-                                      //   unawaited(
-                                      //     FailureWidget.build(
-                                      //       title: 'Something went wrong!',
-                                      //       message: 'There was an error adding the Itinerary.',
-                                      //       context: context,
-                                      //     ),
-                                      //   );
-                                      // }
+                                      if (res.ok && mounted) {
+                                        await SuccessWidget.build(
+                                          title: 'Success!',
+                                          message: 'Itinerary has been added successfully.',
+                                          context: context,
+                                        );
+                                        if (context.mounted) {
+                                          context.pop();
+                                        }
+                                      } else {
+                                        unawaited(
+                                          FailureWidget.build(
+                                            title: 'Something went wrong!',
+                                            message: 'There was an error adding the Itinerary.',
+                                            context: context,
+                                          ),
+                                        );
+                                      }
                                     },
                                   );
                                 },

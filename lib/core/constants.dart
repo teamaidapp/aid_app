@@ -53,7 +53,7 @@ class TAConstants {
     TADropdownModel(
       item: 'Cheerleading',
       id: '7fe5b730-032c-45b5-8dd4-9f2a17a0ea8b',
-    )
+    ),
   ];
 
   /// A list of the genders

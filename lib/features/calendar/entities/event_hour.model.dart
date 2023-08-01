@@ -27,14 +27,22 @@ class EventHourModel {
   final List<CalendarEvent>? event;
 }
 
+/// The `CalendarModel` class represents a day in a calendar, with a day label, day number, and a list
+/// of event hours.
 class CalendarModel {
-  final String dayLabel;
-  final int dayNumber;
-  final List<EventHourModel> hours;
-
-  CalendarModel({
+  /// Constructor
+  const CalendarModel({
     required this.dayLabel,
     required this.dayNumber,
     required this.hours,
   });
+
+  /// The day label
+  final String dayLabel;
+
+  /// The day number
+  final int dayNumber;
+
+  /// The list of hours
+  final List<EventHourModel> hours;
 }

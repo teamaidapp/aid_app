@@ -723,20 +723,23 @@ class _CreateScheduleWidget extends StatefulHookConsumerWidget {
 }
 
 class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
-  final hours = <HourModel>[];
+  final fromHours = <HourModel>[];
+  final tohours = <HourModel>[];
   final days = <DateTime>[];
   final months = <String>[];
   final years = <String>[];
   var _currentDay = DateTime.now().day;
   var _currentSelectedMonth = DateTime.now().month;
   var _currentSelectedYear = DateTime.now().year;
+  var _selectedRepeat = TADropdownModel(item: 'Once', id: 'once');
 
   var _fromDate = DateTime.now();
   var _toDate = DateTime.now();
 
   @override
   void initState() {
-    hours.addAll(GlobalFunctions.generateHourModels());
+    fromHours.addAll(GlobalFunctions.generateHourModels(8));
+    tohours.addAll(GlobalFunctions.generateHourModels(8));
     days.addAll(
       GlobalFunctions.getDaysInMonth(
         month: _currentSelectedMonth,
@@ -940,9 +943,9 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                             child: TADropdown(
                               label: 'From',
                               items: List.generate(
-                                hours.length,
+                                fromHours.length,
                                 (index) {
-                                  final item = hours[index];
+                                  final item = fromHours[index];
                                   return TADropdownModel(
                                     item: item.description,
                                     id: 'hour:${item.hour}minute:${item.minute}',
@@ -952,18 +955,19 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                               placeholder: '',
                               onChange: (v) {
                                 if (v != null) {
+                                  final hour = v.id.split('hour:')[1].split('minute:')[0];
+                                  final minute = v.id.split('hour:')[1].split('minute:')[1];
                                   setState(() {
                                     _fromDate = DateTime(
                                       _currentSelectedYear,
                                       _currentSelectedMonth,
                                       _currentDay,
-                                      int.parse(
-                                        v.id.split('hour:')[1].split('minute:')[0],
-                                      ),
-                                      int.parse(
-                                        v.id.split('hour:')[1].split('minute:')[1],
-                                      ),
+                                      int.parse(hour),
+                                      int.parse(minute),
                                     );
+                                    tohours
+                                      ..clear()
+                                      ..addAll(GlobalFunctions.generateHourModels(int.parse(hour) + 1));
                                   });
                                 }
                               },
@@ -974,9 +978,9 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                             child: TADropdown(
                               label: 'To',
                               items: List.generate(
-                                hours.length,
+                                tohours.length,
                                 (index) {
-                                  final item = hours[index];
+                                  final item = tohours[index];
                                   return TADropdownModel(
                                     item: item.description,
                                     id: 'hour:${item.hour}minute:${item.minute}',
@@ -986,17 +990,15 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                               placeholder: '',
                               onChange: (v) {
                                 if (v != null) {
+                                  final hour = v.id.split('hour:')[1].split('minute:')[0];
+                                  final minute = v.id.split('hour:')[1].split('minute:')[1];
                                   setState(() {
                                     _toDate = DateTime(
                                       _currentSelectedYear,
                                       _currentSelectedMonth,
                                       _currentDay,
-                                      int.parse(
-                                        v.id.split('hour:')[1].split('minute:')[0],
-                                      ),
-                                      int.parse(
-                                        v.id.split('hour:')[1].split('minute:')[1],
-                                      ),
+                                      int.parse(hour),
+                                      int.parse(minute),
                                     );
                                   });
                                 }
@@ -1016,11 +1018,12 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                           TADropdownModel(item: 'Yearly', id: 'yearly'),
                         ],
                         placeholder: '',
-                        selectedValue: TADropdownModel(item: 'Once', id: 'once'),
+                        selectedValue: _selectedRepeat,
                         onChange: (v) {
                           if (v != null) {
                             setState(() {
                               periodicity.value = v.id;
+                              _selectedRepeat = TADropdownModel(item: v.item, id: v.id);
                             });
                           }
                         },
