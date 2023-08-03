@@ -27,6 +27,7 @@ class ItineraryModel {
     required this.locationDescription,
     required this.guests,
     this.userCreator,
+    this.fileId,
   });
 
   /// Creates a new instance of [ItineraryModel] from a map.
@@ -42,6 +43,7 @@ class ItineraryModel {
       locationDescription: map['locationDescription'] as String,
       userCreator: UserCreator.fromMap(map['userCreator'] as Map<String, dynamic>),
       guests: guest.map((x) => Guest.fromMap(x as Map<String, dynamic>)).toList(),
+      fileId: map['fileId'] as String? ?? '',
     );
   }
 
@@ -66,6 +68,9 @@ class ItineraryModel {
   /// The list of guests for the itinerary.
   final List<Guest> guests;
 
+  /// The file id of the itinerary
+  final String? fileId;
+
   /// The user creator of the itinerary.
   final UserCreator? userCreator;
 
@@ -83,6 +88,7 @@ class ItineraryModel {
     String? location,
     List<Guest>? guests,
     UserCreator? userCreator,
+    String? fileId,
   }) {
     return ItineraryModel(
       name: name ?? this.name,
@@ -93,6 +99,7 @@ class ItineraryModel {
       locationDescription: locationDescription ?? this.locationDescription,
       guests: guests ?? this.guests,
       userCreator: userCreator ?? this.userCreator,
+      fileId: fileId ?? this.fileId,
     );
   }
 
@@ -113,6 +120,10 @@ class ItineraryModel {
 
     if (guests.isNotEmpty) {
       data['guest'] = guests;
+    }
+
+    if (fileId != null) {
+      data['fileId'] = fileId;
     }
 
     return data;

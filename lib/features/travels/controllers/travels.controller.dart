@@ -290,4 +290,13 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       );
     }
   }
+
+  /// The function sets the fileId property in the state object.
+  ///
+  /// Args:
+  ///   fileId (String): The `fileId` parameter is a required `String` that represents the unique
+  /// identifier of a file.
+  void setFileId({required String fileId}) {
+    state = state.copyWith(fileId: fileId);
+  }
 }

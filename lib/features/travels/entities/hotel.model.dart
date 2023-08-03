@@ -18,6 +18,7 @@ class HotelModel {
     required this.reservationCode,
     required this.guests,
     required this.placeDescription,
+    this.fileId,
   });
 
   /// Creates a new instance of [HotelModel] from a map.
@@ -46,6 +47,7 @@ class HotelModel {
     String? placeDescription,
     String? reservationCode,
     List<Guest>? guests,
+    String? fileId,
   }) {
     return HotelModel(
       place: place ?? this.place,
@@ -54,6 +56,7 @@ class HotelModel {
       placeDescription: placeDescription ?? this.placeDescription,
       reservationCode: reservationCode ?? this.reservationCode,
       guests: guests ?? this.guests,
+      fileId: fileId ?? this.fileId,
     );
   }
 
@@ -71,6 +74,9 @@ class HotelModel {
       'guest': guest,
     };
 
+    if (fileId != null) {
+      data['fileId'] = fileId;
+    }
     return data;
   }
 
@@ -93,6 +99,9 @@ class HotelModel {
 
   /// The reservation code.
   final String reservationCode;
+
+  /// The File ID of the reservation.
+  final String? fileId;
 
   /// The list of guests for the hotel.
   final List<Guest> guests;

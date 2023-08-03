@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:expandable/expandable.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
@@ -50,6 +53,10 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
 
   late DateTime _fromDate;
   late DateTime _toDate;
+
+  final fileExpandableController = ExpandableController(initialExpanded: false);
+  File? selectedFile;
+  XFile? selectedImage;
 
   @override
   void initState() {
@@ -458,94 +465,221 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                         //   label: 'Guest',
                         // ),
                         const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 100,
-                              child: TATypography.paragraph(
-                                text: 'Cancel',
-                                underline: true,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            SizedBox(
-                              width: 120,
-                              child: Consumer(
-                                builder: (context, ref, child) {
-                                  return TAPrimaryButton(
-                                    text: 'CREATE',
-                                    isLoading: isLoading.value,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    onTap: () async {
-                                      if (eventName.text.isEmpty) {
-                                        unawaited(
-                                          FailureWidget.build(
-                                            title: 'Something went wrong!',
-                                            message: 'Please enter event name to continue.',
-                                            context: context,
-                                          ),
-                                        );
-                                        return;
-                                      }
-                                      if (locationController.text.isEmpty) {
-                                        unawaited(
-                                          FailureWidget.build(
-                                            title: 'Something went wrong!',
-                                            message: 'Please enter location to continue.',
-                                            context: context,
-                                          ),
-                                        );
-                                        return;
-                                      }
-
-                                      final newGuests = <Guest>[];
-
-                                      for (final guest in selectedGuests.value) {
-                                        newGuests.add(Guest(userId: guest.id));
-                                      }
-
-                                      final itinerary = ItineraryModel(
-                                        guests: newGuests,
-                                        name: eventName.text.trim(),
-                                        endDate: _toDate.toIso8601String(),
-                                        transportation: transportation.value,
-                                        startDate: _fromDate.toIso8601String(),
-                                        location: locationController.text.trim(),
-                                        locationDescription: locationDescription.value,
-                                      );
-
-                                      isLoading.value = true;
-                                      final res = await ref.read(travelsControllerProvider.notifier).addItinerary(itinerary: itinerary);
-                                      isLoading.value = false;
-
-                                      if (res.ok && mounted) {
-                                        await SuccessWidget.build(
-                                          title: 'Success!',
-                                          message: 'Itinerary has been added successfully.',
-                                          context: context,
-                                        );
-                                        if (context.mounted) {
-                                          context.pop();
-                                        }
-                                      } else {
-                                        unawaited(
-                                          FailureWidget.build(
-                                            title: 'Something went wrong!',
-                                            message: 'There was an error adding the Itinerary.',
-                                            context: context,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
+                  ),
+                  const SizedBox(height: 20),
+                  TAContainer(
+                    child: ExpandablePanel(
+                      controller: fileExpandableController,
+                      header: TATypography.h3(
+                        text: 'Add a file',
+                        color: TAColors.textColor,
+                      ),
+                      collapsed: const SizedBox(),
+                      expanded: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TATypography.paragraph(
+                              text: 'Choose file from:',
+                              color: TAColors.color2,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: pickFile,
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Iconsax.document_upload,
+                                      size: 20,
+                                      color: TAColors.purple,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    TATypography.paragraph(
+                                      text: 'Files',
+                                      color: TAColors.purple,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              GestureDetector(
+                                onTap: pickImage,
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Iconsax.gallery_export,
+                                      size: 20,
+                                      color: TAColors.purple,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    TATypography.paragraph(
+                                      text: 'Gallery',
+                                      color: TAColors.purple,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          const Divider(),
+                          const SizedBox(height: 20),
+                          if (selectedFile != null || selectedImage != null)
+                            Row(
+                              children: [
+                                const Icon(
+                                  Iconsax.document_upload,
+                                  size: 20,
+                                  color: TAColors.purple,
+                                ),
+                                const SizedBox(width: 10),
+                                if (selectedFile != null)
+                                  Expanded(
+                                    child: TATypography.paragraph(
+                                      text: selectedFile!.path.split('/').last,
+                                      color: TAColors.color2,
+                                    ),
+                                  ),
+                                if (selectedImage != null)
+                                  Expanded(
+                                    child: TATypography.paragraph(
+                                      text: selectedImage!.path.split('/').last,
+                                      color: TAColors.color2,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        child: TATypography.paragraph(
+                          text: 'Cancel',
+                          underline: true,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 120,
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            return TAPrimaryButton(
+                              text: 'CREATE',
+                              isLoading: isLoading.value,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              onTap: () async {
+                                if (eventName.text.isEmpty) {
+                                  unawaited(
+                                    FailureWidget.build(
+                                      title: 'Something went wrong!',
+                                      message: 'Please enter event name to continue.',
+                                      context: context,
+                                    ),
+                                  );
+                                  return;
+                                }
+                                if (locationController.text.isEmpty) {
+                                  unawaited(
+                                    FailureWidget.build(
+                                      title: 'Something went wrong!',
+                                      message: 'Please enter location to continue.',
+                                      context: context,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                /// If theres a file or an image we upload it
+                                if (selectedFile != null || selectedImage != null) {
+                                  File newFile;
+                                  if (selectedFile != null) {
+                                    newFile = selectedFile!;
+                                  } else {
+                                    newFile = File(selectedImage!.path);
+                                  }
+                                  isLoading.value = true;
+
+                                  /// First upload the file
+                                  final res = await ref.read(travelsControllerProvider.notifier).uploadFile(file: newFile);
+
+                                  if (!res.ok && mounted) {
+                                    unawaited(
+                                      FailureWidget.build(
+                                        title: 'Oops',
+                                        message: 'Something went wrong while trying to upload the file',
+                                        context: context,
+                                      ),
+                                    );
+                                  }
+                                }
+
+                                final newGuests = <Guest>[];
+
+                                for (final guest in selectedGuests.value) {
+                                  newGuests.add(Guest(userId: guest.id));
+                                }
+
+                                String? fileId = ref.read(travelsControllerProvider).fileId;
+
+                                if (fileId.isEmpty) {
+                                  fileId = null;
+                                }
+
+                                final itinerary = ItineraryModel(
+                                  guests: newGuests,
+                                  name: eventName.text.trim(),
+                                  endDate: _toDate.toIso8601String(),
+                                  transportation: transportation.value,
+                                  startDate: _fromDate.toIso8601String(),
+                                  location: locationController.text.trim(),
+                                  locationDescription: locationDescription.value,
+                                  fileId: fileId,
+                                );
+
+                                isLoading.value = true;
+                                final res = await ref.read(travelsControllerProvider.notifier).addItinerary(itinerary: itinerary);
+                                isLoading.value = false;
+
+                                if (res.ok && mounted) {
+                                  ref.read(travelsControllerProvider.notifier).setFileId(fileId: '');
+                                  await SuccessWidget.build(
+                                    title: 'Success!',
+                                    message: 'Itinerary has been added successfully.',
+                                    context: context,
+                                  );
+                                  if (context.mounted) {
+                                    context.pop();
+                                  }
+                                } else {
+                                  unawaited(
+                                    FailureWidget.build(
+                                      title: 'Something went wrong!',
+                                      message: 'There was an error adding the Itinerary.',
+                                      context: context,
+                                    ),
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -553,6 +687,32 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
           ),
       ],
     );
+  }
+
+  Future<void> pickFile() async {
+    final result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      final file = File(result.files.single.path!);
+      setState(() {
+        selectedFile = file;
+      });
+    } else {
+      // User canceled the picker
+    }
+  }
+
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        selectedImage = image;
+      });
+    } else {
+      // User canceled the picker
+    }
   }
 }
 

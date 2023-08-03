@@ -22,12 +22,8 @@ import 'package:team_aid/features/travels/screens/view_file.screen.dart';
 class FilesScreen extends StatefulHookConsumerWidget {
   /// The constructor.
   const FilesScreen({
-    required this.pageController,
     super.key,
   });
-
-  /// The page controller
-  final PageController pageController;
 
   @override
   ConsumerState<FilesScreen> createState() => _FilesScreenState();
@@ -315,6 +311,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                               selectedImage = null;
                               descriptionController.clear();
                               selectedGuests.value = [];
+                              ref.read(travelsControllerProvider.notifier).setFileId(fileId: '');
                             });
                             unawaited(
                               SuccessWidget.build(

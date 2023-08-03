@@ -181,9 +181,7 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
                                         MeetingTravelScreen(
                                           pageController: formPageController,
                                         ),
-                                        FilesScreen(
-                                          pageController: formPageController,
-                                        ),
+                                        const FilesScreen(),
                                       ],
                                     ),
                                   ),

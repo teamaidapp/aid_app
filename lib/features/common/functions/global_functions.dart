@@ -43,19 +43,17 @@ class GlobalFunctions {
   /// Returns:
   ///   The function `generateHourModels()` returns a list of `HourModel` objects.
   static List<HourModel> generateHourModels(int startHour) {
-    if (startHour < 1 || startHour > 12) {
-      throw ArgumentError('The startHour should be between 1 and 12 (inclusive).');
+    if (startHour < 0 || startHour > 23) {
+      throw ArgumentError('The startHour should be between 0 and 23 (inclusive).');
     }
 
     final hourModels = <HourModel>[];
 
     for (var i = startHour; i <= startHour + 11; i++) {
-      final isAM = i <= 12;
-      final hour = (isAM ? i : i - 12).toString().padLeft(2, '0');
-      final meridiem = isAM ? 'AM' : 'PM';
+      final hour = i % 24;
       hourModels
-        ..add(HourModel(hour: hour, description: '$hour:00$meridiem', minute: '00'))
-        ..add(HourModel(hour: hour, description: '$hour:30$meridiem', minute: '30'));
+        ..add(HourModel(hour: hour.toString().padLeft(2, '0'), description: '$hour:00', minute: '00'))
+        ..add(HourModel(hour: hour.toString().padLeft(2, '0'), description: '$hour:30', minute: '30'));
     }
 
     return hourModels;
