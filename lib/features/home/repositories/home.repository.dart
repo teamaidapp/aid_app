@@ -1,4 +1,3 @@
-// ignore_for_file: one_member_abstracts
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
@@ -10,6 +9,7 @@ import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/failure.dart';
 import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/core/entities/team.model.dart';
+import 'package:team_aid/features/home/entities/invitation.model.dart';
 import 'package:team_aid/main.dart';
 
 /// The provider of HomeRepository
@@ -26,6 +26,9 @@ abstract class HomeRepository {
 
   /// Get user teams
   Future<Either<Failure, List<TeamModel>>> getUserTeams();
+
+  /// Get the invitations from the given boolean
+  Future<Either<Failure, List<InvitationModel>>> getInvitations({required bool isCoach});
 }
 
 /// This class is responsible for implementing the HomeRepository
@@ -75,6 +78,34 @@ class HomeRepositoryImpl implements HomeRepository {
         teams.add(team);
       }
       return Right(teams);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un error en HomeRepositoryImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<InvitationModel>>> getInvitations({
+    required bool isCoach,
+  }) async {
+    final invitations = <InvitationModel>[];
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/teams/invitations-by-coach',
+      );
+      final res = await http.get(url, headers: {'Authorization': 'Bearer $token'});
+
+      final data = (jsonDecode(res.body) as Map)['data'] as List;
+
+      for (final element in data) {
+        final invitation = InvitationModel.fromMap(element as Map<String, dynamic>);
+        invitations.add(invitation);
+      }
+      return Right(invitations);
     } catch (e) {
       return Left(
         Failure(

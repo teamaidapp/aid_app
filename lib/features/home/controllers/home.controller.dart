@@ -1,16 +1,14 @@
-import 'dart:developer';
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/features/home/services/home.service.dart';
 import 'package:team_aid/features/home/state/home.state.dart';
 
 /// A dependency injection.
-final homeControllerProvider =
-    StateNotifierProvider<HomeController, HomeScreenState>((ref) {
+final homeControllerProvider = StateNotifierProvider<HomeController, HomeScreenState>((ref) {
   return HomeController(
     const HomeScreenState(
       userTeams: AsyncValue.loading(),
+      invitations: AsyncValue.loading(),
     ),
     ref,
     ref.watch(homeServiceProvider),
@@ -59,11 +57,41 @@ class HomeController extends StateNotifier<HomeScreenState> {
     var response = ResponseFailureModel.defaultFailureResponse();
     try {
       final result = await _homeService.getUserTeams();
-      inspect(result);
+
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
         (list) {
           state = state.copyWith(userTeams: AsyncValue.data(list));
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de HomeService',
+      );
+    }
+  }
+
+  /// The function `getInvitations` retrieves invitations from the `_homeService` and updates the state
+  /// with the retrieved data.
+  ///
+  /// Args:
+  ///   isCoach (bool): A boolean value indicating whether the user is a coach or not.
+  ///
+  /// Returns:
+  ///   a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> getInvitations({required bool isCoach}) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _homeService.getInvitations(isCoach: isCoach);
+
+      return result.fold(
+        (failure) {
+          state = state.copyWith(invitations: const AsyncValue.data([]));
+          return response = response.copyWith(message: failure.message);
+        },
+        (list) {
+          state = state.copyWith(invitations: AsyncValue.data(list));
           return response = response.copyWith(ok: true);
         },
       );

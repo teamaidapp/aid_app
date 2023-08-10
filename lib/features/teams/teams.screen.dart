@@ -9,6 +9,7 @@ import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
+import 'package:team_aid/features/teams/widgets/invitations.widget.dart';
 import 'package:team_aid/features/teams/widgets/team_card.widget.dart';
 import 'package:team_aid/main.dart';
 
@@ -230,24 +231,6 @@ class TeamsListWidget extends ConsumerWidget {
           );
         },
       ),
-    );
-  }
-}
-
-/// The MyInvitationsWidget is a Flutter widget that displays a list of invitations based on data retrieved from a
-/// home controller provider.
-class MyInvitationsWidget extends StatelessWidget {
-  /// The constructor.
-  const MyInvitationsWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        TAContainer(
-          child: Text('Invitations'),
-        ),
-      ],
     );
   }
 }

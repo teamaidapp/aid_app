@@ -16,7 +16,6 @@ import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/routes.dart';
-import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
 
@@ -144,7 +143,6 @@ class CreateAccountTeamPlayerScreen extends StatelessWidget {
                                 ),
                                 onChange: (selectedValue) {
                                   if (selectedValue != null) {
-                                    debugPrint(selectedValue.id);
                                     currentSelectedState.value = selectedValue.id;
                                   }
                                 },

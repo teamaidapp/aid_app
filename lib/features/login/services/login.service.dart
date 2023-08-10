@@ -1,6 +1,4 @@
 // ignore_for_file: one_member_abstracts
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
@@ -44,7 +42,6 @@ class LoginServiceImpl implements LoginService {
       return result.fold(
         Left.new,
         (r) async {
-          inspect(r);
           await GlobalFunctions().saveUserSession(
             user: UserModel(
               email: email,

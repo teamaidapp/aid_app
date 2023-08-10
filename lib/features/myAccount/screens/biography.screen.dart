@@ -110,7 +110,6 @@ class BiographyScreen extends HookConsumerWidget {
                                             value: isVisible.value,
                                             activeColor: const Color(0xff586DF4),
                                             onChanged: (v) {
-                                              debugPrint(v.toString());
                                               isVisible.value = v;
                                               prefs.setBool(TAConstants.isBiographyVisible, v);
                                             },

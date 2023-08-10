@@ -13,7 +13,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
-import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
@@ -426,7 +425,6 @@ class _SearchPlayerWidget extends HookConsumerWidget {
                   ),
                   onChange: (selectedValue) {
                     if (selectedValue != null) {
-                      debugPrint(selectedValue.id);
                       currentSelectedState.value = selectedValue.id;
                     }
                   },

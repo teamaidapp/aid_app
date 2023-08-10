@@ -150,7 +150,7 @@ class _TravelsScreenState extends ConsumerState<TravelsScreen> {
                 child: prefs.when(
                   data: (prefs) {
                     final role = prefs.getString(TAConstants.role);
-                    debugPrint(role);
+
                     if (teamData.isNotEmpty || role == Role.coach.name) {
                       return Column(
                         children: [

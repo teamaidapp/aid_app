@@ -35,12 +35,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     ref.read(homeControllerProvider.notifier).getUserTeams();
+    ref.read(homeControllerProvider.notifier).getInvitations(isCoach: true);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final prefsProvider = ref.watch(sharedPrefs);
+    final invitations = ref.watch(homeControllerProvider).invitations;
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
@@ -148,33 +150,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 30),
-                    ExpandablePanel(
-                      controller: requestsExpandableController,
-                      header: TATypography.h3(
-                        text: 'Requests',
-                        color: TAColors.textColor,
-                      ),
-                      collapsed: const SizedBox(),
-                      expanded: const TAContainer(
-                        radius: 28,
-                        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            RequestsWidget(
-                              icon: Iconsax.copy_success5,
-                              name: 'Camila',
-                              description: 'Sent you a message invitation...',
+                    invitations.when(
+                      data: (data) {
+                        return ExpandablePanel(
+                          controller: requestsExpandableController,
+                          header: TATypography.h3(
+                            text: 'Requests',
+                            color: TAColors.textColor,
+                          ),
+                          collapsed: const SizedBox(),
+                          expanded: TAContainer(
+                            radius: 28,
+                            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: data.length,
+                              padding: EdgeInsets.zero,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                final invitation = data[index];
+                                return Column(
+                                  children: [
+                                    RequestsWidget(invitation: invitation),
+                                    const Divider(),
+                                  ],
+                                );
+                              },
                             ),
-                            Divider(),
-                            RequestsWidget(
-                              icon: Iconsax.copy_success5,
-                              name: 'Camila',
-                              description: 'Sent you a message invitation...',
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
+                      error: (_, __) => const SizedBox(),
+                      loading: () {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: TAColors.purple,
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 20),
                     ExpandablePanel(

@@ -9,7 +9,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:searchable_listview/searchable_listview.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
-import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
@@ -176,7 +175,6 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                                   user.user.phoneNumber,
                                                 );
                                               } catch (e) {
-                                                debugPrint(e.toString());
                                                 unawaited(
                                                   FailureWidget.build(
                                                     title: 'Error',

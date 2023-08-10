@@ -14,7 +14,6 @@ import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/functions.dart';
-import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/components/inputs/multi_dropdown.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/entities/hour.model.dart';

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:team_aid/core/entities/team.model.dart';
+import 'package:team_aid/features/home/entities/invitation.model.dart';
 
 /// State of the home screen
 @immutable
@@ -9,6 +10,7 @@ class HomeScreenState {
   /// Constructor
   const HomeScreenState({
     required this.userTeams,
+    required this.invitations,
   });
 
   /// The function returns a new instance of HomeScreenState with updated userTeams value if provided,
@@ -27,12 +29,17 @@ class HomeScreenState {
   /// new instance with the same `userTeams` value as the current instance.
   HomeScreenState copyWith({
     AsyncValue<List<TeamModel>>? userTeams,
+    AsyncValue<List<InvitationModel>>? invitations,
   }) {
     return HomeScreenState(
       userTeams: userTeams ?? this.userTeams,
+      invitations: invitations ?? this.invitations,
     );
   }
 
   /// The user teams
   final AsyncValue<List<TeamModel>> userTeams;
+
+  /// The user invitations
+  final AsyncValue<List<InvitationModel>> invitations;
 }

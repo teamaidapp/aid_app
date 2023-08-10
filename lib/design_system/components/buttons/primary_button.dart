@@ -13,7 +13,6 @@ class TAPrimaryButton extends StatelessWidget {
     this.icon,
     this.height = 40,
     this.isLoading = false,
-    this.color = TAColors.primary,
     this.padding = const EdgeInsets.symmetric(horizontal: 32),
     this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
   });
@@ -23,9 +22,6 @@ class TAPrimaryButton extends StatelessWidget {
 
   /// The height of the button.
   final double height;
-
-  /// The color of the button.
-  final Color color;
 
   /// A callback that is used to handle the tap event.
   final VoidCallback onTap;

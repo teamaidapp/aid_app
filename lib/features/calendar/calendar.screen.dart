@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -13,7 +12,6 @@ import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/extensions.dart';
 import 'package:team_aid/design_system/components/buttons/secondary_button.dart';
-import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/components/inputs/multi_dropdown.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/controllers/calendar.controller.dart';
@@ -1119,7 +1117,6 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                                       guest: newGuests,
                                       periodicity: periodicity.value,
                                     );
-                                    inspect(event);
                                     final res = await ref.read(calendarControllerProvider.notifier).addSchedule(schedule: event);
                                     isLoading.value = false;
 

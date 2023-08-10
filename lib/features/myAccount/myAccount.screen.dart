@@ -188,7 +188,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                             child: prefs.when(
                               data: (data) {
                                 final avatar = data.getString(TAConstants.avatar);
-                                debugPrint(avatar);
+
                                 if (avatar != null && avatar.isEmpty) {
                                   return const CircleAvatar(
                                     radius: 48,

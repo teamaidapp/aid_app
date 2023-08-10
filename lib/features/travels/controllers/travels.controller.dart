@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
@@ -234,7 +233,6 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
         (failure) => response = response.copyWith(message: failure.message),
         (success) async {
           state = state.copyWith(fileId: success.message);
-          debugPrint('FileId: ${state.fileId}');
           return response = response.copyWith(ok: true);
         },
       );

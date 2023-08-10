@@ -14,7 +14,6 @@ import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/core/routes.dart';
-import 'package:team_aid/design_system/components/inputs/dropdown_input.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
 

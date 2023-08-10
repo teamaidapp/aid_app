@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
 import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/core/entities/team.model.dart';
+import 'package:team_aid/features/home/entities/invitation.model.dart';
 import 'package:team_aid/features/home/entities/player.model.dart';
 import 'package:team_aid/features/home/repositories/add_player.repository.dart';
 import 'package:team_aid/features/home/repositories/home.repository.dart';
@@ -41,6 +42,9 @@ abstract class HomeService {
     required String sport,
     required int page,
   });
+
+  /// Get the invitations from the given boolean
+  Future<Either<Failure, List<InvitationModel>>> getInvitations({required bool isCoach});
 }
 
 /// This class is responsible for implementing the HomeService
@@ -129,6 +133,21 @@ class HomeServiceImpl implements HomeService {
         sport: sport,
         page: page,
       );
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<InvitationModel>>> getInvitations({required bool isCoach}) async {
+    try {
+      final result = await homeRepository.getInvitations(isCoach: isCoach);
 
       return result.fold(Left.new, Right.new);
     } catch (e) {
