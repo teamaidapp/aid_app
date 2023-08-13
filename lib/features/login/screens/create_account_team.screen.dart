@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -151,6 +152,10 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                 label: 'Zip Code',
                                 textEditingController: zipCodeController,
                                 placeholder: 'Enter the zipcode',
+                                inputListFormatter: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                ],
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
@@ -189,13 +194,15 @@ class CreateAccountTeamScreen extends StatelessWidget {
 
                                       if (response.statusCode == 200) {
                                         final data = (jsonDecode(response.body) as Map)['data'] as List;
-                                        return data.map((e) {
+                                        final list = data.map((e) {
                                           final taDropdownModel = TADropdownModel(
                                             item: (e as Map)['name'] as String,
                                             id: e['id'] as String,
                                           );
                                           return taDropdownModel;
-                                        }).toList();
+                                        }).toList()
+                                          ..sort((a, b) => a.item.compareTo(b.item));
+                                        return list;
                                       } else {
                                         return [];
                                       }

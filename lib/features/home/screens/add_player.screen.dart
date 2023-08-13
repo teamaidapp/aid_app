@@ -13,6 +13,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
+import 'package:team_aid/core/functions.dart';
+import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
@@ -272,6 +274,14 @@ class _AddPlayerWidget extends HookConsumerWidget {
                 return;
               }
 
+              if (!isValidEmail(emailController.text.trim())) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter a valid email'),
+                  ),
+                );
+              }
+
               isLoading.value = true;
               final res = await ref.read(addPlayerControllerProvider.notifier).sendPlayerInvitation(
                     email: emailController.text,
@@ -302,10 +312,15 @@ class _AddPlayerWidget extends HookConsumerWidget {
           ),
         ),
         const SizedBox(height: 30),
-        TATypography.paragraph(
-          text: 'Go to teams',
-          underline: true,
-          color: TAColors.textColor,
+        GestureDetector(
+          onTap: () {
+            context.pushNamed(AppRoutes.teams);
+          },
+          child: TATypography.paragraph(
+            text: 'Go to teams',
+            underline: true,
+            color: TAColors.textColor,
+          ),
         ),
       ],
     );
@@ -449,13 +464,15 @@ class _SearchPlayerWidget extends HookConsumerWidget {
 
                         if (response.statusCode == 200) {
                           final data = (jsonDecode(response.body) as Map)['data'] as List;
-                          return data.map((e) {
+                          final list = data.map((e) {
                             final taDropdownModel = TADropdownModel(
                               item: (e as Map)['name'] as String,
                               id: e['id'] as String,
                             );
                             return taDropdownModel;
-                          }).toList();
+                          }).toList()
+                            ..sort((a, b) => a.item.compareTo(b.item));
+                          return list;
                         } else {
                           return [];
                         }

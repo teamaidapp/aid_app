@@ -13,6 +13,7 @@ import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/extensions.dart';
 import 'package:team_aid/design_system/components/buttons/secondary_button.dart';
 import 'package:team_aid/design_system/components/inputs/multi_dropdown.dart';
+import 'package:team_aid/design_system/components/inputs/time_picker.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/controllers/calendar.controller.dart';
 import 'package:team_aid/features/calendar/entities/event.model.dart';
@@ -731,8 +732,8 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
   var _currentSelectedYear = DateTime.now().year;
   var _selectedRepeat = TADropdownModel(item: 'Once', id: 'once');
 
-  var _fromDate = DateTime.now();
-  var _toDate = DateTime.now();
+  DateTime? _fromDate;
+  DateTime? _toDate;
 
   @override
   void initState() {
@@ -938,68 +939,41 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                       Row(
                         children: [
                           Expanded(
-                            child: TADropdown(
-                              label: 'From',
-                              items: List.generate(
-                                fromHours.length,
-                                (index) {
-                                  final item = fromHours[index];
-                                  return TADropdownModel(
-                                    item: item.description,
-                                    id: 'hour:${item.hour}minute:${item.minute}',
+                            child: TATimePicker(
+                              label: 'Check In',
+                              pickedDate: _fromDate,
+                              onChanged: (date) {
+                                setState(() {
+                                  _fromDate = DateTime(
+                                    _currentSelectedYear,
+                                    _currentSelectedMonth,
+                                    _currentDay,
+                                    date.hour,
+                                    date.minute,
                                   );
-                                },
-                              ),
-                              placeholder: '',
-                              onChange: (v) {
-                                if (v != null) {
-                                  final hour = v.id.split('hour:')[1].split('minute:')[0];
-                                  final minute = v.id.split('hour:')[1].split('minute:')[1];
-                                  setState(() {
-                                    _fromDate = DateTime(
-                                      _currentSelectedYear,
-                                      _currentSelectedMonth,
-                                      _currentDay,
-                                      int.parse(hour),
-                                      int.parse(minute),
-                                    );
-                                    tohours
-                                      ..clear()
-                                      ..addAll(GlobalFunctions.generateHourModels(int.parse(hour) + 1));
-                                  });
-                                }
+                                  tohours
+                                    ..clear()
+                                    ..addAll(GlobalFunctions.generateHourModels(date.hour + 1));
+                                });
                               },
                             ),
                           ),
                           const SizedBox(width: 6),
                           Expanded(
-                            child: TADropdown(
-                              label: 'To',
-                              items: List.generate(
-                                tohours.length,
-                                (index) {
-                                  final item = tohours[index];
-                                  return TADropdownModel(
-                                    item: item.description,
-                                    id: 'hour:${item.hour}minute:${item.minute}',
+                            child: TATimePicker(
+                              label: 'Check Out',
+                              pickedDate: _toDate,
+                              hourFrom: _toDate != null ? _fromDate!.hour + 1 : null,
+                              onChanged: (date) {
+                                setState(() {
+                                  _toDate = DateTime(
+                                    _currentSelectedYear,
+                                    _currentSelectedMonth,
+                                    _currentDay,
+                                    date.hour,
+                                    date.minute,
                                   );
-                                },
-                              ),
-                              placeholder: '',
-                              onChange: (v) {
-                                if (v != null) {
-                                  final hour = v.id.split('hour:')[1].split('minute:')[0];
-                                  final minute = v.id.split('hour:')[1].split('minute:')[1];
-                                  setState(() {
-                                    _toDate = DateTime(
-                                      _currentSelectedYear,
-                                      _currentSelectedMonth,
-                                      _currentDay,
-                                      int.parse(hour),
-                                      int.parse(minute),
-                                    );
-                                  });
-                                }
+                                });
                               },
                             ),
                           ),
@@ -1099,6 +1073,28 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                                       );
                                       return;
                                     }
+
+                                    if (_fromDate == null) {
+                                      unawaited(
+                                        FailureWidget.build(
+                                          title: 'Something went wrong!',
+                                          message: 'Please select the hour of the check out.',
+                                          context: context,
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    if (_toDate == null) {
+                                      unawaited(
+                                        FailureWidget.build(
+                                          title: 'Something went wrong!',
+                                          message: 'Please select the hour of the check in.',
+                                          context: context,
+                                        ),
+                                      );
+                                      return;
+                                    }
+
                                     isLoading.value = true;
 
                                     final newGuests = <Guest>[];
@@ -1110,8 +1106,8 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                                     final event = ScheduleModel(
                                       eventName: eventName.text,
                                       locationDescription: locationDescription.value,
-                                      startDate: _fromDate.toIso8601String(),
-                                      endDate: _toDate.toIso8601String(),
+                                      startDate: _fromDate!.toIso8601String(),
+                                      endDate: _toDate!.toIso8601String(),
                                       location: locationController.text,
                                       eventDescription: descriptionController.text,
                                       guest: newGuests,

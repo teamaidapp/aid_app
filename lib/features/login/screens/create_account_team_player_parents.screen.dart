@@ -15,6 +15,7 @@ import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
+import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
@@ -94,19 +95,19 @@ class CreateAccountParentsScreen extends StatelessWidget {
                               TAPrimaryInput(
                                 label: 'First name',
                                 textEditingController: firstNameController,
-                                placeholder: 'Enter your first name',
+                                placeholder: 'Enter the first name of the child',
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
                                 label: 'Last name',
                                 textEditingController: lastNameController,
-                                placeholder: 'Enter your last name',
+                                placeholder: 'Enter the last name of the child',
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
                                 label: 'E-mail',
                                 textEditingController: emailController,
-                                placeholder: 'Enter your email',
+                                placeholder: 'Enter the email of the child',
                                 inputListFormatter: [
                                   FilteringTextInputFormatter.allow(
                                     RegExp('[a-zA-Z0-9.@_-]'),
@@ -117,7 +118,7 @@ class CreateAccountParentsScreen extends StatelessWidget {
                               TADropdown(
                                 label: 'Sports',
                                 items: TAConstants.sportsList,
-                                placeholder: 'Select your sport',
+                                placeholder: 'Select a sport',
                                 onChange: (v) {
                                   if (v != null) {
                                     sport.value = v.id;
@@ -161,13 +162,15 @@ class CreateAccountParentsScreen extends StatelessWidget {
 
                                       if (response.statusCode == 200) {
                                         final data = (jsonDecode(response.body) as Map)['data'] as List;
-                                        return data.map((e) {
+                                        final list = data.map((e) {
                                           final taDropdownModel = TADropdownModel(
                                             item: (e as Map)['name'] as String,
                                             id: e['id'] as String,
                                           );
                                           return taDropdownModel;
-                                        }).toList();
+                                        }).toList()
+                                          ..sort((a, b) => a.item.compareTo(b.item));
+                                        return list;
                                       } else {
                                         return [];
                                       }
@@ -236,7 +239,7 @@ class CreateAccountParentsScreen extends StatelessWidget {
                               TAPrimaryInput(
                                 label: 'Phone number',
                                 textEditingController: phoneNumberController,
-                                placeholder: 'Enter your phone number',
+                                placeholder: 'Enter the phone number of the child',
                                 inputListFormatter: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(10),
@@ -247,7 +250,7 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                 label: 'Password',
                                 textEditingController: passwordController,
                                 isPassword: true,
-                                placeholder: 'Enter your password',
+                                placeholder: 'Enter the password of the child',
                               ),
                               const SizedBox(height: 20),
                             ],
@@ -276,70 +279,113 @@ class CreateAccountParentsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        HookConsumer(
-                          builder: (context, ref, child) {
-                            final isLoading = useState(false);
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 20, right: 20),
-                              child: TAPrimaryButton(
-                                text: 'CREATE ACCOUNT',
-                                height: 50,
-                                isLoading: isLoading.value,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                onTap: () async {
-                                  if (firstNameController.text.isEmpty ||
-                                      lastNameController.text.isEmpty ||
-                                      emailController.text.isEmpty ||
-                                      phoneNumberController.text.isEmpty ||
-                                      passwordController.text.isEmpty ||
-                                      sport.value.isEmpty ||
-                                      currentSelectedState.value.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Please fill all fields'),
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  if (!agreeToTerms.value) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Please agree to terms of service and privacy policy',
-                                        ),
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  final user = UserModel(
-                                    firstName: firstNameController.text,
-                                    lastName: lastNameController.text,
-                                    email: emailController.text.toLowerCase(),
-                                    phoneNumber: phoneNumberController.text,
-                                    password: passwordController.text,
-                                    sportId: sport.value,
-                                    role: Role.player,
-                                    cityId: cityState.value,
-                                    stateId: currentSelectedState.value,
-                                  );
-                                  isLoading.value = true;
-                                  final res = await ref.read(createAccountControllerProvider.notifier).createChildAccount(user: user);
-                                  isLoading.value = false;
-                                  if (res.ok && context.mounted) {
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            right: 20,
+                            bottom: 40,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Flexible(
+                                flex: 2,
+                                child: GestureDetector(
+                                  onTap: () {
                                     context.go(AppRoutes.home);
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(res.message),
+                                  },
+                                  child: TATypography.paragraph(
+                                    text: 'Skip',
+                                    underline: true,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 4,
+                                child: HookConsumer(
+                                  builder: (context, ref, child) {
+                                    final isLoading = useState(false);
+                                    return Padding(
+                                      padding: const EdgeInsets.only(left: 20, right: 20),
+                                      child: TAPrimaryButton(
+                                        text: 'CREATE ACCOUNT',
+                                        height: 50,
+                                        isLoading: isLoading.value,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        onTap: () async {
+                                          if (firstNameController.text.isEmpty ||
+                                              lastNameController.text.isEmpty ||
+                                              emailController.text.isEmpty ||
+                                              phoneNumberController.text.isEmpty ||
+                                              passwordController.text.isEmpty ||
+                                              sport.value.isEmpty ||
+                                              currentSelectedState.value.isEmpty) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text('Please fill all fields'),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          if (!isValidPhoneNumber(phoneNumberController.text.trim())) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text('Please enter a valid phone number'),
+                                              ),
+                                            );
+                                          }
+
+                                          if (!isValidEmail(emailController.text.trim())) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text('Please enter a valid email'),
+                                              ),
+                                            );
+                                          }
+
+                                          if (!agreeToTerms.value) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'Please agree to terms of service and privacy policy',
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          final user = UserModel(
+                                            firstName: firstNameController.text,
+                                            lastName: lastNameController.text,
+                                            email: emailController.text.toLowerCase(),
+                                            phoneNumber: phoneNumberController.text,
+                                            password: passwordController.text,
+                                            sportId: sport.value,
+                                            role: Role.player,
+                                            cityId: cityState.value,
+                                            stateId: currentSelectedState.value,
+                                          );
+                                          isLoading.value = true;
+                                          final res = await ref.read(createAccountControllerProvider.notifier).createChildAccount(user: user);
+                                          isLoading.value = false;
+                                          if (res.ok && context.mounted) {
+                                            context.go(AppRoutes.home);
+                                          } else {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text(res.message),
+                                              ),
+                                            );
+                                          }
+                                        },
                                       ),
                                     );
-                                  }
-                                },
+                                  },
+                                ),
                               ),
-                            );
-                          },
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 20),
                       ],

@@ -15,6 +15,7 @@ import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
+import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
@@ -161,13 +162,15 @@ class CreateAccountCoachScreen extends StatelessWidget {
 
                                       if (response.statusCode == 200) {
                                         final data = (jsonDecode(response.body) as Map)['data'] as List;
-                                        return data.map((e) {
+                                        final list = data.map((e) {
                                           final taDropdownModel = TADropdownModel(
                                             item: (e as Map)['name'] as String,
                                             id: e['id'] as String,
                                           );
                                           return taDropdownModel;
-                                        }).toList();
+                                        }).toList()
+                                          ..sort((a, b) => a.item.compareTo(b.item));
+                                        return list;
                                       } else {
                                         return [];
                                       }
@@ -301,6 +304,14 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                     return;
                                   }
 
+                                  if (!isValidEmail(emailController.text.trim())) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Please enter a valid email'),
+                                      ),
+                                    );
+                                  }
+
                                   if (!agreeToTerms.value) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -310,6 +321,14 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                       ),
                                     );
                                     return;
+                                  }
+
+                                  if (!isValidPhoneNumber(phoneNumberController.text.trim())) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Please enter a valid phone number'),
+                                      ),
+                                    );
                                   }
 
                                   final user = UserModel(

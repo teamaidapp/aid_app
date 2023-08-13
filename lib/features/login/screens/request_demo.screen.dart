@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/entities/request_demo.model.dart';
+import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/design_system/components/buttons/primary_button.dart';
 import 'package:team_aid/design_system/components/container.dart';
 import 'package:team_aid/design_system/components/inputs/primary_input.dart';
@@ -240,6 +241,15 @@ class RequestDemoScreen extends StatelessWidget {
                                     );
                                     return;
                                   }
+
+                                  if (!isValidPhoneNumber(phoneController.text.trim())) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Please enter a valid phone number'),
+                                      ),
+                                    );
+                                  }
+
                                   isLoading.value = true;
                                   final demo = RequestDemoModel(
                                     name: nameController.text,

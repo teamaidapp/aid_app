@@ -159,25 +159,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             color: TAColors.textColor,
                           ),
                           collapsed: const SizedBox(),
-                          expanded: TAContainer(
-                            radius: 28,
-                            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: data.length,
-                              padding: EdgeInsets.zero,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                final invitation = data[index];
-                                return Column(
-                                  children: [
-                                    RequestsWidget(invitation: invitation),
-                                    const Divider(),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
+                          expanded: data.isNotEmpty
+                              ? TAContainer(
+                                  radius: 28,
+                                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: data.length,
+                                    padding: EdgeInsets.zero,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      final invitation = data[index];
+                                      return Column(
+                                        children: [
+                                          RequestsWidget(invitation: invitation),
+                                          const Divider(),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                )
+                              : const SizedBox(),
                         );
                       },
                       error: (_, __) => const SizedBox(),

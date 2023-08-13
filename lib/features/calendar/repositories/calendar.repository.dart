@@ -53,9 +53,7 @@ class CalendarRepositoryImpl implements CalendarRepository {
       );
       final res = await http.get(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
+        headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
       );
       if (res.statusCode != 200 && res.statusCode != 201) {
         return Left(

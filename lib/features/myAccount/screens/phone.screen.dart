@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -97,6 +98,10 @@ class PhoneScreen extends HookConsumerWidget {
                                 label: 'Phone number',
                                 placeholder: '',
                                 textEditingController: phoneController,
+                                inputListFormatter: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                ],
                               ),
                               const SizedBox(height: 20),
                               ref.watch(sharedPrefs).when(
@@ -181,6 +186,14 @@ class PhoneScreen extends HookConsumerWidget {
                                     context: context,
                                   );
                                   return;
+                                }
+
+                                if (!isValidPhoneNumber(phoneController.text.trim())) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Please enter a valid phone number'),
+                                    ),
+                                  );
                                 }
 
                                 final user = UserModel(

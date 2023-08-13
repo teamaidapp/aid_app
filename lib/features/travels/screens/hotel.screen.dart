@@ -14,6 +14,7 @@ import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/design_system/components/inputs/multi_dropdown.dart';
+import 'package:team_aid/design_system/components/inputs/time_picker.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/entities/hour.model.dart';
 import 'package:team_aid/features/common/functions/global_functions.dart';
@@ -47,8 +48,8 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
   var _currentSelectedMonth = DateTime.now().month;
   var _currentSelectedYear = DateTime.now().year;
 
-  late DateTime _fromDate;
-  late DateTime _toDate;
+  DateTime? _fromDate;
+  DateTime? _toDate;
 
   final fileExpandableController = ExpandableController(initialExpanded: false);
   File? selectedFile;
@@ -350,68 +351,41 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: TADropdown(
-                                label: 'From',
-                                items: List.generate(
-                                  fromHours.length,
-                                  (index) {
-                                    final item = fromHours[index];
-                                    return TADropdownModel(
-                                      item: item.description,
-                                      id: 'hour:${item.hour}minute:${item.minute}',
+                              child: TATimePicker(
+                                label: 'Check In',
+                                pickedDate: _fromDate,
+                                onChanged: (date) {
+                                  setState(() {
+                                    _fromDate = DateTime(
+                                      _currentSelectedYear,
+                                      _currentSelectedMonth,
+                                      currentDay,
+                                      date.hour,
+                                      date.minute,
                                     );
-                                  },
-                                ),
-                                placeholder: '',
-                                onChange: (v) {
-                                  if (v != null) {
-                                    final hour = v.id.split('hour:')[1].split('minute:')[0];
-                                    final minute = v.id.split('hour:')[1].split('minute:')[1];
-                                    setState(() {
-                                      _fromDate = DateTime(
-                                        _currentSelectedYear,
-                                        _currentSelectedMonth,
-                                        currentDay,
-                                        int.parse(hour),
-                                        int.parse(minute),
-                                      );
-                                      tohours
-                                        ..clear()
-                                        ..addAll(GlobalFunctions.generateHourModels(int.parse(hour) + 1));
-                                    });
-                                  }
+                                    tohours
+                                      ..clear()
+                                      ..addAll(GlobalFunctions.generateHourModels(date.hour + 1));
+                                  });
                                 },
                               ),
                             ),
                             const SizedBox(width: 6),
                             Expanded(
-                              child: TADropdown(
-                                label: 'To',
-                                items: List.generate(
-                                  tohours.length,
-                                  (index) {
-                                    final item = tohours[index];
-                                    return TADropdownModel(
-                                      item: item.description,
-                                      id: 'hour:${item.hour}minute:${item.minute}',
+                              child: TATimePicker(
+                                label: 'Check Out',
+                                pickedDate: _toDate,
+                                hourFrom: _toDate != null ? _fromDate!.hour + 1 : null,
+                                onChanged: (date) {
+                                  setState(() {
+                                    _toDate = DateTime(
+                                      _currentSelectedYear,
+                                      _currentSelectedMonth,
+                                      currentDay,
+                                      date.hour,
+                                      date.minute,
                                     );
-                                  },
-                                ),
-                                placeholder: '',
-                                onChange: (v) {
-                                  if (v != null) {
-                                    final hour = v.id.split('hour:')[1].split('minute:')[0];
-                                    final minute = v.id.split('hour:')[1].split('minute:')[1];
-                                    setState(() {
-                                      _toDate = DateTime(
-                                        _currentSelectedYear,
-                                        _currentSelectedMonth,
-                                        currentDay,
-                                        int.parse(hour),
-                                        int.parse(minute),
-                                      );
-                                    });
-                                  }
+                                  });
                                 },
                               ),
                             ),
@@ -571,6 +545,27 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                                   return;
                                 }
 
+                                if (_fromDate == null) {
+                                  unawaited(
+                                    FailureWidget.build(
+                                      title: 'Something went wrong!',
+                                      message: 'Please select the hour of the check out.',
+                                      context: context,
+                                    ),
+                                  );
+                                  return;
+                                }
+                                if (_toDate == null) {
+                                  unawaited(
+                                    FailureWidget.build(
+                                      title: 'Something went wrong!',
+                                      message: 'Please select the hour of the check in.',
+                                      context: context,
+                                    ),
+                                  );
+                                  return;
+                                }
+
                                 /// If theres a file or an image we upload it
                                 if (selectedFile != null || selectedImage != null) {
                                   File newFile;
@@ -611,8 +606,8 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                                 final hotel = HotelModel(
                                   place: name.text.trim(),
                                   placeDescription: name.text.trim(),
-                                  startDate: _fromDate.toIso8601String(),
-                                  endDate: _toDate.toIso8601String(),
+                                  startDate: _fromDate!.toIso8601String(),
+                                  endDate: _toDate!.toIso8601String(),
                                   reservationCode: reservationController.text.trim(),
                                   guests: newGuests,
                                 );
@@ -767,7 +762,7 @@ class _HotelWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TATypography.subparagraph(
-                                text: 'FROM',
+                                text: 'Check In',
                                 color: TAColors.grey1,
                               ),
                               TATypography.paragraph(
@@ -791,7 +786,7 @@ class _HotelWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TATypography.subparagraph(
-                                text: 'TO',
+                                text: 'Check Out',
                                 color: TAColors.grey1,
                               ),
                               TATypography.paragraph(

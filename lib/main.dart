@@ -5,12 +5,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/routes.dart';
 
 Future<void> main() async {
   await dotenv.load(
     fileName: kReleaseMode ? '.env' : '.env.staging',
   );
+  TAConstants.statesList.sort((a, b) => a.name.compareTo(b.name));
   runApp(
     const ProviderScope(
       child: MainApp(),

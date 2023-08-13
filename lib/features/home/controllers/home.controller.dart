@@ -4,7 +4,7 @@ import 'package:team_aid/features/home/services/home.service.dart';
 import 'package:team_aid/features/home/state/home.state.dart';
 
 /// A dependency injection.
-final homeControllerProvider = StateNotifierProvider<HomeController, HomeScreenState>((ref) {
+final homeControllerProvider = StateNotifierProvider.autoDispose<HomeController, HomeScreenState>((ref) {
   return HomeController(
     const HomeScreenState(
       userTeams: AsyncValue.loading(),
