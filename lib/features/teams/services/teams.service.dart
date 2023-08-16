@@ -2,6 +2,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
+import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/features/teams/entities/contact.model.dart';
 import 'package:team_aid/features/teams/repositories/teams.repository.dart';
 
@@ -16,6 +17,12 @@ abstract class TeamsService {
   /// Get data
   Future<Either<Failure, List<ContactModel>>> getContactList({
     required String teamId,
+  });
+
+  /// Update the invitation status
+  Future<Either<Failure, Success>> updateInvitation({
+    required String status,
+    required String invitationId,
   });
 }
 
@@ -39,6 +46,27 @@ class TeamsServiceImpl implements TeamsService {
       return Left(
         Failure(
           message: 'Hubo un problema al obtener los datos de TeamsServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> updateInvitation({
+    required String status,
+    required String invitationId,
+  }) async {
+    try {
+      final result = await teamsRepository.updateInvitation(
+        invitationId: invitationId,
+        status: status,
+      );
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was an error on TeamsServiceImpl',
         ),
       );
     }

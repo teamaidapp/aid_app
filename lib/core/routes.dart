@@ -92,7 +92,10 @@ final routerProvider = Provider((ref) {
       ),
       GoRoute(
         path: AppRoutes.createAccountCoach,
-        builder: (context, state) => const CreateAccountCoachScreen(),
+        name: AppRoutes.createAccountCoach,
+        builder: (context, state) => CreateAccountCoachScreen(
+          isAdmin: state.queryParameters['isAdmin'] == 'true',
+        ),
       ),
       GoRoute(
         path: AppRoutes.createAccountTeamForCoach,
@@ -146,7 +149,7 @@ final routerProvider = Provider((ref) {
         path: AppRoutes.createAccountTeamPlayer,
         name: AppRoutes.createAccountTeamPlayer,
         builder: (context, state) => CreateAccountTeamPlayerScreen(
-          isCreatingSon: state.queryParameters['isCreatingSon']! == 'true',
+          isCreatingSon: state.queryParameters['isCreatingSon'] == 'true',
         ),
       ),
       GoRoute(

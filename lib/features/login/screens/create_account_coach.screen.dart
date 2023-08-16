@@ -23,7 +23,13 @@ import 'package:team_aid/features/login/controllers/createAccount.controller.dar
 /// The statelessWidget that handles the current screen
 class CreateAccountCoachScreen extends StatelessWidget {
   /// The constructor.
-  const CreateAccountCoachScreen({super.key});
+  const CreateAccountCoachScreen({
+    required this.isAdmin,
+    super.key,
+  });
+
+  /// If the account creating is an admin
+  final bool isAdmin;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +55,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                     ),
                     const Spacer(),
                     TATypography.h3(
-                      text: 'Coach / Admin',
+                      text: isAdmin ? 'Admin' : 'Coach',
                       color: TAColors.textColor,
                       fontWeight: FontWeight.w700,
                     ),

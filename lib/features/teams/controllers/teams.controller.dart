@@ -4,8 +4,7 @@ import 'package:team_aid/features/teams/services/teams.service.dart';
 import 'package:team_aid/features/teams/state/teams.state.dart';
 
 /// A dependency injection.
-final teamsControllerProvider =
-    StateNotifierProvider.autoDispose<TeamsController, TeamsScreenState>((ref) {
+final teamsControllerProvider = StateNotifierProvider.autoDispose<TeamsController, TeamsScreenState>((ref) {
   return TeamsController(
     const TeamsScreenState(
       contactList: AsyncValue.loading(),
@@ -43,6 +42,41 @@ class TeamsController extends StateNotifier<TeamsScreenState> {
           state = state.copyWith(
             contactList: AsyncValue.data(list),
           );
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de TeamsService',
+      );
+    }
+  }
+
+  /// The function `updateInvitation` updates the status of an invitation and returns a
+  /// `ResponseFailureModel` indicating the success or failure of the operation.
+  ///
+  /// Args:
+  ///   status (String): The "status" parameter is a required String that represents the updated status of
+  /// an invitation. It could be values like "accepted", "rejected", "pending", etc.
+  ///   invitationId (String): The `invitationId` parameter is a required String that represents the
+  /// unique identifier of the invitation that needs to be updated.
+  ///
+  /// Returns:
+  ///   a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> updateInvitation({
+    required String status,
+    required String invitationId,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _teamsService.updateInvitation(
+        status: status,
+        invitationId: invitationId,
+      );
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (list) {
           return response = response.copyWith(ok: true);
         },
       );

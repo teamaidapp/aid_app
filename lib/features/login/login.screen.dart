@@ -253,74 +253,15 @@ class _CreateAccountPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final teamPlayerSelected = useState(false);
-    return teamPlayerSelected.value
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TATypography.h3(
-                        text: 'Team player',
-                        color: TAColors.textColor,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          teamPlayerSelected.value = false;
-                        },
-                        child: const Icon(Iconsax.close_circle),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  TATypography.paragraph(
-                    text: 'Choose your profile',
-                    color: TAColors.color3,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  TeamPlayerWidget(
-                    subtitle: 'Under age',
-                    title: 'Parents',
-                    icon: Iconsax.profile_2user,
-                    description: 'School sponsored / Elementary / Middle and High School',
-                    onTap: () {
-                      context.pushNamed(
-                        AppRoutes.createAccountTeamPlayer,
-                        queryParameters: {
-                          'isCreatingSon': 'true',
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TeamPlayerWidget(
-                    subtitle: 'Starting college',
-                    title: 'Team player',
-                    icon: Iconsax.people,
-                    description: 'College / Youth Leagues / Athletic Associations / Professional players',
-                    onTap: () {
-                      context.pushNamed(
-                        AppRoutes.createAccountTeamPlayer,
-                        queryParameters: {
-                          'isCreatingSon': 'false',
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-            ],
-          )
-        : Column(
+    final coachOrAdminSelected = useState(false);
+    return Column(
+      children: [
+        if (teamPlayerSelected.value)
+          TeamPlayerMenuWidget(teamPlayerSelected: teamPlayerSelected)
+        else if (coachOrAdminSelected.value)
+          CoachOrAdminWidget(coachOrAdminSelected: coachOrAdminSelected)
+        else
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
@@ -347,8 +288,10 @@ class _CreateAccountPage extends HookWidget {
                   _RegisterOptionWidget(
                     text: 'Coach / Admin',
                     icon: Iconsax.user,
+                    path: 'assets/whistle.png',
                     onTap: () {
-                      context.push(AppRoutes.createAccountCoach);
+                      // context.push(AppRoutes.createAccountCoach);
+                      coachOrAdminSelected.value = true;
                     },
                   ),
                   const SizedBox(width: 14),
@@ -384,7 +327,167 @@ class _CreateAccountPage extends HookWidget {
                 ),
               ),
             ],
-          );
+          ),
+      ],
+    );
+  }
+}
+
+class CoachOrAdminWidget extends StatelessWidget {
+  /// Constructor
+  const CoachOrAdminWidget({
+    required this.coachOrAdminSelected,
+    super.key,
+  });
+
+  final ValueNotifier<bool> coachOrAdminSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TATypography.h3(
+                text: 'Coach / Admin',
+                color: TAColors.textColor,
+              ),
+              const SizedBox(height: 8),
+              TATypography.paragraph(
+                text: 'Choose your profile',
+                color: TAColors.color3,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _RegisterOptionWidget(
+              text: 'Admin',
+              icon: Iconsax.user,
+              path: 'assets/admin.png',
+              onTap: () {
+                context.pushNamed(
+                  AppRoutes.createAccountCoach,
+                  queryParameters: {'isAdmin': 'true'},
+                );
+              },
+            ),
+            const SizedBox(width: 14),
+            _RegisterOptionWidget(
+              text: 'Coach',
+              icon: Iconsax.people,
+              path: 'assets/whistle.png',
+              onTap: () {
+                context.pushNamed(
+                  AppRoutes.createAccountCoach,
+                  queryParameters: {'isAdmin': 'false'},
+                );
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 40),
+        GestureDetector(
+          onTap: () {
+            coachOrAdminSelected.value = false;
+          },
+          child: Align(
+            child: TATypography.paragraph(
+              text: 'Go to back',
+              underline: true,
+              color: TAColors.textColor,
+            ),
+          ),
+        ),
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+}
+
+class TeamPlayerMenuWidget extends StatelessWidget {
+  const TeamPlayerMenuWidget({
+    required this.teamPlayerSelected,
+    super.key,
+  });
+
+  final ValueNotifier<bool> teamPlayerSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TATypography.h3(
+                  text: 'Team player',
+                  color: TAColors.textColor,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    teamPlayerSelected.value = false;
+                  },
+                  child: const Icon(Iconsax.close_circle),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            TATypography.paragraph(
+              text: 'Choose your profile',
+              color: TAColors.color3,
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TeamPlayerWidget(
+              subtitle: 'Under age',
+              title: 'Parents',
+              icon: Iconsax.profile_2user,
+              description: 'School sponsored / Elementary / Middle and High School',
+              onTap: () {
+                context.pushNamed(
+                  AppRoutes.createAccountTeamPlayer,
+                  queryParameters: {
+                    'isCreatingSon': 'true',
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            TeamPlayerWidget(
+              subtitle: 'Starting college',
+              title: 'Team player',
+              icon: Iconsax.people,
+              description: 'College / Youth Leagues / Athletic Associations / Professional players',
+              onTap: () {
+                context.pushNamed(
+                  AppRoutes.createAccountTeamPlayer,
+                  queryParameters: {
+                    'isCreatingSon': 'false',
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
   }
 }
 
@@ -393,9 +496,12 @@ class _RegisterOptionWidget extends StatelessWidget {
     required this.icon,
     required this.text,
     required this.onTap,
+    this.path,
   });
 
   final IconData icon;
+
+  final String? path;
 
   final String text;
 
@@ -423,11 +529,13 @@ class _RegisterOptionWidget extends StatelessWidget {
                 ),
               ],
             ),
-            child: Icon(
-              icon,
-              size: 54,
-              color: const Color(0xff496CF1),
-            ),
+            child: path != null
+                ? Image.asset(path!)
+                : Icon(
+                    icon,
+                    size: 54,
+                    color: const Color(0xff496CF1),
+                  ),
           ),
           const SizedBox(height: 16),
           TATypography.paragraph(

@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/failure.dart';
+import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/features/teams/entities/contact.model.dart';
 import 'package:team_aid/main.dart';
 
@@ -23,6 +24,12 @@ abstract class TeamsRepository {
   /// Get data
   Future<Either<Failure, List<ContactModel>>> getContactList({
     required String teamId,
+  });
+
+  /// Update the invitation status
+  Future<Either<Failure, Success>> updateInvitation({
+    required String status,
+    required String invitationId,
   });
 }
 
@@ -71,6 +78,49 @@ class TeamsRepositoryImpl implements TeamsRepository {
       }
 
       return Right(list);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un error en TeamsRepositoyImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> updateInvitation({
+    required String status,
+    required String invitationId,
+  }) async {
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/teams/invitation',
+      );
+
+      final data = {
+        'invitationId': invitationId,
+        'status': status,
+      };
+
+      final res = await http.patch(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(data),
+      );
+
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error updating the invitatino',
+          ),
+        );
+      }
+
+      return Right(Success(ok: true, message: 'Invitation updated.'));
     } catch (e) {
       return Left(
         Failure(
