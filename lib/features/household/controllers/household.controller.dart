@@ -1,4 +1,3 @@
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/features/household/services/household.service.dart';
@@ -7,7 +6,9 @@ import 'package:team_aid/features/household/state/household.state.dart';
 /// A dependency injection.
 final householdControllerProvider = StateNotifierProvider.autoDispose<HouseholdController, HouseholdScreenState>((ref) {
   return HouseholdController(
-    const HouseholdScreenState(),
+    const HouseholdScreenState(
+      houseHoldList: AsyncValue.loading(),
+    ),
     ref,
     ref.watch(householdServiceProvider),
   );
@@ -31,11 +32,15 @@ class HouseholdController extends StateNotifier<HouseholdScreenState> {
   Future<ResponseFailureModel> getData() async {
     var response = ResponseFailureModel.defaultFailureResponse();
     try {
-      final result = await _householdService.getData();
+      final result = await _householdService.getHouseholds();
 
       return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
-        (success) {          
+        (failure) {
+          state = state.copyWith(houseHoldList: const AsyncValue.data([]));
+          return response = response.copyWith(message: failure.message);
+        },
+        (success) {
+          state = state.copyWith(houseHoldList: AsyncValue.data(success));
           return response = response.copyWith(ok: true);
         },
       );

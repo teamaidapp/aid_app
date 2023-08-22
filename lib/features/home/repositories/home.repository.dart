@@ -29,6 +29,9 @@ abstract class HomeRepository {
 
   /// Get the invitations from the given boolean
   Future<Either<Failure, List<InvitationModel>>> getInvitations({required bool isCoach});
+
+  /// Get data
+  Future<Either<Failure, List<TeamModel>>> getAllTeams();
 }
 
 /// This class is responsible for implementing the HomeRepository
@@ -106,6 +109,37 @@ class HomeRepositoryImpl implements HomeRepository {
         invitations.add(invitation);
       }
       return Right(invitations);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un error en HomeRepositoryImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TeamModel>>> getAllTeams() async {
+    final teams = <TeamModel>[];
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/teams/all-teams',
+      );
+      final res = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      final data = (jsonDecode(res.body) as Map)['data'] as List;
+
+      for (final element in data) {
+        final team = TeamModel.fromMap(element as Map<String, dynamic>);
+        teams.add(team);
+      }
+      return Right(teams);
     } catch (e) {
       return Left(
         Failure(

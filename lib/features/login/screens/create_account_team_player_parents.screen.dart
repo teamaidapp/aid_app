@@ -310,6 +310,7 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                       child: TAPrimaryButton(
                                         text: 'CREATE ACCOUNT',
                                         height: 50,
+                                        padding: EdgeInsets.zero,
                                         isLoading: isLoading.value,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         onTap: () async {

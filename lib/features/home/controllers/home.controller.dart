@@ -7,6 +7,7 @@ import 'package:team_aid/features/home/state/home.state.dart';
 final homeControllerProvider = StateNotifierProvider.autoDispose<HomeController, HomeScreenState>((ref) {
   return HomeController(
     const HomeScreenState(
+      allTeams: AsyncValue.loading(),
       userTeams: AsyncValue.loading(),
       invitations: AsyncValue.loading(),
     ),
@@ -59,9 +60,39 @@ class HomeController extends StateNotifier<HomeScreenState> {
       final result = await _homeService.getUserTeams();
 
       return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
+        (failure) {
+          state.copyWith(userTeams: const AsyncValue.data([]));
+          return response = response.copyWith(message: failure.message);
+        },
         (list) {
           state = state.copyWith(userTeams: AsyncValue.data(list));
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de HomeService',
+      );
+    }
+  }
+
+  /// The function `getAllTeams` retrieves a list of teams from `_homeService` and updates the state with
+  /// the retrieved data, returning a response indicating success or failure.
+  ///
+  /// Returns:
+  ///   a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> getAllTeams() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _homeService.getAllTeams();
+
+      return result.fold(
+        (failure) {
+          state.copyWith(allTeams: const AsyncValue.data([]));
+          return response = response.copyWith(message: failure.message);
+        },
+        (list) {
+          state = state.copyWith(allTeams: AsyncValue.data(list));
           return response = response.copyWith(ok: true);
         },
       );

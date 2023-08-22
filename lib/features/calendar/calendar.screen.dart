@@ -122,7 +122,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               ),
               const SizedBox(width: 10),
               SizedBox(
-                width: 150,
+                width: 160,
                 child: GestureDetector(
                   key: const Key('full_calendar'),
                   onTap: () {

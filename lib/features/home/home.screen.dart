@@ -124,7 +124,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         prefsProvider.when(
                           data: (prefs) {
                             final role = prefs.getString(TAConstants.role);
-                            if (role == Role.coach.name) {
+                            if (role == Role.admin.name) {
                               return Expanded(
                                 child: TAPrimaryButton(
                                   text: 'CREATE TEAM',
@@ -133,6 +133,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   icon: Iconsax.add,
                                   onTap: () {
                                     context.push(AppRoutes.createAccountTeamForCoach);
+                                  },
+                                ),
+                              );
+                            } else if (role == Role.coach.name) {
+                              return Expanded(
+                                child: TAPrimaryButton(
+                                  text: 'ADD PLAYER',
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  icon: Iconsax.add,
+                                  onTap: () {
+                                    context.push(AppRoutes.addPlayer);
                                   },
                                 ),
                               );
@@ -170,12 +182,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     physics: const NeverScrollableScrollPhysics(),
                                     itemBuilder: (context, index) {
                                       final invitation = data[index];
-                                      return Column(
-                                        children: [
-                                          RequestsWidget(invitation: invitation),
-                                          const Divider(),
-                                        ],
-                                      );
+                                      if (invitation.invitations.isNotEmpty) {
+                                        return Column(
+                                          children: [
+                                            RequestsWidget(invitation: invitation),
+                                            const Divider(),
+                                          ],
+                                        );
+                                      } else {
+                                        return const SizedBox();
+                                      }
                                     },
                                   ),
                                 )

@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/features/calendar/calendar.screen.dart';
 import 'package:team_aid/features/home/home.screen.dart';
+import 'package:team_aid/features/home/screens/add_coach.screen.dart';
 import 'package:team_aid/features/home/screens/add_player.screen.dart';
 import 'package:team_aid/features/household/household.screen.dart';
 import 'package:team_aid/features/login/login.screen.dart';
@@ -15,6 +16,7 @@ import 'package:team_aid/features/myAccount/screens/address.screen.dart';
 import 'package:team_aid/features/myAccount/screens/biography.screen.dart';
 import 'package:team_aid/features/myAccount/screens/phone.screen.dart';
 import 'package:team_aid/features/teams/screens/contacts-list.screen.dart';
+import 'package:team_aid/features/teams/screens/join_team.screen.dart';
 import 'package:team_aid/features/teams/teams.screen.dart';
 import 'package:team_aid/features/travels/travels.screen.dart';
 
@@ -71,6 +73,12 @@ class AppRoutes {
 
   /// Household route
   static const String household = '/household';
+
+  /// Add Coach route
+  static const String addCoach = '/home/team/addCoach';
+
+  /// Join Team route
+  static const String joinTeam = '/home/joinTeam';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -155,6 +163,14 @@ final routerProvider = Provider((ref) {
       GoRoute(
         path: AppRoutes.household,
         builder: (context, state) => const HouseholdScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.addCoach,
+        builder: (context, state) => const AddCoachScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.joinTeam,
+        builder: (context, state) => const JoinTeamScreen(),
       ),
     ],
   );

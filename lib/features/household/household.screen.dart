@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/household/controllers/household.controller.dart';
 import 'package:team_aid/features/household/widget/child.screen.dart';
 
 /// The statelessWidget that handles the current screen
-class HouseholdScreen extends StatelessWidget {
+class HouseholdScreen extends ConsumerStatefulWidget {
   /// The constructor.
   const HouseholdScreen({super.key});
 
   @override
+  ConsumerState<HouseholdScreen> createState() => _HouseholdScreenState();
+}
+
+class _HouseholdScreenState extends ConsumerState<HouseholdScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(householdControllerProvider.notifier).getData();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final houseHoldList = ref.watch(householdControllerProvider).houseHoldList;
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Column(
         children: [
           const SizedBox(height: 10),
@@ -62,25 +76,18 @@ class HouseholdScreen extends StatelessWidget {
                   topRight: Radius.circular(40),
                 ),
               ),
-              child: const SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 20),
-                    ChildWidget(
-                      team: TeamModel(
-                        teamName: 'Team 1',
-                        sport: 'Cheerleading',
-                        gender: 'Male',
-                        organization: 'Organization',
-                        country: 'USA',
-                        zipCode: '78374',
-                        state: 'Michigan',
-                        level: 'Middleschool',
-                        id: '',
-                        city: 'Detroit',
-                      ),
-                    ),
-                  ],
+              child: houseHoldList.when(
+                data: (data) {
+                  return ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return ChildWidget(houseHold: data[index]);
+                    },
+                  );
+                },
+                error: (_, __) => const SizedBox(),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(),
                 ),
               ),
             ),
@@ -90,6 +97,7 @@ class HouseholdScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: TAPrimaryButton(
                 text: 'ADD HOUSEHOLD MEMBER',
+                height: 50,
                 mainAxisAlignment: MainAxisAlignment.center,
                 onTap: () {
                   context.push(AppRoutes.createAccountParents);

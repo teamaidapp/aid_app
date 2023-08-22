@@ -1,18 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
+import 'package:team_aid/core/enums/role.enum.dart';
+import 'package:team_aid/core/extensions.dart';
 import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
@@ -21,6 +18,8 @@ import 'package:team_aid/features/common/widgets/success.widget.dart';
 import 'package:team_aid/features/home/controllers/add_player.controller.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/home/entities/player.model.dart';
+import 'package:team_aid/features/home/widgets/player_card.widget.dart';
+import 'package:team_aid/features/home/widgets/search_form.widget.dart';
 
 /// The statelessWidget that handles the current screen
 class AddPlayerScreen extends HookWidget {
@@ -216,6 +215,10 @@ class _AddPlayerWidget extends HookConsumerWidget {
                 label: 'Phone',
                 textEditingController: phoneController,
                 placeholder: 'Enter the phone number',
+                inputListFormatter: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10),
+                ],
               ),
               const SizedBox(height: 20),
               Row(
@@ -282,12 +285,20 @@ class _AddPlayerWidget extends HookConsumerWidget {
                 );
               }
 
+              if (!isValidPhoneNumber(phoneController.text.trim())) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter a valid phone number'),
+                  ),
+                );
+              }
+
               isLoading.value = true;
               final res = await ref.read(addPlayerControllerProvider.notifier).sendPlayerInvitation(
                     email: emailController.text,
                     phone: phoneController.text,
                     teamId: teamId.value,
-                    isCoach: makeAdmin.value,
+                    role: Role.player.name,
                   );
               isLoading.value = false;
               if (res.ok && context.mounted) {
@@ -314,7 +325,7 @@ class _AddPlayerWidget extends HookConsumerWidget {
         const SizedBox(height: 30),
         GestureDetector(
           onTap: () {
-            context.pushNamed(AppRoutes.teams);
+            context.push(AppRoutes.teams);
           },
           child: TATypography.paragraph(
             text: 'Go to teams',
@@ -332,263 +343,187 @@ class _SearchPlayerWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sportController = useState('');
-    final levelController = useState('');
-    final positionController = useState('');
-    final nameController = useTextEditingController();
-    final cityState = useState('');
-    final currentSelectedState = useState('');
-    final isLoading = useState(false);
     final showForm = useState(true);
-
+    final teamId = useState('');
     final players = ref.watch(addPlayerControllerProvider).listOfPlayers;
 
     if (showForm.value) {
-      return Column(
-        children: [
-          // TAContainer(
-          //   margin: const EdgeInsets.only(
-          //     left: 20,
-          //     right: 20,
-          //     top: 30,
-          //   ),
-          //   padding: const EdgeInsets.only(
-          //     top: 20,
-          //     left: 20,
-          //     right: 20,
-          //     bottom: 30,
-          //   ),
-          //   child: TADropdown(
-          //     label: 'Team',
-          //     placeholder: 'Select a team',
-          //     items: [
-          //       TADropdownModel(item: 'One', id: ''),
-          //     ],
-          //     onChange: (selectedValue) {},
-          //   ),
-          // ),
-          TAContainer(
-            margin: const EdgeInsets.only(
-              left: 20,
-              right: 20,
-              top: 30,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.only(left: 6),
-                  child: TATypography.paragraph(
-                    text: 'Search by any option',
-                    fontWeight: FontWeight.w600,
-                    color: TAColors.textColor,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TAPrimaryInput(
-                  label: 'Name',
-                  placeholder: 'Search by name',
-                  textEditingController: nameController,
-                ),
-                const SizedBox(height: 10),
-                TADropdown(
-                  label: 'Sport',
-                  placeholder: 'Select the sport',
-                  items: TAConstants.sportsList,
-                  onChange: (selectedValue) {
-                    if (selectedValue != null) {
-                      sportController.value = selectedValue.id;
-                    }
-                  },
-                ),
-                // const SizedBox(height: 10),
-                // TADropdown(
-                //   label: 'Level',
-                //   placeholder: 'Select a level',
-                //   items: [
-                //     TADropdownModel(
-                //       item: 'Elite',
-                //       id: '',
-                //     ),
-                //     TADropdownModel(
-                //       item: 'Amateur',
-                //       id: '',
-                //     )
-                //   ],
-                //   onChange: (selectedValue) {},
-                // ),
-                const SizedBox(height: 20),
-                TADropdown(
-                  label: 'Position',
-                  placeholder: 'Select a position',
-                  items: [
-                    TADropdownModel(item: 'One', id: ''),
-                  ],
-                  onChange: (selectedValue) {},
-                ),
-                const SizedBox(height: 20),
-                TADropdown(
-                  label: 'State',
-                  placeholder: 'Select a state',
-                  items: List.generate(
-                    TAConstants.statesList.length,
-                    (index) => TADropdownModel(
-                      item: TAConstants.statesList[index].name,
-                      id: TAConstants.statesList[index].id,
-                    ),
-                  ),
-                  onChange: (selectedValue) {
-                    if (selectedValue != null) {
-                      currentSelectedState.value = selectedValue.id;
-                    }
-                  },
-                ),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TATypography.paragraph(
-                      text: 'City',
-                      fontWeight: FontWeight.w500,
-                      color: TAColors.color1,
-                    ),
-                    SizedBox(height: 0.5.h),
-                    DropdownSearch<TADropdownModel>(
-                      asyncItems: (filter) async {
-                        final response = await http.get(
-                          Uri.parse(
-                            '${dotenv.env['API_URL']}/cities/cities/${currentSelectedState.value}',
-                          ),
-                        );
+      return SearchFormWidget(
+        teamId: teamId,
+        showForm: showForm,
+      );
+    } else {
+      return PlayersSearchWidget(
+        players: players,
+        showForm: showForm,
+        teamId: teamId,
+      );
+    }
+  }
+}
 
-                        if (response.statusCode == 200) {
-                          final data = (jsonDecode(response.body) as Map)['data'] as List;
-                          final list = data.map((e) {
-                            final taDropdownModel = TADropdownModel(
-                              item: (e as Map)['name'] as String,
-                              id: e['id'] as String,
-                            );
-                            return taDropdownModel;
-                          }).toList()
-                            ..sort((a, b) => a.item.compareTo(b.item));
-                          return list;
-                        } else {
-                          return [];
-                        }
-                      },
-                      onChanged: (value) {
-                        if (value != null) {
-                          cityState.value = value.id;
-                        }
-                      },
-                      itemAsString: (item) => item.item,
-                      dropdownButtonProps: const DropdownButtonProps(
-                        icon: Icon(
-                          Iconsax.arrow_down_1,
-                          size: 14,
-                          color: Colors.black,
-                        ),
-                      ),
-                      dropdownDecoratorProps: DropDownDecoratorProps(
-                        baseStyle: GoogleFonts.poppins(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
-                          color: TAColors.color2,
-                        ),
-                        dropdownSearchDecoration: InputDecoration(
-                          hintText: 'Select a city',
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 10,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: TAColors.color1.withOpacity(0.5),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: TAColors.color1.withOpacity(0.5),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                              color: TAColors.color1,
-                            ),
-                          ),
-                          hintStyle: GoogleFonts.poppins(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: TAColors.color2,
-                          ),
-                        ),
-                      ),
-                      popupProps: PopupProps.menu(
-                        fit: FlexFit.loose,
-                        constraints: const BoxConstraints.tightFor(),
-                        menuProps: MenuProps(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
+class PlayersSearchWidget extends HookWidget {
+  const PlayersSearchWidget({
+    super.key,
+    required this.teamId,
+    required this.players,
+    required this.showForm,
+  });
+
+  final AsyncValue<List<PlayerModel>> players;
+  final ValueNotifier<bool> showForm;
+  final ValueNotifier<String> teamId;
+
+  @override
+  Widget build(BuildContext context) {
+    final showPlayerInfo = useState(false);
+    final playerInfo = useState(PlayerModel.initDefault());
+    if (showPlayerInfo.value) {
+      return TAContainer(
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(26),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(28),
+                  topRight: Radius.circular(28),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(28),
+                    child: Image.network(
+                      playerInfo.value.avatar.isEmpty ? 'https://placehold.co/400x200/png' : playerInfo.value.avatar,
                     ),
-                  ],
-                ),
-                // TADropdown(
-                //   label: 'City',
-                //   textEditingController: cityController,
-                //   placeholder: 'Select a city',
-                //   items: [
-                //     TADropdownModel(item: 'One', id: ''),
-                //   ],
-                //   onChange: (selectedValue) {},
-                // ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-          const SizedBox(height: 80),
-          Consumer(
-            builder: (context, ref, child) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                child: TAPrimaryButton(
-                  text: 'SEARCH',
-                  height: 50,
-                  isLoading: isLoading.value,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  onTap: () async {
-                    isLoading.value = true;
-                    final res = await ref.read(addPlayerControllerProvider.notifier).searchPlayer(
-                          name: nameController.text,
-                          level: levelController.value,
-                          position: positionController.value,
-                          statePlayer: currentSelectedState.value,
-                          city: cityState.value,
-                          sport: sportController.value,
-                          page: 1,
-                        );
-                    isLoading.value = false;
-                    if (res.ok && context.mounted) {
-                      showForm.value = false;
-                    } else {
-                      unawaited(
-                        FailureWidget.build(
-                          title: 'Error',
-                          message: res.message,
-                          context: context,
+                  ),
+                  const SizedBox(height: 10),
+                  TATypography.paragraph(
+                    text: playerInfo.value.firstName,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  Row(
+                    children: [
+                      TATypography.paragraph(
+                        text: 'Sport',
+                        fontWeight: FontWeight.w600,
+                        color: TAColors.color1,
+                      ),
+                      const SizedBox(width: 10),
+                      TATypography.paragraph(
+                        text: playerInfo.value.userHasSports.fold<String>('', (previousValue, element) => '$previousValue${element.sportsId.name} '),
+                        color: TAColors.color1,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      TATypography.paragraph(
+                        text: 'Level',
+                        fontWeight: FontWeight.w600,
+                        color: TAColors.color1,
+                      ),
+                      const SizedBox(width: 10),
+                      TATypography.paragraph(
+                        text: playerInfo.value.role.capitalize(),
+                        color: TAColors.color1,
+                      ),
+                    ],
+                  ),
+                  if (playerInfo.value.address.isNotEmpty)
+                    Row(
+                      children: [
+                        TATypography.paragraph(
+                          text: 'Addresss',
+                          fontWeight: FontWeight.w600,
+                          color: TAColors.color1,
                         ),
-                      );
-                    }
-                  },
-                ),
-              );
-            },
-          ),
-        ],
+                        const SizedBox(width: 10),
+                        TATypography.paragraph(
+                          text: playerInfo.value.address,
+                          color: TAColors.color1,
+                        ),
+                      ],
+                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Flexible(
+                        flex: 2,
+                        child: GestureDetector(
+                          onTap: () {
+                            showForm.value = true;
+                          },
+                          child: TATypography.paragraph(
+                            text: 'Cancel',
+                            underline: true,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: HookConsumer(
+                          builder: (context, ref, child) {
+                            final isLoading = useState(false);
+                            return Padding(
+                              padding: EdgeInsets.zero,
+                              child: TAPrimaryButton(
+                                text: 'SEND INVITATION',
+                                height: 50,
+                                isLoading: isLoading.value,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                onTap: () async {
+                                  if (playerInfo.value.email.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Can't send the invitation because user has the email private"),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  isLoading.value = true;
+                                  final res = await ref.read(addPlayerControllerProvider.notifier).sendPlayerInvitation(
+                                        email: playerInfo.value.email,
+                                        phone: playerInfo.value.phoneNumber,
+                                        teamId: teamId.value,
+                                        role: Role.player.name,
+                                      );
+                                  isLoading.value = false;
+                                  if (res.ok && context.mounted) {
+                                    await SuccessWidget.build(
+                                      title: 'Success',
+                                      message: 'Your invitation has been sent successfully.',
+                                      context: context,
+                                    );
+                                    if (context.mounted) {
+                                      context.go(AppRoutes.home);
+                                    }
+                                  } else {
+                                    unawaited(
+                                      FailureWidget.build(
+                                        title: 'Error',
+                                        message: res.message,
+                                        context: context,
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       );
     } else {
       return Column(
@@ -614,7 +549,10 @@ class _SearchPlayerWidget extends HookConsumerWidget {
                     itemCount: data.length,
                     itemBuilder: (context, index) {
                       return PlayerCard(
-                        onTap: () {},
+                        onTap: () {
+                          showPlayerInfo.value = true;
+                          playerInfo.value = data[index];
+                        },
                         player: data[index],
                       );
                     },
@@ -645,66 +583,5 @@ class _SearchPlayerWidget extends HookConsumerWidget {
         ],
       );
     }
-  }
-}
-
-/// The PlayerCard class is a stateless widget that displays a player's avatar, first name, and role,
-/// and can be tapped to trigger a callback function.
-class PlayerCard extends StatelessWidget {
-  /// Constructor
-  const PlayerCard({
-    required this.player,
-    required this.onTap,
-    super.key,
-  });
-
-  /// Player model
-  final PlayerModel player;
-
-  /// On tap callback
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: TAContainer(
-        margin: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(28),
-                  topRight: Radius.circular(28),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
-                    child: Image.network(
-                      player.avatar.isEmpty ? 'https://placehold.co/200/png' : player.avatar,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  TATypography.paragraph(
-                    text: player.firstName,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  TATypography.paragraph(
-                    text: player.role,
-                    fontWeight: FontWeight.w500,
-                    color: TAColors.color1,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

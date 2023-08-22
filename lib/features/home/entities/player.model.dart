@@ -57,6 +57,28 @@ class PlayerModel {
     );
   }
 
+  /// The function "initDefault" returns a default instance of the PlayerModel class with empty values
+  /// for all properties.
+  ///
+  /// Returns:
+  ///   The `PlayerModel` object with all its properties initialized to empty values.
+  factory PlayerModel.initDefault() {
+    return PlayerModel(
+      id: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      address: '',
+      role: '',
+      accountVerificationState: '',
+      fatherId: '',
+      avatar: '',
+      createdAt: '',
+      userHasSports: [],
+    );
+  }
+
   /// The unique identifier of the player.
   final String id;
 

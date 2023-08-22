@@ -11,6 +11,7 @@ class HomeScreenState {
   const HomeScreenState({
     required this.userTeams,
     required this.invitations,
+    required this.allTeams,
   });
 
   /// The function returns a new instance of HomeScreenState with updated userTeams value if provided,
@@ -29,16 +30,21 @@ class HomeScreenState {
   /// new instance with the same `userTeams` value as the current instance.
   HomeScreenState copyWith({
     AsyncValue<List<TeamModel>>? userTeams,
+    AsyncValue<List<TeamModel>>? allTeams,
     AsyncValue<List<InvitationModel>>? invitations,
   }) {
     return HomeScreenState(
       userTeams: userTeams ?? this.userTeams,
       invitations: invitations ?? this.invitations,
+      allTeams: allTeams ?? this.allTeams,
     );
   }
 
   /// The user teams
   final AsyncValue<List<TeamModel>> userTeams;
+
+  /// All teams on the DB
+  final AsyncValue<List<TeamModel>> allTeams;
 
   /// The user invitations
   final AsyncValue<List<InvitationModel>> invitations;

@@ -344,7 +344,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                     phoneNumber: phoneNumberController.text,
                                     password: passwordController.text,
                                     sportId: sport.value,
-                                    role: Role.coach,
+                                    role: isAdmin ? Role.admin : Role.coach,
                                     cityId: cityState.value,
                                     stateId: currentSelectedState.value,
                                   );
@@ -356,9 +356,11 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                       .createAccount(user: user);
                                   isLoading.value = false;
                                   if (res.ok && context.mounted) {
-                                    context.go(
-                                      AppRoutes.createAccountTeamForCoach,
-                                    );
+                                    if (isAdmin) {
+                                      context.go(AppRoutes.createAccountTeamForCoach);
+                                    } else {
+                                      context.go(AppRoutes.joinTeam);
+                                    }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(

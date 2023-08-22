@@ -4,9 +4,7 @@ import 'package:team_aid/features/home/services/home.service.dart';
 import 'package:team_aid/features/home/state/add_player.state.dart';
 
 /// A dependency injection.
-final addPlayerControllerProvider =
-    StateNotifierProvider.autoDispose<AddPlayerController, AddPlayerState>(
-        (ref) {
+final addPlayerControllerProvider = StateNotifierProvider.autoDispose<AddPlayerController, AddPlayerState>((ref) {
   final homeService = ref.watch(homeServiceProvider);
   return AddPlayerController(
     const AddPlayerState(
@@ -41,7 +39,7 @@ class AddPlayerController extends StateNotifier<AddPlayerState> {
   /// Returns:
   ///   A `Future` of `ResponseFailureModel` is being returned.
   Future<ResponseFailureModel> sendPlayerInvitation({
-    required bool isCoach,
+    required String role,
     required String email,
     required String phone,
     required String teamId,
@@ -50,7 +48,7 @@ class AddPlayerController extends StateNotifier<AddPlayerState> {
     try {
       final result = await _homeService.sendPlayerInvitation(
         email: email,
-        isCoach: isCoach,
+        role: role,
         phone: phone,
         teamId: teamId,
       );

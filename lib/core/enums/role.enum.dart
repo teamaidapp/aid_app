@@ -9,6 +9,13 @@ enum Role {
   /// Parent role
   parent,
 
+  /// Admin role
+  admin,
+
+  /// Player under age
+  // ignore: constant_identifier_names
+  player_under_aged,
+
   /// Support role
   support,
 }

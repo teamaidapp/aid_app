@@ -154,7 +154,7 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                 placeholder: 'Enter the zipcode',
                                 inputListFormatter: [
                                   FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(10),
+                                  LengthLimitingTextInputFormatter(5),
                                 ],
                               ),
                               const SizedBox(height: 10),
@@ -342,7 +342,7 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                             .createTeam(team: team);
                                         isLoading.value = false;
                                         if (res.ok && context.mounted) {
-                                          context.go(AppRoutes.home);
+                                          context.go(AppRoutes.addCoach);
                                         } else {
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(

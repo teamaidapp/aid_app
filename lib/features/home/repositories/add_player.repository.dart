@@ -22,7 +22,7 @@ final addPlayerRepositoryProvider = Provider<AddPlayerRepository>((ref) {
 abstract class AddPlayerRepository {
   /// Send player invitation
   Future<Either<Failure, Success>> sendPlayerInvitation({
-    required bool isCoach,
+    required String role,
     required String email,
     required String phone,
     required String teamId,
@@ -54,7 +54,7 @@ class AddPlayerRepositoryImpl implements AddPlayerRepository {
   /// Get data from backend
   @override
   Future<Either<Failure, Success>> sendPlayerInvitation({
-    required bool isCoach,
+    required String role,
     required String email,
     required String phone,
     required String teamId,
@@ -65,7 +65,7 @@ class AddPlayerRepositoryImpl implements AddPlayerRepository {
         '${dotenv.env['API_URL']}/teams/invite-user-by-coach',
       );
       final data = {
-        'isCoach': isCoach,
+        'role': role,
         'email': email,
         'phone': phone,
         'teamId': teamId,
@@ -118,7 +118,7 @@ class AddPlayerRepositoryImpl implements AddPlayerRepository {
     final list = <PlayerModel>[];
     try {
       final token = await secureStorage.read(key: TAConstants.accessToken);
-      final url = Uri.parse('${dotenv.env['API_URL']}/users?limit=10&page=$page'
+      final url = Uri.parse('${dotenv.env['API_URL']}/users?limit=50&page=$page'
           '${name.isNotEmpty ? '&name=$name' : ''}'
           '${level.isNotEmpty ? '&level=$level' : ''}'
           '${position.isNotEmpty ? '&position=$position' : ''}'
@@ -142,8 +142,7 @@ class AddPlayerRepositoryImpl implements AddPlayerRepository {
       }
 
       // ignore: avoid_dynamic_calls
-      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data']
-          ['result'] as List;
+      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data']['result'] as List;
 
       for (final element in data) {
         final player = PlayerModel.fromMap(element as Map<String, dynamic>);

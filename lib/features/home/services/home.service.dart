@@ -24,9 +24,12 @@ abstract class HomeService {
   /// Get user teams
   Future<Either<Failure, List<TeamModel>>> getUserTeams();
 
+  /// Get all teams
+  Future<Either<Failure, List<TeamModel>>> getAllTeams();
+
   /// Send player invitation
   Future<Either<Failure, Success>> sendPlayerInvitation({
-    required bool isCoach,
+    required String role,
     required String email,
     required String phone,
     required String teamId,
@@ -89,15 +92,30 @@ class HomeServiceImpl implements HomeService {
   }
 
   @override
+  Future<Either<Failure, List<TeamModel>>> getAllTeams() async {
+    try {
+      final result = await homeRepository.getAllTeams();
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
   Future<Either<Failure, Success>> sendPlayerInvitation({
-    required bool isCoach,
+    required String role,
     required String email,
     required String phone,
     required String teamId,
   }) async {
     try {
       final result = await addPlayerRepository.sendPlayerInvitation(
-        isCoach: isCoach,
+        role: role,
         email: email,
         phone: phone,
         teamId: teamId,
