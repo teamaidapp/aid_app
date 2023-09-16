@@ -18,6 +18,7 @@ import 'package:team_aid/features/myAccount/screens/phone.screen.dart';
 import 'package:team_aid/features/teams/screens/contacts-list.screen.dart';
 import 'package:team_aid/features/teams/screens/join_team.screen.dart';
 import 'package:team_aid/features/teams/teams.screen.dart';
+import 'package:team_aid/features/travels/screens/files.screen.dart';
 import 'package:team_aid/features/travels/travels.screen.dart';
 
 /// This class defines the routes for a GoRouter in a Flutter app, including
@@ -79,6 +80,9 @@ class AppRoutes {
 
   /// Join Team route
   static const String joinTeam = '/home/joinTeam';
+
+  /// Files route
+  static const String files = '/home/files';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -171,6 +175,13 @@ final routerProvider = Provider((ref) {
       GoRoute(
         path: AppRoutes.joinTeam,
         builder: (context, state) => const JoinTeamScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.files,
+        name: AppRoutes.files,
+        builder: (context, state) => FilesScreen(
+          isInTravel: state.queryParameters['isInTravel'] == ' true',
+        ),
       ),
     ],
   );

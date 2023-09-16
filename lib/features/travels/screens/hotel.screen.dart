@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:expandable/expandable.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +21,7 @@ import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/entities/hour.model.dart';
 import 'package:team_aid/features/common/functions/global_functions.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
+import 'package:team_aid/features/common/widgets/location.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/travels/controllers/travels.controller.dart';
@@ -77,9 +80,11 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
   @override
   Widget build(BuildContext context) {
     final teamId = useState('');
+    final placeDescription = useState('');
     final isLoading = useState(false);
     final showHotels = useState(false);
     final name = useTextEditingController();
+    final description = useTextEditingController();
     final reservationController = useTextEditingController();
     final teams = ref.watch(homeControllerProvider).userTeams;
     final guests = ref.watch(travelsControllerProvider).contactList;
@@ -117,7 +122,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
             ),
             const SizedBox(width: 10),
             SizedBox(
-              width: 150,
+              width: 170,
               child: GestureDetector(
                 key: const Key('show_hotels'),
                 onTap: () {
@@ -125,7 +130,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                 },
                 child: Container(
                   height: 50,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
                   decoration: BoxDecoration(
                     color: showHotels.value ? TAColors.purple : Colors.white,
                     borderRadius: const BorderRadius.all(
@@ -237,6 +242,12 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                         TAPrimaryInput(
                           label: 'Name',
                           textEditingController: name,
+                          placeholder: '',
+                        ),
+                        const SizedBox(height: 10),
+                        TAPrimaryInput(
+                          label: 'Description',
+                          textEditingController: description,
                           placeholder: '',
                         ),
                         const SizedBox(height: 10),
@@ -354,18 +365,10 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                               child: TATimePicker(
                                 label: 'Check In',
                                 pickedDate: _fromDate,
+                                cupertinoDatePickerMode: CupertinoDatePickerMode.date,
                                 onChanged: (date) {
                                   setState(() {
-                                    _fromDate = DateTime(
-                                      _currentSelectedYear,
-                                      _currentSelectedMonth,
-                                      currentDay,
-                                      date.hour,
-                                      date.minute,
-                                    );
-                                    tohours
-                                      ..clear()
-                                      ..addAll(GlobalFunctions.generateHourModels(date.hour + 1));
+                                    _fromDate = date;
                                   });
                                 },
                               ),
@@ -375,16 +378,11 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                               child: TATimePicker(
                                 label: 'Check Out',
                                 pickedDate: _toDate,
+                                cupertinoDatePickerMode: CupertinoDatePickerMode.date,
                                 hourFrom: _toDate != null ? _fromDate!.hour + 1 : null,
                                 onChanged: (date) {
                                   setState(() {
-                                    _toDate = DateTime(
-                                      _currentSelectedYear,
-                                      _currentSelectedMonth,
-                                      currentDay,
-                                      date.hour,
-                                      date.minute,
-                                    );
+                                    _toDate = date;
                                   });
                                 },
                               ),
@@ -415,7 +413,14 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                             selectedGuests.value = v;
                           },
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),
+                        LocationWidget(
+                          onChanged: (v) {
+                            if (v != null) {
+                              placeDescription.value = v.id;
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -526,11 +531,11 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                       ),
                       const SizedBox(width: 10),
                       SizedBox(
-                        width: 120,
+                        width: 140,
                         child: Consumer(
                           builder: (context, ref, child) {
                             return TAPrimaryButton(
-                              text: 'CREATE',
+                              text: 'NEXT',
                               isLoading: isLoading.value,
                               mainAxisAlignment: MainAxisAlignment.center,
                               onTap: () async {
@@ -605,7 +610,8 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                                 isLoading.value = true;
                                 final hotel = HotelModel(
                                   place: name.text.trim(),
-                                  placeDescription: name.text.trim(),
+                                  placeDescription: placeDescription.value,
+                                  description: description.text.trim(),
                                   startDate: _fromDate!.toIso8601String(),
                                   endDate: _toDate!.toIso8601String(),
                                   reservationCode: reservationController.text.trim(),
@@ -616,14 +622,18 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
 
                                 if (res.ok && mounted) {
                                   ref.read(travelsControllerProvider.notifier).setFileId(fileId: '');
-                                  await SuccessWidget.build(
-                                    title: 'Success!',
-                                    message: 'Event has been added successfully.',
-                                    context: context,
+                                  await widget.pageController.nextPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeIn,
                                   );
-                                  if (context.mounted) {
-                                    context.pop();
-                                  }
+                                  // await SuccessWidget.build(
+                                  //   title: 'Success!',
+                                  //   message: 'Event has been added successfully.',
+                                  //   context: context,
+                                  // );
+                                  // if (context.mounted) {
+                                  //   context.pop();
+                                  // }
                                 } else {
                                   unawaited(
                                     FailureWidget.build(

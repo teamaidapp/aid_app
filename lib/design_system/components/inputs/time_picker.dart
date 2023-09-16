@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/design_system/design_system.dart';
 
@@ -10,6 +11,7 @@ class TATimePicker extends StatefulWidget {
     required this.onChanged,
     required this.pickedDate,
     this.hourFrom,
+    this.cupertinoDatePickerMode = CupertinoDatePickerMode.time,
     super.key,
   });
 
@@ -21,6 +23,9 @@ class TATimePicker extends StatefulWidget {
 
   /// The hour from
   final int? hourFrom;
+
+  /// Cupertino date picker mode
+  final CupertinoDatePickerMode cupertinoDatePickerMode;
 
   /// Triggers when the picker changes
   final Function(DateTime) onChanged;
@@ -39,7 +44,11 @@ class _TATimePickerState extends State<TATimePicker> {
         if (widget.pickedDate != null) {
           dateTime = widget.pickedDate!;
         } else {
-          dateTime = DateTime(now.year, now.month, now.day, widget.hourFrom ?? now.hour, 30);
+          if (widget.cupertinoDatePickerMode == CupertinoDatePickerMode.time) {
+            dateTime = DateTime(now.year, now.month, now.day, widget.hourFrom ?? now.hour, 30);
+          } else {
+            dateTime = DateTime(now.year, now.month, now.day, now.hour);
+          }
         }
         widget.onChanged(dateTime);
         showCupertinoModalPopup<void>(
@@ -52,10 +61,9 @@ class _TATimePickerState extends State<TATimePicker> {
                 SizedBox(
                   height: 400,
                   child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.time,
+                    mode: widget.cupertinoDatePickerMode,
                     initialDateTime: dateTime,
                     onDateTimeChanged: widget.onChanged,
-                    minuteInterval: 30,
                   ),
                 ),
                 CupertinoButton(
@@ -115,20 +123,24 @@ class _TATimePickerState extends State<TATimePicker> {
       return '';
     }
 
-    var hour = widget.pickedDate!.hour;
-    final minute = widget.pickedDate!.minute;
+    if (widget.cupertinoDatePickerMode == CupertinoDatePickerMode.time) {
+      var hour = widget.pickedDate!.hour;
+      final minute = widget.pickedDate!.minute;
 
-    final amPm = hour < 12 ? 'AM' : 'PM';
+      final amPm = hour < 12 ? 'AM' : 'PM';
 
-    hour = hour % 12; // Convert to 12-hour format
+      hour = hour % 12; // Convert to 12-hour format
 
-    if (hour == 0) {
-      hour = 12; // Display 12 instead of 0 at 12:00 AM or 12:00 PM
+      if (hour == 0) {
+        hour = 12; // Display 12 instead of 0 at 12:00 AM or 12:00 PM
+      }
+
+      final formattedHour = hour.toString().padLeft(2, '0');
+      final formattedMinute = minute.toString().padLeft(2, '0');
+
+      return '$formattedHour:$formattedMinute $amPm';
+    } else {
+      return DateFormat.MMMEd().format(widget.pickedDate!);
     }
-
-    final formattedHour = hour.toString().padLeft(2, '0');
-    final formattedMinute = minute.toString().padLeft(2, '0');
-
-    return '$formattedHour:$formattedMinute $amPm';
   }
 }

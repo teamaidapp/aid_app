@@ -18,6 +18,7 @@ import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/common/widgets/location.widget.dart';
 import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
 
 /// The statelessWidget that handles the current screen
@@ -33,6 +34,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final labelPrefix = isAdmin ? 'Organization' : '';
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -55,7 +57,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                     ),
                     const Spacer(),
                     TATypography.h3(
-                      text: isAdmin ? 'Admin' : 'Coach',
+                      text: isAdmin ? 'Organization' : 'Coach',
                       color: TAColors.textColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -82,6 +84,8 @@ class CreateAccountCoachScreen extends StatelessWidget {
                 final sport = useState('');
                 final cityState = useState('');
                 final currentSelectedState = useState('');
+                final address = useState('');
+                final googleAddress = useState('');
                 return Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
@@ -104,25 +108,25 @@ class CreateAccountCoachScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               TAPrimaryInput(
-                                label: 'First name',
+                                label: '$labelPrefix first name',
                                 textEditingController: firstNameController,
                                 placeholder: 'Enter your first name',
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
-                                label: 'Last name',
+                                label: '$labelPrefix last name',
                                 textEditingController: lastNameController,
                                 placeholder: 'Enter your last name',
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
-                                label: 'E-mail',
+                                label: '$labelPrefix email',
                                 textEditingController: emailController,
                                 placeholder: 'Enter your email',
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
-                                label: 'Sports',
+                                label: '$labelPrefix sports',
                                 items: TAConstants.sportsList,
                                 placeholder: 'Select your sport',
                                 onChange: (v) {
@@ -133,7 +137,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
-                                label: 'State',
+                                label: '$labelPrefix state',
                                 placeholder: 'Select a state',
                                 items: List.generate(
                                   TAConstants.statesList.length,
@@ -153,7 +157,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   TATypography.paragraph(
-                                    text: 'City',
+                                    text: '$labelPrefix city',
                                     fontWeight: FontWeight.w500,
                                     color: TAColors.color1,
                                   ),
@@ -243,7 +247,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
-                                label: 'Phone number',
+                                label: '$labelPrefix phone number',
                                 textEditingController: phoneNumberController,
                                 placeholder: 'Enter your phone number',
                                 inputListFormatter: [
@@ -252,8 +256,18 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 10),
+                              if (isAdmin)
+                                LocationWidget(
+                                  onChanged: (v) {
+                                    if (v != null) {
+                                      address.value = v.item;
+                                      googleAddress.value = v.id;
+                                    }
+                                  },
+                                ),
+                              const SizedBox(height: 10),
                               TAPrimaryInput(
-                                label: 'Password',
+                                label: '$labelPrefix password',
                                 textEditingController: passwordController,
                                 isPassword: true,
                                 placeholder: 'Enter your password',
@@ -347,6 +361,8 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                     role: isAdmin ? Role.admin : Role.coach,
                                     cityId: cityState.value,
                                     stateId: currentSelectedState.value,
+                                    address: isAdmin ? address.value : null,
+                                    googleAddress: isAdmin ? googleAddress.value : null,
                                   );
                                   isLoading.value = true;
                                   final res = await ref

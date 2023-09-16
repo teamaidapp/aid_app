@@ -57,9 +57,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: GestureDetector(
-                onTap: () {
-                  context.pop();
-                },
+                onTap: () {},
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -167,7 +165,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         return ExpandablePanel(
                           controller: requestsExpandableController,
                           header: TATypography.h3(
-                            text: 'Requests',
+                            text: 'Invitations',
                             color: TAColors.textColor,
                           ),
                           collapsed: const SizedBox(),

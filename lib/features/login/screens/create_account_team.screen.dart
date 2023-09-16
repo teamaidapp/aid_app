@@ -69,7 +69,7 @@ class CreateAccountTeamScreen extends StatelessWidget {
                 final sportController = useTextEditingController();
                 final levelController = useTextEditingController();
                 final genderController = useTextEditingController();
-                final organizationController = useTextEditingController();
+                final organizationController = useTextEditingController(text: '');
                 final countryController = useTextEditingController();
                 final zipCodeController = useTextEditingController();
                 final stateController = useTextEditingController();
@@ -135,12 +135,12 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                   }
                                 },
                               ),
-                              const SizedBox(height: 10),
-                              TAPrimaryInput(
-                                label: 'Organization',
-                                textEditingController: organizationController,
-                                placeholder: 'Enter your organization',
-                              ),
+                              // const SizedBox(height: 10),
+                              // TAPrimaryInput(
+                              //   label: 'Organization',
+                              //   textEditingController: organizationController,
+                              //   placeholder: 'Enter your organization',
+                              // ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
                                 label: 'Country',

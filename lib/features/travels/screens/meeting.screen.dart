@@ -17,6 +17,7 @@ import 'package:team_aid/features/calendar/entities/schedule.model.dart';
 import 'package:team_aid/features/calendar/widgets/event.widget.dart';
 import 'package:team_aid/features/common/functions/global_functions.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
+import 'package:team_aid/features/common/widgets/location.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/travels/controllers/travels.controller.dart';
@@ -71,7 +72,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
   @override
   Widget build(BuildContext context) {
     final teamId = useState('');
-    final periodicity = useState('');
+    final periodicity = useState('once');
     final isLoading = useState(false);
     final showMeetings = useState(false);
     final eventName = useTextEditingController();
@@ -113,7 +114,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
             ),
             const SizedBox(width: 10),
             SizedBox(
-              width: 150,
+              width: 170,
               child: GestureDetector(
                 key: const Key('show_meetings'),
                 onTap: () {
@@ -121,7 +122,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                 },
                 child: Container(
                   height: 50,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
                   decoration: BoxDecoration(
                     color: showMeetings.value ? TAColors.purple : Colors.white,
                     borderRadius: const BorderRadius.all(
@@ -404,6 +405,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                         TADropdown(
                           label: 'Repeat',
                           items: [
+                            TADropdownModel(item: 'Once', id: 'once'),
                             TADropdownModel(item: 'Daily', id: 'daily'),
                             TADropdownModel(item: 'Weekly', id: 'weekly'),
                             TADropdownModel(item: 'Monthly', id: 'monthly'),
@@ -438,6 +440,14 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                             selectedGuests.value = v;
                           },
                         ),
+                        const SizedBox(height: 10),
+                        LocationWidget(
+                          onChanged: (v) {
+                            if (v != null) {
+                              locationController.text = v.id;
+                            }
+                          },
+                        ),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -455,7 +465,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                               child: Consumer(
                                 builder: (context, ref, child) {
                                   return TAPrimaryButton(
-                                    text: 'SAVE',
+                                    text: 'NEXT',
                                     isLoading: isLoading.value,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     onTap: () async {
@@ -508,7 +518,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                         endDate: _toDate!.toIso8601String(),
                                         location: locationController.text,
                                         eventDescription: eventDescription.text,
-                                        locationDescription: '',
+                                        locationDescription: locationController.text,
                                         guest: [],
                                         periodicity: periodicity.value,
                                       );
@@ -516,16 +526,18 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                       isLoading.value = false;
 
                                       if (res.ok && mounted) {
-                                        unawaited(
-                                          SuccessWidget.build(
-                                            title: 'Success!',
-                                            message: 'Event has been added successfully.',
-                                            context: context,
-                                          ),
+                                        await widget.pageController.nextPage(
+                                          duration: const Duration(milliseconds: 300),
+                                          curve: Curves.easeIn,
                                         );
-                                        if (context.mounted) {
-                                          context.pop();
-                                        }
+                                        // await SuccessWidget.build(
+                                        //   title: 'Success!',
+                                        //   message: 'Event has been added successfully.',
+                                        //   context: context,
+                                        // );
+                                        // if (context.mounted) {
+                                        //   context.pop();
+                                        // }
                                       } else {
                                         unawaited(
                                           FailureWidget.build(

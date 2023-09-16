@@ -19,7 +19,7 @@ void main() {
 
       await tester.pumpWidget(materialApp);
 
-      expect(find.text('Coach / Admin'), findsOneWidget);
+      expect(find.text('Organization'), findsOneWidget);
       expect(find.byType(TATypography), findsWidgets);
       expect(find.byType(TAPrimaryButton), findsOneWidget);
       expect(find.byType(TAPrimaryInput), findsNWidgets(6));

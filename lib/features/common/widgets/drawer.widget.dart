@@ -50,6 +50,15 @@ class DrawerWidget extends HookConsumerWidget {
                         ),
                       ],
                     ),
+                    if (role == Role.admin.name) const SizedBox(height: 30),
+                    if (role == Role.admin.name)
+                      _DrawerOptionWidget(
+                        icon: Iconsax.profile_add,
+                        title: 'Coaches',
+                        onTap: () {
+                          context.push(AppRoutes.addPlayer);
+                        },
+                      ),
                     if (role == Role.coach.name) const SizedBox(height: 30),
                     if (role == Role.coach.name)
                       _DrawerOptionWidget(
@@ -101,12 +110,17 @@ class DrawerWidget extends HookConsumerWidget {
                       },
                     ),
                     const SizedBox(height: spaceBetweenItems),
-                    // _DrawerOptionWidget(
-                    //   icon: Iconsax.folder_open,
-                    //   title: 'My Files',
-                    //   onTap: () {},
-                    // ),
-                    // const SizedBox(height: spaceBetweenItems),
+                    _DrawerOptionWidget(
+                      icon: Iconsax.folder_open,
+                      title: 'Attachments',
+                      onTap: () {
+                        context.pushNamed(
+                          AppRoutes.files,
+                          queryParameters: {'isInTravel': 'true'},
+                        );
+                      },
+                    ),
+                    const SizedBox(height: spaceBetweenItems),
                     _DrawerOptionWidget(
                       icon: Iconsax.profile_circle,
                       title: 'My Account',

@@ -352,7 +352,7 @@ class CreateAccountTeamPlayerScreen extends StatelessWidget {
                                     phoneNumber: phoneNumberController.text,
                                     password: passwordController.text,
                                     sportId: sport.value,
-                                    role: Role.parent,
+                                    role: isCreatingSon ? Role.parent : Role.player,
                                     cityId: cityState.value,
                                     stateId: currentSelectedState.value,
                                   );

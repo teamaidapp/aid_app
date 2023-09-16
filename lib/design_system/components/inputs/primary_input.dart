@@ -15,6 +15,7 @@ class TAPrimaryInput extends StatefulWidget {
     super.key,
     this.textEditingController,
     this.isPassword = false,
+    this.isReadOnly = false,
     this.maxLines,
     this.inputListFormatter = const [],
   });
@@ -36,6 +37,9 @@ class TAPrimaryInput extends StatefulWidget {
 
   /// Formatter
   final List<TextInputFormatter> inputListFormatter;
+
+  /// A boolean that is used to determine if the text field is read only.
+  final bool isReadOnly;
 
   @override
   State<TAPrimaryInput> createState() => _TAPrimaryInputState();
@@ -67,6 +71,7 @@ class _TAPrimaryInputState extends State<TAPrimaryInput> {
           controller: textEditingController,
           obscureText: obscureText,
           inputFormatters: widget.inputListFormatter,
+          readOnly: widget.isReadOnly,
           // maxLines: widget.maxLines,
           decoration: InputDecoration(
             filled: true,

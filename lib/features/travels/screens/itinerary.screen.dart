@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:expandable/expandable.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -94,7 +95,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: 120,
+              width: 140,
               child: GestureDetector(
                 key: const Key('add_itineraries'),
                 onTap: () {
@@ -120,7 +121,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
             ),
             const SizedBox(width: 10),
             SizedBox(
-              width: 150,
+              width: 170,
               child: GestureDetector(
                 key: const Key('show_itineraries'),
                 onTap: () {
@@ -128,7 +129,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                 },
                 child: Container(
                   height: 50,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
                   decoration: BoxDecoration(
                     color: showItineraries.value ? TAColors.purple : Colors.white,
                     borderRadius: const BorderRadius.all(
@@ -357,18 +358,10 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                               child: TATimePicker(
                                 label: 'Check In',
                                 pickedDate: _fromDate,
+                                cupertinoDatePickerMode: CupertinoDatePickerMode.date,
                                 onChanged: (date) {
                                   setState(() {
-                                    _fromDate = DateTime(
-                                      _currentSelectedYear,
-                                      _currentSelectedMonth,
-                                      currentDay,
-                                      date.hour,
-                                      date.minute,
-                                    );
-                                    tohours
-                                      ..clear()
-                                      ..addAll(GlobalFunctions.generateHourModels(date.hour + 1));
+                                    _fromDate = date;
                                   });
                                 },
                               ),
@@ -378,16 +371,11 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                               child: TATimePicker(
                                 label: 'Check Out',
                                 pickedDate: _toDate,
+                                cupertinoDatePickerMode: CupertinoDatePickerMode.date,
                                 hourFrom: _toDate != null ? _fromDate!.hour + 1 : null,
                                 onChanged: (date) {
                                   setState(() {
-                                    _toDate = DateTime(
-                                      _currentSelectedYear,
-                                      _currentSelectedMonth,
-                                      currentDay,
-                                      date.hour,
-                                      date.minute,
-                                    );
+                                    _toDate = date;
                                   });
                                 },
                               ),
@@ -548,11 +536,11 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                       ),
                       const SizedBox(width: 10),
                       SizedBox(
-                        width: 120,
+                        width: 130,
                         child: Consumer(
                           builder: (context, ref, child) {
                             return TAPrimaryButton(
-                              text: 'CREATE',
+                              text: 'NEXT',
                               isLoading: isLoading.value,
                               mainAxisAlignment: MainAxisAlignment.center,
                               onTap: () async {
@@ -651,14 +639,18 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
 
                                 if (res.ok && mounted) {
                                   ref.read(travelsControllerProvider.notifier).setFileId(fileId: '');
-                                  await SuccessWidget.build(
-                                    title: 'Success!',
-                                    message: 'Itinerary has been added successfully.',
-                                    context: context,
+                                  await widget.pageController.nextPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeIn,
                                   );
-                                  if (context.mounted) {
-                                    context.pop();
-                                  }
+                                  // await SuccessWidget.build(
+                                  //   title: 'Success!',
+                                  //   message: 'Itinerary has been added successfully.',
+                                  //   context: context,
+                                  // );
+                                  // if (context.mounted) {
+                                  //   context.pop();
+                                  // }
                                 } else {
                                   unawaited(
                                     FailureWidget.build(

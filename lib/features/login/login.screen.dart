@@ -286,7 +286,7 @@ class _CreateAccountPage extends HookWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _RegisterOptionWidget(
-                    text: 'Coach / Admin',
+                    text: 'Coach / Org',
                     icon: Iconsax.user,
                     path: 'assets/whistle.png',
                     onTap: () {
@@ -353,7 +353,7 @@ class CoachOrAdminWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TATypography.h3(
-                text: 'Coach / Admin',
+                text: 'Organization',
                 color: TAColors.textColor,
               ),
               const SizedBox(height: 8),
@@ -369,7 +369,8 @@ class CoachOrAdminWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _RegisterOptionWidget(
-              text: 'Admin',
+              text: 'Organization',
+              subtitle: 'Create organization',
               icon: Iconsax.user,
               path: 'assets/admin.png',
               onTap: () {
@@ -496,6 +497,7 @@ class _RegisterOptionWidget extends StatelessWidget {
     required this.icon,
     required this.text,
     required this.onTap,
+    this.subtitle,
     this.path,
   });
 
@@ -504,6 +506,8 @@ class _RegisterOptionWidget extends StatelessWidget {
   final String? path;
 
   final String text;
+
+  final String? subtitle;
 
   final VoidCallback onTap;
 
@@ -542,7 +546,12 @@ class _RegisterOptionWidget extends StatelessWidget {
             text: text,
             fontWeight: FontWeight.w600,
             color: TAColors.textColor,
-          )
+          ),
+          if (subtitle != null)
+            TATypography.subparagraph(
+              text: subtitle!,
+              color: TAColors.grey1,
+            ),
         ],
       ),
     );

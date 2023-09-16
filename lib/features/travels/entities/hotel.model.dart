@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:team_aid/core/entities/guest.model.dart';
 
 /// A class representing a hotel reservation.
@@ -13,11 +14,12 @@ class HotelModel {
   /// The [reservationCode] parameter is required and represents the reservation code.
   const HotelModel({
     required this.place,
+    required this.placeDescription,
+    required this.description,
     required this.startDate,
     required this.endDate,
     required this.reservationCode,
     required this.guests,
-    required this.placeDescription,
     this.fileId,
   });
 
@@ -32,6 +34,7 @@ class HotelModel {
       placeDescription: map['placeDescription'] as String,
       reservationCode: map['reservation_code'] as String,
       guests: guests.map((x) => Guest.fromMap(x as Map<String, dynamic>)).toList(),
+      description: map['description'] as String,
     );
   }
 
@@ -42,21 +45,23 @@ class HotelModel {
   /// Returns a new [HotelModel] instance with the specified properties replaced.
   HotelModel copyWith({
     String? place,
+    String? placeDescription,
+    String? description,
     String? startDate,
     String? endDate,
-    String? placeDescription,
     String? reservationCode,
-    List<Guest>? guests,
     String? fileId,
+    List<Guest>? guests,
   }) {
     return HotelModel(
       place: place ?? this.place,
+      placeDescription: placeDescription ?? this.placeDescription,
+      description: description ?? this.description,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      placeDescription: placeDescription ?? this.placeDescription,
       reservationCode: reservationCode ?? this.reservationCode,
-      guests: guests ?? this.guests,
       fileId: fileId ?? this.fileId,
+      guests: guests ?? this.guests,
     );
   }
 
@@ -72,6 +77,7 @@ class HotelModel {
       'placeDescription': placeDescription,
       'reservation_code': reservationCode,
       'guest': guest,
+      'description': description,
     };
 
     if (fileId != null) {
@@ -88,8 +94,11 @@ class HotelModel {
   /// The name of the hotel.
   final String place;
 
-  /// The description of the hotel.
+  /// The description location of the hotel.
   final String placeDescription;
+
+  /// The description of the hotel.
+  final String description;
 
   /// The start date of the reservation.
   final String startDate;

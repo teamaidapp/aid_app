@@ -23,6 +23,8 @@ class UserModel {
     this.isBiographyVisible = false,
     this.biography = '',
     this.avatar,
+    this.address,
+    this.googleAddress,
   });
 
   /// This is a factory function in Dart that creates a UserModel object from a map of key-value pairs.
@@ -138,6 +140,8 @@ class UserModel {
       'stateId': stateId,
       'role': role.name,
       'biography': biography,
+      'address': address ?? '',
+      'google_address': googleAddress ?? '',
     };
   }
 
@@ -192,6 +196,12 @@ class UserModel {
 
   /// Determines if the Biography is visible or not.
   final bool? isBiographyVisible;
+
+  /// Address when its an organization
+  final String? address;
+
+  /// Google address when its an organization
+  final String? googleAddress;
 
   String toJson() => json.encode(toMap());
 

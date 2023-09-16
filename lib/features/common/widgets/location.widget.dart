@@ -16,11 +16,15 @@ class LocationWidget extends HookWidget {
   /// Constructor
   const LocationWidget({
     required this.onChanged,
+    this.title = 'Location',
     super.key,
   });
 
   /// The callback that is called when the dropdown changes.
   final void Function(TADropdownModel?) onChanged;
+
+  /// The title
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -29,22 +33,20 @@ class LocationWidget extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TATypography.paragraph(
-          text: 'Location',
+          text: title,
           fontWeight: FontWeight.w500,
           color: TAColors.color1,
         ),
         SizedBox(height: 0.5.h),
         DropdownSearch<TADropdownModel>(
           asyncItems: (filter) async {
-            final url =
-                'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${name.text}&key=${dotenv.env['GOOGLE_API_KEY']}';
+            final url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${name.text}&key=${dotenv.env['GOOGLE_API_KEY']}';
             final response = await http.get(Uri.parse(url));
 
             final list = <TADropdownModel>[];
 
             if (response.statusCode == 200) {
-              final data =
-                  (jsonDecode(response.body) as Map)['predictions'] as List;
+              final data = (jsonDecode(response.body) as Map)['predictions'] as List;
               for (final place in data) {
                 final taDropdownModel = TADropdownModel(
                   item: (place as Map)['description'] as String,

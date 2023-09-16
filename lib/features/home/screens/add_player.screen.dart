@@ -85,7 +85,7 @@ class AddPlayerScreen extends HookWidget {
                         topLeft: Radius.circular(20),
                       ),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
                     child: Center(
                       child: TATypography.paragraph(
                         text: 'Add Player',

@@ -33,6 +33,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
   @override
   Widget build(BuildContext context) {
     final nameController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.firstName);
+    final roleController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.role);
     final originalName = useState(nameController.text);
     final isLoading = useState(false);
     final prefs = ref.watch(sharedPrefs);
@@ -119,6 +120,13 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                                 label: 'Name',
                                 placeholder: '',
                                 textEditingController: nameController,
+                              ),
+                              const SizedBox(height: 20),
+                              TAPrimaryInput(
+                                label: 'Role',
+                                placeholder: '',
+                                isReadOnly: true,
+                                textEditingController: roleController,
                               ),
                               // const SizedBox(height: 10),
                               // TADropdown(
