@@ -135,12 +135,12 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                   }
                                 },
                               ),
-                              // const SizedBox(height: 10),
-                              // TAPrimaryInput(
-                              //   label: 'Organization',
-                              //   textEditingController: organizationController,
-                              //   placeholder: 'Enter your organization',
-                              // ),
+                              const SizedBox(height: 10),
+                              TAPrimaryInput(
+                                label: 'Organization',
+                                textEditingController: organizationController,
+                                placeholder: 'Enter your organization',
+                              ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
                                 label: 'Country',

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -108,143 +109,159 @@ class CreateAccountCoachScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               TAPrimaryInput(
-                                label: '$labelPrefix first name',
+                                label: '$labelPrefix name',
                                 textEditingController: firstNameController,
-                                placeholder: 'Enter your first name',
+                                placeholder: 'Enter the name',
                               ),
-                              const SizedBox(height: 10),
-                              TAPrimaryInput(
-                                label: '$labelPrefix last name',
-                                textEditingController: lastNameController,
-                                placeholder: 'Enter your last name',
-                              ),
+                              if (!isAdmin)
+                                Column(
+                                  children: [
+                                    const SizedBox(height: 10),
+                                    TAPrimaryInput(
+                                      label: '$labelPrefix last name',
+                                      textEditingController: lastNameController,
+                                      placeholder: 'Enter your last name',
+                                    ),
+                                  ],
+                                )
+                              else
+                                Column(
+                                  children: [
+                                    const SizedBox(height: 10),
+                                    TAPrimaryInput(
+                                      label: 'Administrator name',
+                                      textEditingController: lastNameController,
+                                      placeholder: 'Enter the administrator name',
+                                    ),
+                                  ],
+                                ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
                                 label: '$labelPrefix email',
                                 textEditingController: emailController,
                                 placeholder: 'Enter your email',
                               ),
-                              const SizedBox(height: 10),
-                              TADropdown(
-                                label: '$labelPrefix sports',
-                                items: TAConstants.sportsList,
-                                placeholder: 'Select your sport',
-                                onChange: (v) {
-                                  if (v != null) {
-                                    sport.value = v.id;
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              TADropdown(
-                                label: '$labelPrefix state',
-                                placeholder: 'Select a state',
-                                items: List.generate(
-                                  TAConstants.statesList.length,
-                                  (index) => TADropdownModel(
-                                    item: TAConstants.statesList[index].name,
-                                    id: TAConstants.statesList[index].id,
-                                  ),
-                                ),
-                                onChange: (selectedValue) {
-                                  if (selectedValue != null) {
-                                    currentSelectedState.value = selectedValue.id;
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TATypography.paragraph(
-                                    text: '$labelPrefix city',
-                                    fontWeight: FontWeight.w500,
-                                    color: TAColors.color1,
-                                  ),
-                                  SizedBox(height: 0.5.h),
-                                  DropdownSearch<TADropdownModel>(
-                                    asyncItems: (filter) async {
-                                      final response = await http.get(
-                                        Uri.parse(
-                                          '${dotenv.env['API_URL']}/cities/cities/${currentSelectedState.value}',
-                                        ),
-                                      );
+                              // const SizedBox(height: 10),
+                              // TADropdown(
+                              //   label: '$labelPrefix sports',
+                              //   items: TAConstants.sportsList,
+                              //   placeholder: 'Select your sport',
+                              //   onChange: (v) {
+                              //     if (v != null) {
+                              //       sport.value = v.id;
+                              //     }
+                              //   },
+                              // ),
+                              // const SizedBox(height: 10),
+                              // TADropdown(
+                              //   label: '$labelPrefix state',
+                              //   placeholder: 'Select a state',
+                              //   items: List.generate(
+                              //     TAConstants.statesList.length,
+                              //     (index) => TADropdownModel(
+                              //       item: TAConstants.statesList[index].name,
+                              //       id: TAConstants.statesList[index].id,
+                              //     ),
+                              //   ),
+                              //   onChange: (selectedValue) {
+                              //     if (selectedValue != null) {
+                              //       currentSelectedState.value = selectedValue.id;
+                              //     }
+                              //   },
+                              // ),
+                              // const SizedBox(height: 10),
+                              // Column(
+                              //   crossAxisAlignment: CrossAxisAlignment.start,
+                              //   children: [
+                              //     TATypography.paragraph(
+                              //       text: '$labelPrefix city',
+                              //       fontWeight: FontWeight.w500,
+                              //       color: TAColors.color1,
+                              //     ),
+                              //     SizedBox(height: 0.5.h),
+                              //     DropdownSearch<TADropdownModel>(
+                              //       asyncItems: (filter) async {
+                              //         final response = await http.get(
+                              //           Uri.parse(
+                              //             '${dotenv.env['API_URL']}/cities/cities/${currentSelectedState.value}',
+                              //           ),
+                              //         );
 
-                                      if (response.statusCode == 200) {
-                                        final data = (jsonDecode(response.body) as Map)['data'] as List;
-                                        final list = data.map((e) {
-                                          final taDropdownModel = TADropdownModel(
-                                            item: (e as Map)['name'] as String,
-                                            id: e['id'] as String,
-                                          );
-                                          return taDropdownModel;
-                                        }).toList()
-                                          ..sort((a, b) => a.item.compareTo(b.item));
-                                        return list;
-                                      } else {
-                                        return [];
-                                      }
-                                    },
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        cityState.value = value.id;
-                                      }
-                                    },
-                                    itemAsString: (item) => item.item,
-                                    dropdownButtonProps: const DropdownButtonProps(
-                                      icon: Icon(
-                                        Iconsax.arrow_down_1,
-                                        size: 14,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    dropdownDecoratorProps: DropDownDecoratorProps(
-                                      baseStyle: GoogleFonts.poppins(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: TAColors.color2,
-                                      ),
-                                      dropdownSearchDecoration: InputDecoration(
-                                        hintText: 'Select a city',
-                                        contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 10,
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                            color: TAColors.color1.withOpacity(0.5),
-                                          ),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                            color: TAColors.color1.withOpacity(0.5),
-                                          ),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: const BorderSide(
-                                            color: TAColors.color1,
-                                          ),
-                                        ),
-                                        hintStyle: GoogleFonts.poppins(
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: TAColors.color2,
-                                        ),
-                                      ),
-                                    ),
-                                    popupProps: PopupProps.menu(
-                                      fit: FlexFit.loose,
-                                      constraints: const BoxConstraints.tightFor(),
-                                      menuProps: MenuProps(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              //         if (response.statusCode == 200) {
+                              //           final data = (jsonDecode(response.body) as Map)['data'] as List;
+                              //           final list = data.map((e) {
+                              //             final taDropdownModel = TADropdownModel(
+                              //               item: (e as Map)['name'] as String,
+                              //               id: e['id'] as String,
+                              //             );
+                              //             return taDropdownModel;
+                              //           }).toList()
+                              //             ..sort((a, b) => a.item.compareTo(b.item));
+                              //           return list;
+                              //         } else {
+                              //           return [];
+                              //         }
+                              //       },
+                              //       onChanged: (value) {
+                              //         if (value != null) {
+                              //           cityState.value = value.id;
+                              //         }
+                              //       },
+                              //       itemAsString: (item) => item.item,
+                              //       dropdownButtonProps: const DropdownButtonProps(
+                              //         icon: Icon(
+                              //           Iconsax.arrow_down_1,
+                              //           size: 14,
+                              //           color: Colors.black,
+                              //         ),
+                              //       ),
+                              //       dropdownDecoratorProps: DropDownDecoratorProps(
+                              //         baseStyle: GoogleFonts.poppins(
+                              //           fontSize: 16.sp,
+                              //           fontWeight: FontWeight.w500,
+                              //           color: TAColors.color2,
+                              //         ),
+                              //         dropdownSearchDecoration: InputDecoration(
+                              //           hintText: 'Select a city',
+                              //           contentPadding: const EdgeInsets.symmetric(
+                              //             horizontal: 10,
+                              //             vertical: 10,
+                              //           ),
+                              //           border: OutlineInputBorder(
+                              //             borderRadius: BorderRadius.circular(10),
+                              //             borderSide: BorderSide(
+                              //               color: TAColors.color1.withOpacity(0.5),
+                              //             ),
+                              //           ),
+                              //           enabledBorder: OutlineInputBorder(
+                              //             borderRadius: BorderRadius.circular(10),
+                              //             borderSide: BorderSide(
+                              //               color: TAColors.color1.withOpacity(0.5),
+                              //             ),
+                              //           ),
+                              //           focusedBorder: OutlineInputBorder(
+                              //             borderRadius: BorderRadius.circular(10),
+                              //             borderSide: const BorderSide(
+                              //               color: TAColors.color1,
+                              //             ),
+                              //           ),
+                              //           hintStyle: GoogleFonts.poppins(
+                              //             fontSize: 16.sp,
+                              //             fontWeight: FontWeight.w500,
+                              //             color: TAColors.color2,
+                              //           ),
+                              //         ),
+                              //       ),
+                              //       popupProps: PopupProps.menu(
+                              //         fit: FlexFit.loose,
+                              //         constraints: const BoxConstraints.tightFor(),
+                              //         menuProps: MenuProps(
+                              //           borderRadius: BorderRadius.circular(10),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
                                 label: '$labelPrefix phone number',
@@ -252,12 +269,16 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                 placeholder: 'Enter your phone number',
                                 inputListFormatter: [
                                   FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(10),
+                                  LengthLimitingTextInputFormatter(12),
+                                  PhoneInputFormatter(
+                                    allowEndlessPhone: true,
+                                  )
                                 ],
                               ),
                               const SizedBox(height: 10),
                               if (isAdmin)
                                 LocationWidget(
+                                  title: 'Organization address',
                                   onChanged: (v) {
                                     if (v != null) {
                                       address.value = v.item;
@@ -311,14 +332,21 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 onTap: () async {
                                   if (firstNameController.text.isEmpty ||
-                                      lastNameController.text.isEmpty ||
                                       emailController.text.isEmpty ||
                                       phoneNumberController.text.isEmpty ||
-                                      passwordController.text.isEmpty ||
-                                      sport.value.isEmpty) {
+                                      passwordController.text.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('Please fill all fields'),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  if (!isAdmin && lastNameController.text.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Please fill the last name'),
                                       ),
                                     );
                                     return;
@@ -343,13 +371,13 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                     return;
                                   }
 
-                                  if (!isValidPhoneNumber(phoneNumberController.text.trim())) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Please enter a valid phone number'),
-                                      ),
-                                    );
-                                  }
+                                  // if (!isValidPhoneNumber(phoneNumberController.text.trim())) {
+                                  //   ScaffoldMessenger.of(context).showSnackBar(
+                                  //     const SnackBar(
+                                  //       content: Text('Please enter a valid phone number'),
+                                  //     ),
+                                  //   );
+                                  // }
 
                                   final user = UserModel(
                                     firstName: firstNameController.text,
