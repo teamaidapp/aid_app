@@ -37,7 +37,7 @@ class CreateAccountParentsScreen extends StatelessWidget {
                   // ),
                   const Spacer(),
                   TATypography.h3(
-                    text: 'Create child account',
+                    text: 'Add child as team player',
                     color: TAColors.textColor,
                     fontWeight: FontWeight.w700,
                   ),
@@ -58,7 +58,8 @@ class CreateAccountParentsScreen extends StatelessWidget {
                 final lastNameController = useTextEditingController();
                 final emailController = useTextEditingController();
                 final phoneNumberController = useTextEditingController();
-                final passwordController = useTextEditingController(text: '1234');
+                final passwordController =
+                    useTextEditingController(text: '1234');
                 final agreeToTerms = useState(false);
                 final sport = useState('');
                 final cityState = useState('');
@@ -87,7 +88,8 @@ class CreateAccountParentsScreen extends StatelessWidget {
                               TAPrimaryInput(
                                 label: 'First name',
                                 textEditingController: firstNameController,
-                                placeholder: 'Enter the first name of the child',
+                                placeholder:
+                                    'Enter the first name of the child',
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
@@ -266,7 +268,8 @@ class CreateAccountParentsScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: TATypography.subparagraph(
-                                  text: 'I agree to terms of service and privacy policy',
+                                  text:
+                                      'I agree to terms of service and privacy policy',
                                   color: TAColors.grey1,
                                 ),
                               ),
@@ -301,41 +304,52 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                   builder: (context, ref, child) {
                                     final isLoading = useState(false);
                                     return Padding(
-                                      padding: const EdgeInsets.only(left: 20, right: 20),
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 20),
                                       child: TAPrimaryButton(
                                         text: 'CREATE ACCOUNT',
                                         height: 50,
                                         padding: EdgeInsets.zero,
                                         isLoading: isLoading.value,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         onTap: () async {
-                                          if (firstNameController.text.isEmpty ||
-                                                  lastNameController.text.isEmpty ||
-                                                  emailController.text.isEmpty ||
+                                          if (firstNameController
+                                                      .text.isEmpty ||
+                                                  lastNameController
+                                                      .text.isEmpty ||
+                                                  emailController
+                                                      .text.isEmpty ||
                                                   // phoneNumberController.text.isEmpty ||
                                                   // passwordController.text.isEmpty ||
                                                   sport.value.isEmpty
                                               // currentSelectedState.value.isEmpty
                                               ) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
                                               const SnackBar(
-                                                content: Text('Please fill all fields'),
+                                                content: Text(
+                                                    'Please fill all fields'),
                                               ),
                                             );
                                             return;
                                           }
 
-                                          if (!isValidEmail(emailController.text.trim())) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
+                                          if (!isValidEmail(
+                                              emailController.text.trim())) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
                                               const SnackBar(
-                                                content: Text('Please enter a valid email'),
+                                                content: Text(
+                                                    'Please enter a valid email'),
                                               ),
                                             );
                                             return;
                                           }
 
                                           if (!agreeToTerms.value) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
                                               const SnackBar(
                                                 content: Text(
                                                   'Please agree to terms of service and privacy policy',
@@ -345,12 +359,16 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                             return;
                                           }
 
-                                          final phone = phoneNumberController.text.replaceAll(' ', '').replaceAll('+', '');
+                                          final phone = phoneNumberController
+                                              .text
+                                              .replaceAll(' ', '')
+                                              .replaceAll('+', '');
 
                                           final user = UserModel(
                                             firstName: firstNameController.text,
                                             lastName: lastNameController.text,
-                                            email: emailController.text.toLowerCase(),
+                                            email: emailController.text
+                                                .toLowerCase(),
                                             phoneNumber: phone,
                                             password: passwordController.text,
                                             sportId: sport.value,
@@ -359,12 +377,17 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                             stateId: currentSelectedState.value,
                                           );
                                           isLoading.value = true;
-                                          final res = await ref.read(createAccountControllerProvider.notifier).createChildAccount(user: user);
+                                          final res = await ref
+                                              .read(
+                                                  createAccountControllerProvider
+                                                      .notifier)
+                                              .createChildAccount(user: user);
                                           isLoading.value = false;
                                           if (res.ok && context.mounted) {
                                             context.go(AppRoutes.home);
                                           } else {
-                                            ScaffoldMessenger.of(context).showSnackBar(
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
                                               SnackBar(
                                                 content: Text(res.message),
                                               ),
