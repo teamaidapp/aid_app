@@ -129,20 +129,21 @@ class UserModel {
   /// corresponding values of the instance variables `firstName`, `lastName`, `email`, `phoneNumber`,
   /// `address`, `password`, and `role`.
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    final map = <String, dynamic>{
       'firstName': firstName,
       'lastName': lastName,
       'email': email,
       'phoneNumber': phoneNumber,
       'password': password,
-      'sportId': sportId,
-      'cityId': cityId,
-      'stateId': stateId,
+      // 'sportId': sportId,
+      // 'cityId': cityId,
+      // 'stateId': stateId,
       'role': role.name,
       'biography': biography,
       'address': address ?? '',
       'google_address': googleAddress ?? '',
     };
+    return map;
   }
 
   @override

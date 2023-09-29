@@ -20,12 +20,12 @@ class TeamModel {
       teamName: map['teamName'] as String,
       sport: map['sport'] as String,
       gender: map['gender'] as String,
-      organization: map['organization'] as String,
-      country: map['country'] as String,
-      zipCode: map['zipCode'] as String,
-      state: map['state'] as String,
       level: map['level'] as String,
       id: map['id'] as String,
+      organization: map['organization'] as String? ?? '',
+      country: map['country'] as String? ?? '',
+      zipCode: map['zipCode'] as String? ?? '',
+      state: map['state'] as String? ?? '',
       city: map['city'] as String? ?? '',
     );
   }
@@ -64,12 +64,12 @@ class TeamModel {
       'teamName': teamName,
       'sport': sport,
       'gender': gender,
-      'organization': organization,
-      'country': country,
-      'zipCode': zipCode,
-      'state': state,
       'level': level,
-      'city': city,
+      // 'organization': organization,
+      // 'country': country,
+      // 'zipCode': zipCode,
+      // 'state': state,
+      // 'city': city,
     };
   }
 

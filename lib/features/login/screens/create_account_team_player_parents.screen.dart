@@ -1,19 +1,10 @@
-import 'dart:convert';
-
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http/http.dart' as http;
-import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/constants.dart';
-import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/functions.dart';
@@ -67,7 +58,7 @@ class CreateAccountParentsScreen extends StatelessWidget {
                 final lastNameController = useTextEditingController();
                 final emailController = useTextEditingController();
                 final phoneNumberController = useTextEditingController();
-                final passwordController = useTextEditingController();
+                final passwordController = useTextEditingController(text: '1234');
                 final agreeToTerms = useState(false);
                 final sport = useState('');
                 final cityState = useState('');
@@ -126,136 +117,136 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                   }
                                 },
                               ),
-                              const SizedBox(height: 10),
-                              TADropdown(
-                                label: 'State',
-                                placeholder: 'Select a state',
-                                items: List.generate(
-                                  TAConstants.statesList.length,
-                                  (index) => TADropdownModel(
-                                    item: TAConstants.statesList[index].name,
-                                    id: TAConstants.statesList[index].id,
-                                  ),
-                                ),
-                                onChange: (selectedValue) {
-                                  if (selectedValue != null) {
-                                    currentSelectedState.value = selectedValue.id;
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TATypography.paragraph(
-                                    text: 'City',
-                                    fontWeight: FontWeight.w500,
-                                    color: TAColors.color1,
-                                  ),
-                                  SizedBox(height: 0.5.h),
-                                  DropdownSearch<TADropdownModel>(
-                                    asyncItems: (filter) async {
-                                      final response = await http.get(
-                                        Uri.parse(
-                                          '${dotenv.env['API_URL']}/cities/cities/${currentSelectedState.value}',
-                                        ),
-                                      );
+                              // const SizedBox(height: 10),
+                              // TADropdown(
+                              //   label: 'State',
+                              //   placeholder: 'Select a state',
+                              //   items: List.generate(
+                              //     TAConstants.statesList.length,
+                              //     (index) => TADropdownModel(
+                              //       item: TAConstants.statesList[index].name,
+                              //       id: TAConstants.statesList[index].id,
+                              //     ),
+                              //   ),
+                              //   onChange: (selectedValue) {
+                              //     if (selectedValue != null) {
+                              //       currentSelectedState.value = selectedValue.id;
+                              //     }
+                              //   },
+                              // ),
+                              // const SizedBox(height: 10),
+                              // Column(
+                              //   crossAxisAlignment: CrossAxisAlignment.start,
+                              //   children: [
+                              //     TATypography.paragraph(
+                              //       text: 'City',
+                              //       fontWeight: FontWeight.w500,
+                              //       color: TAColors.color1,
+                              //     ),
+                              //     SizedBox(height: 0.5.h),
+                              //     DropdownSearch<TADropdownModel>(
+                              //       asyncItems: (filter) async {
+                              //         final response = await http.get(
+                              //           Uri.parse(
+                              //             '${dotenv.env['API_URL']}/cities/cities/${currentSelectedState.value}',
+                              //           ),
+                              //         );
 
-                                      if (response.statusCode == 200) {
-                                        final data = (jsonDecode(response.body) as Map)['data'] as List;
-                                        final list = data.map((e) {
-                                          final taDropdownModel = TADropdownModel(
-                                            item: (e as Map)['name'] as String,
-                                            id: e['id'] as String,
-                                          );
-                                          return taDropdownModel;
-                                        }).toList()
-                                          ..sort((a, b) => a.item.compareTo(b.item));
-                                        return list;
-                                      } else {
-                                        return [];
-                                      }
-                                    },
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        cityState.value = value.id;
-                                      }
-                                    },
-                                    itemAsString: (item) => item.item,
-                                    dropdownButtonProps: const DropdownButtonProps(
-                                      icon: Icon(
-                                        Iconsax.arrow_down_1,
-                                        size: 14,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    dropdownDecoratorProps: DropDownDecoratorProps(
-                                      baseStyle: GoogleFonts.poppins(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: TAColors.color2,
-                                      ),
-                                      dropdownSearchDecoration: InputDecoration(
-                                        hintText: 'Select a city',
-                                        contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 10,
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                            color: TAColors.color1.withOpacity(0.5),
-                                          ),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                            color: TAColors.color1.withOpacity(0.5),
-                                          ),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: const BorderSide(
-                                            color: TAColors.color1,
-                                          ),
-                                        ),
-                                        hintStyle: GoogleFonts.poppins(
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: TAColors.color2,
-                                        ),
-                                      ),
-                                    ),
-                                    popupProps: PopupProps.menu(
-                                      fit: FlexFit.loose,
-                                      constraints: const BoxConstraints.tightFor(),
-                                      menuProps: MenuProps(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              TAPrimaryInput(
-                                label: 'Phone number',
-                                textEditingController: phoneNumberController,
-                                placeholder: 'Enter the phone number of the child',
-                                inputListFormatter: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(12),
-                                  PhoneInputFormatter(
-                                    allowEndlessPhone: true,
-                                  )
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              TAPrimaryInput(
-                                label: 'Password',
-                                textEditingController: passwordController,
-                                isPassword: true,
-                                placeholder: 'Enter the password of the child',
-                              ),
+                              //         if (response.statusCode == 200) {
+                              //           final data = (jsonDecode(response.body) as Map)['data'] as List;
+                              //           final list = data.map((e) {
+                              //             final taDropdownModel = TADropdownModel(
+                              //               item: (e as Map)['name'] as String,
+                              //               id: e['id'] as String,
+                              //             );
+                              //             return taDropdownModel;
+                              //           }).toList()
+                              //             ..sort((a, b) => a.item.compareTo(b.item));
+                              //           return list;
+                              //         } else {
+                              //           return [];
+                              //         }
+                              //       },
+                              //       onChanged: (value) {
+                              //         if (value != null) {
+                              //           cityState.value = value.id;
+                              //         }
+                              //       },
+                              //       itemAsString: (item) => item.item,
+                              //       dropdownButtonProps: const DropdownButtonProps(
+                              //         icon: Icon(
+                              //           Iconsax.arrow_down_1,
+                              //           size: 14,
+                              //           color: Colors.black,
+                              //         ),
+                              //       ),
+                              //       dropdownDecoratorProps: DropDownDecoratorProps(
+                              //         baseStyle: GoogleFonts.poppins(
+                              //           fontSize: 16.sp,
+                              //           fontWeight: FontWeight.w500,
+                              //           color: TAColors.color2,
+                              //         ),
+                              //         dropdownSearchDecoration: InputDecoration(
+                              //           hintText: 'Select a city',
+                              //           contentPadding: const EdgeInsets.symmetric(
+                              //             horizontal: 10,
+                              //             vertical: 10,
+                              //           ),
+                              //           border: OutlineInputBorder(
+                              //             borderRadius: BorderRadius.circular(10),
+                              //             borderSide: BorderSide(
+                              //               color: TAColors.color1.withOpacity(0.5),
+                              //             ),
+                              //           ),
+                              //           enabledBorder: OutlineInputBorder(
+                              //             borderRadius: BorderRadius.circular(10),
+                              //             borderSide: BorderSide(
+                              //               color: TAColors.color1.withOpacity(0.5),
+                              //             ),
+                              //           ),
+                              //           focusedBorder: OutlineInputBorder(
+                              //             borderRadius: BorderRadius.circular(10),
+                              //             borderSide: const BorderSide(
+                              //               color: TAColors.color1,
+                              //             ),
+                              //           ),
+                              //           hintStyle: GoogleFonts.poppins(
+                              //             fontSize: 16.sp,
+                              //             fontWeight: FontWeight.w500,
+                              //             color: TAColors.color2,
+                              //           ),
+                              //         ),
+                              //       ),
+                              //       popupProps: PopupProps.menu(
+                              //         fit: FlexFit.loose,
+                              //         constraints: const BoxConstraints.tightFor(),
+                              //         menuProps: MenuProps(
+                              //           borderRadius: BorderRadius.circular(10),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                              // const SizedBox(height: 10),
+                              // TAPrimaryInput(
+                              //   label: 'Phone number',
+                              //   textEditingController: phoneNumberController,
+                              //   placeholder: 'Enter the phone number of the child',
+                              //   inputListFormatter: [
+                              //     FilteringTextInputFormatter.digitsOnly,
+                              //     LengthLimitingTextInputFormatter(12),
+                              //     PhoneInputFormatter(
+                              //       allowEndlessPhone: true,
+                              //     )
+                              //   ],
+                              // ),
+                              // const SizedBox(height: 10),
+                              // TAPrimaryInput(
+                              //   label: 'Password',
+                              //   textEditingController: passwordController,
+                              //   isPassword: true,
+                              //   placeholder: 'Enter the password of the child',
+                              // ),
                               const SizedBox(height: 20),
                             ],
                           ),
@@ -319,12 +310,13 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         onTap: () async {
                                           if (firstNameController.text.isEmpty ||
-                                              lastNameController.text.isEmpty ||
-                                              emailController.text.isEmpty ||
-                                              phoneNumberController.text.isEmpty ||
-                                              passwordController.text.isEmpty ||
-                                              sport.value.isEmpty ||
-                                              currentSelectedState.value.isEmpty) {
+                                                  lastNameController.text.isEmpty ||
+                                                  emailController.text.isEmpty ||
+                                                  // phoneNumberController.text.isEmpty ||
+                                                  // passwordController.text.isEmpty ||
+                                                  sport.value.isEmpty
+                                              // currentSelectedState.value.isEmpty
+                                              ) {
                                             ScaffoldMessenger.of(context).showSnackBar(
                                               const SnackBar(
                                                 content: Text('Please fill all fields'),
@@ -333,20 +325,13 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                             return;
                                           }
 
-                                          if (!isValidPhoneNumber(phoneNumberController.text.trim())) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(
-                                                content: Text('Please enter a valid phone number'),
-                                              ),
-                                            );
-                                          }
-
                                           if (!isValidEmail(emailController.text.trim())) {
                                             ScaffoldMessenger.of(context).showSnackBar(
                                               const SnackBar(
                                                 content: Text('Please enter a valid email'),
                                               ),
                                             );
+                                            return;
                                           }
 
                                           if (!agreeToTerms.value) {
@@ -360,11 +345,13 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                             return;
                                           }
 
+                                          final phone = phoneNumberController.text.replaceAll(' ', '').replaceAll('+', '');
+
                                           final user = UserModel(
                                             firstName: firstNameController.text,
                                             lastName: lastNameController.text,
                                             email: emailController.text.toLowerCase(),
-                                            phoneNumber: phoneNumberController.text,
+                                            phoneNumber: phone,
                                             password: passwordController.text,
                                             sportId: sport.value,
                                             role: Role.player,

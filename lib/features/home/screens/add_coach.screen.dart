@@ -175,15 +175,16 @@ class _AddCoachScreenState extends ConsumerState<AddCoachScreen> {
                                 content: Text('Please enter a valid email'),
                               ),
                             );
+                            return;
                           }
 
-                          if (!isValidPhoneNumber(phoneController.text.trim())) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please enter a valid phone number'),
-                              ),
-                            );
-                          }
+                          // if (!isValidPhoneNumber(phoneController.text.trim())) {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(
+                          //       content: Text('Please enter a valid phone number'),
+                          //     ),
+                          //   );
+                          // }
                           isLoading.value = true;
                           final res = await ref.read(addPlayerControllerProvider.notifier).sendPlayerInvitation(
                                 email: emailController.text,

@@ -1,19 +1,11 @@
-import 'dart:convert';
-
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:team_aid/core/constants.dart';
-import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/functions.dart';
@@ -109,7 +101,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               TAPrimaryInput(
-                                label: '$labelPrefix name',
+                                label: '${isAdmin ? labelPrefix : 'First'} name',
                                 textEditingController: firstNameController,
                                 placeholder: 'Enter the name',
                               ),
@@ -118,7 +110,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                   children: [
                                     const SizedBox(height: 10),
                                     TAPrimaryInput(
-                                      label: '$labelPrefix last name',
+                                      label: 'Last name',
                                       textEditingController: lastNameController,
                                       placeholder: 'Enter your last name',
                                     ),
@@ -264,9 +256,9 @@ class CreateAccountCoachScreen extends StatelessWidget {
                               // ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
-                                label: '$labelPrefix phone number',
+                                label: '$labelPrefix ${isAdmin ? 'phone' : 'Phone'}',
                                 textEditingController: phoneNumberController,
-                                placeholder: 'Enter your phone number',
+                                placeholder: 'Enter your phone',
                                 inputListFormatter: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(12),
@@ -379,11 +371,12 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                   //   );
                                   // }
 
+                                  final phone = phoneNumberController.text.replaceAll(' ', '').replaceAll('+', '');
                                   final user = UserModel(
                                     firstName: firstNameController.text,
                                     lastName: lastNameController.text,
                                     email: emailController.text.toLowerCase(),
-                                    phoneNumber: phoneNumberController.text,
+                                    phoneNumber: phone,
                                     password: passwordController.text,
                                     sportId: sport.value,
                                     role: isAdmin ? Role.admin : Role.coach,

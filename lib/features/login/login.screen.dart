@@ -383,6 +383,7 @@ class CoachOrAdminWidget extends StatelessWidget {
             const SizedBox(width: 14),
             _RegisterOptionWidget(
               text: 'Coach',
+              subtitle: '',
               icon: Iconsax.people,
               path: 'assets/whistle.png',
               onTap: () {
@@ -452,14 +453,14 @@ class TeamPlayerMenuWidget extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20),
-        Column(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TeamPlayerWidget(
+            _RegisterOptionWidget(
+              text: 'Parents',
               subtitle: 'Under age',
-              title: 'Parents',
-              icon: Iconsax.profile_2user,
-              description: 'School sponsored / Elementary / Middle and High School',
+              icon: Iconsax.user,
+              path: 'assets/admin.png',
               onTap: () {
                 context.pushNamed(
                   AppRoutes.createAccountTeamPlayer,
@@ -469,12 +470,11 @@ class TeamPlayerMenuWidget extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 20),
-            TeamPlayerWidget(
-              subtitle: 'Starting college',
-              title: 'Team player',
-              icon: Iconsax.people,
-              description: 'College / Youth Leagues / Athletic Associations / Professional players',
+            const SizedBox(width: 14),
+            _RegisterOptionWidget(
+              text: 'Team Player',
+              subtitle: '',
+              icon: Iconsax.people5,
               onTap: () {
                 context.pushNamed(
                   AppRoutes.createAccountTeamPlayer,
@@ -486,6 +486,40 @@ class TeamPlayerMenuWidget extends StatelessWidget {
             ),
           ],
         ),
+        // Column(
+        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //   children: [
+        //     TeamPlayerWidget(
+        //       subtitle: 'Under age',
+        //       title: 'Parents',
+        //       icon: Iconsax.profile_2user,
+        //       description: 'School sponsored / Elementary / Middle and High School',
+        //       onTap: () {
+        //         context.pushNamed(
+        //           AppRoutes.createAccountTeamPlayer,
+        //           queryParameters: {
+        //             'isCreatingSon': 'true',
+        //           },
+        //         );
+        //       },
+        //     ),
+        //     const SizedBox(height: 20),
+        //     TeamPlayerWidget(
+        //       subtitle: 'Starting college',
+        //       title: 'Team player',
+        //       icon: Iconsax.people,
+        //       description: 'College / Youth Leagues / Athletic Associations / Professional players',
+        //       onTap: () {
+        //         context.pushNamed(
+        //           AppRoutes.createAccountTeamPlayer,
+        //           queryParameters: {
+        //             'isCreatingSon': 'false',
+        //           },
+        //         );
+        //       },
+        //     ),
+        //   ],
+        // ),
         const SizedBox(height: 20),
       ],
     );
