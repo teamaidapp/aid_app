@@ -105,15 +105,20 @@ class CreateAccountTeamScreen extends StatelessWidget {
                                 },
                               ),
                               const SizedBox(height: 10),
-                              TADropdown(
+                              // TADropdown(
+                              //   label: 'Level',
+                              //   placeholder: 'Select level',
+                              //   items: TAConstants.ageGroupList,
+                              //   onChange: (selectedValue) {
+                              //     if (selectedValue != null) {
+                              //       levelController.text = selectedValue.item;
+                              //     }
+                              //   },
+                              // ),
+                              TAPrimaryInput(
                                 label: 'Level',
-                                placeholder: 'Select level',
-                                items: TAConstants.ageGroupList,
-                                onChange: (selectedValue) {
-                                  if (selectedValue != null) {
-                                    levelController.text = selectedValue.item;
-                                  }
-                                },
+                                textEditingController: levelController,
+                                placeholder: 'Enter the level',
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
