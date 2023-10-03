@@ -106,9 +106,9 @@ class TAConstants {
 
   /// A list of the genders
   static final genderList = <TADropdownModel>[
-    TADropdownModel(item: 'Mixed', id: ''),
-    TADropdownModel(item: 'Women', id: ''),
-    TADropdownModel(item: 'Men', id: ''),
+    TADropdownModel(item: 'Co.ed', id: 'Co.ed'),
+    TADropdownModel(item: 'Female', id: 'Female'),
+    TADropdownModel(item: 'Men', id: 'Men'),
   ];
 
   /// A list of the transportations
