@@ -88,7 +88,7 @@ class AppRoutes {
 /// The routerProvider is a Provider that returns a GoRouter.
 final routerProvider = Provider((ref) {
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: AppRoutes.joinTeam,
     routes: [
       GoRoute(
         path: AppRoutes.home,

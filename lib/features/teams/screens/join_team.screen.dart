@@ -76,91 +76,90 @@ class _JoinTeamScreenState extends ConsumerState<JoinTeamScreen> {
                   topRight: Radius.circular(40),
                 ),
               ),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    TAContainer(
-                      margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
-                      child: teams.when(
-                        data: (data) {
-                          return TADropdown(
-                            label: 'Team',
-                            placeholder: 'Select a team',
-                            items: List.generate(
-                              data.length,
-                              (index) => TADropdownModel(
-                                item: data[index].teamName,
-                                id: data[index].id,
-                              ),
+              child: Column(
+                children: [
+                  TAContainer(
+                    margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
+                    child: teams.when(
+                      data: (data) {
+                        return TADropdown(
+                          label: 'Team',
+                          placeholder: 'Select a team',
+                          items: List.generate(
+                            data.length,
+                            (index) => TADropdownModel(
+                              item: data[index].teamName,
+                              id: data[index].id,
                             ),
-                            onChange: (selectedValue) {
-                              if (selectedValue != null) {
-                                selectedTeamId.value = selectedValue.id;
-                              }
+                          ),
+                          onChange: (selectedValue) {
+                            if (selectedValue != null) {
+                              selectedTeamId.value = selectedValue.id;
+                            }
+                          },
+                        );
+                      },
+                      error: (e, s) => const SizedBox(),
+                      loading: () => const SizedBox(),
+                    ),
+                  ),
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: 40,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Spacer(),
+                        Expanded(
+                          flex: 2,
+                          child: GestureDetector(
+                            onTap: () {
+                              context.go(AppRoutes.home);
                             },
-                          );
-                        },
-                        error: (e, s) => const SizedBox(),
-                        loading: () => const SizedBox(),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 20,
-                        right: 20,
-                        bottom: 40,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Flexible(
-                            flex: 2,
-                            child: GestureDetector(
-                              onTap: () {
-                                context.go(AppRoutes.home);
-                              },
-                              child: TATypography.paragraph(
-                                text: 'Skip',
-                                underline: true,
-                              ),
+                            child: TATypography.paragraph(
+                              text: 'Skip',
+                              underline: true,
                             ),
                           ),
-                          Expanded(
-                            flex: 4,
-                            child: HookConsumer(
-                              builder: (context, ref, child) {
-                                final isLoading = useState(false);
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 20, right: 20),
-                                  child: TAPrimaryButton(
-                                    text: 'JOIN TEAM',
-                                    height: 50,
-                                    isLoading: isLoading.value,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    onTap: () async {
-                                      if (selectedTeamId.value.isEmpty) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(
-                                            content: Text('Please select the team'),
-                                          ),
-                                        );
-                                        return;
-                                      }
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: HookConsumer(
+                            builder: (context, ref, child) {
+                              final isLoading = useState(false);
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 20, right: 20),
+                                child: TAPrimaryButton(
+                                  text: 'JOIN TEAM',
+                                  height: 50,
+                                  isLoading: isLoading.value,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  onTap: () async {
+                                    if (selectedTeamId.value.isEmpty) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Please select the team'),
+                                        ),
+                                      );
+                                      return;
+                                    }
 
-                                      /// TODO: Send request to backend
-                                      context.go(AppRoutes.home);
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
+                                    /// TODO: Send request to backend
+                                    context.go(AppRoutes.home);
+                                  },
+                                ),
+                              );
+                            },
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
