@@ -55,12 +55,52 @@ class TAConstants {
       id: '7fe5b730-032c-45b5-8dd4-9f2a17a0ea8b',
     ),
     TADropdownModel(
+      item: 'Baseball',
+      id: '95f3d050-f2de-4f71-a863-8d1cd4514557',
+    ),
+    TADropdownModel(
       item: 'Dance',
       id: '87b4b001-1d29-4f1e-9fc9-738992b65039',
     ),
     TADropdownModel(
       item: 'Other',
       id: '7fe5b730-032c-45b5-8dd4-9f2a17a0ea8e',
+    ),
+    TADropdownModel(
+      item: 'Basketball',
+      id: '75eb0efd-a067-497e-9f74-1cd198cff9aa',
+    ),
+    TADropdownModel(
+      item: 'Football',
+      id: '5c3bbe89-9893-4e54-958b-d098eb68cb0b',
+    ),
+    TADropdownModel(
+      item: 'Golf',
+      id: '7a9741f7-70d2-4cbc-bcf8-7a7fdcc53ed7',
+    ),
+    TADropdownModel(
+      item: 'Lacrosse',
+      id: '63d03d75-6967-42eb-a656-dd65da66c73c',
+    ),
+    TADropdownModel(
+      item: 'Soccer',
+      id: '630df706-7720-412e-8def-f06e29166d31',
+    ),
+    TADropdownModel(
+      item: 'Softball',
+      id: 'd6a7b4aa-74d4-45ee-946f-4a4d9502a3f2',
+    ),
+    TADropdownModel(
+      item: 'Tennis',
+      id: '6524e3ef-2fe9-4e58-ae3d-d4596d55673c',
+    ),
+    TADropdownModel(
+      item: 'Track',
+      id: 'd847c64f-1751-4193-bd40-b2d539da64e3',
+    ),
+    TADropdownModel(
+      item: 'Volleyball',
+      id: 'b8ad21e6-562d-4f00-b726-e491ab39f164',
     ),
   ];
 
