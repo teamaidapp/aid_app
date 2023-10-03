@@ -122,9 +122,7 @@ class RequestDemoScreen extends StatelessWidget {
                                     inputListFormatter: [
                                       FilteringTextInputFormatter.digitsOnly,
                                       LengthLimitingTextInputFormatter(12),
-                                      PhoneInputFormatter(
-                                        allowEndlessPhone: true,
-                                      )
+                                      PhoneInputFormatter(defaultCountryCode: 'US')
                                     ],
                                   ),
                                   const SizedBox(height: 10),

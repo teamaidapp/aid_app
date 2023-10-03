@@ -102,9 +102,7 @@ class PhoneScreen extends HookConsumerWidget {
                                 inputListFormatter: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(12),
-                                  PhoneInputFormatter(
-                                    allowEndlessPhone: true,
-                                  )
+                                  PhoneInputFormatter(defaultCountryCode: 'US')
                                 ],
                               ),
                               const SizedBox(height: 20),
