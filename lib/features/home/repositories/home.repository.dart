@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/failure.dart';
+import 'package:team_aid/core/entities/organization.model.dart';
 import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/features/home/entities/invitation.model.dart';
@@ -32,6 +33,12 @@ abstract class HomeRepository {
 
   /// Get data
   Future<Either<Failure, List<TeamModel>>> getAllTeams();
+
+  /// Get teams by organization
+  Future<Either<Failure, List<TeamModel>>> getTeamsByOrganization({required String organizationId});
+
+  /// Get all organizations
+  Future<Either<Failure, List<OrganizationModel>>> getAllOrganizations();
 }
 
 /// This class is responsible for implementing the HomeRepository
@@ -140,6 +147,70 @@ class HomeRepositoryImpl implements HomeRepository {
         teams.add(team);
       }
       return Right(teams);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un error en HomeRepositoryImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TeamModel>>> getTeamsByOrganization({
+    required String organizationId,
+  }) async {
+    final teams = <TeamModel>[];
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/teams/teams-by-organization?organizationId=$organizationId',
+      );
+      final res = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      final data = (jsonDecode(res.body) as Map)['data'] as List;
+
+      for (final element in data) {
+        final team = TeamModel.fromMap(element as Map<String, dynamic>);
+        teams.add(team);
+      }
+      return Right(teams);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un error en HomeRepositoryImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<OrganizationModel>>> getAllOrganizations() async {
+    final organizations = <OrganizationModel>[];
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/users/organizations',
+      );
+      final res = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      final data = (jsonDecode(res.body) as Map)['data'] as List;
+
+      for (final element in data) {
+        final organization = OrganizationModel.fromMap(element as Map<String, dynamic>);
+        organizations.add(organization);
+      }
+      return Right(organizations);
     } catch (e) {
       return Left(
         Failure(

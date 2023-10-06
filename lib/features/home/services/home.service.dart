@@ -2,6 +2,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
+import 'package:team_aid/core/entities/organization.model.dart';
 import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/features/home/entities/invitation.model.dart';
@@ -27,6 +28,9 @@ abstract class HomeService {
   /// Get all teams
   Future<Either<Failure, List<TeamModel>>> getAllTeams();
 
+  /// Get teams by organization
+  Future<Either<Failure, List<TeamModel>>> getTeamsByOrganization({required String organizationId});
+
   /// Send player invitation
   Future<Either<Failure, Success>> sendPlayerInvitation({
     required String role,
@@ -48,6 +52,9 @@ abstract class HomeService {
 
   /// Get the invitations from the given boolean
   Future<Either<Failure, List<InvitationModel>>> getInvitations({required bool isCoach});
+
+  /// Get all organizations
+  Future<Either<Failure, List<OrganizationModel>>> getAllOrganizations();
 }
 
 /// This class is responsible for implementing the HomeService
@@ -166,6 +173,36 @@ class HomeServiceImpl implements HomeService {
   Future<Either<Failure, List<InvitationModel>>> getInvitations({required bool isCoach}) async {
     try {
       final result = await homeRepository.getInvitations(isCoach: isCoach);
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TeamModel>>> getTeamsByOrganization({required String organizationId}) async {
+    try {
+      final result = await homeRepository.getTeamsByOrganization(organizationId: organizationId);
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<OrganizationModel>>> getAllOrganizations() async {
+    try {
+      final result = await homeRepository.getAllOrganizations();
 
       return result.fold(Left.new, Right.new);
     } catch (e) {

@@ -25,6 +25,7 @@ class UserModel {
     this.avatar,
     this.address,
     this.googleAddress,
+    this.position,
   });
 
   /// This is a factory function in Dart that creates a UserModel object from a map of key-value pairs.
@@ -101,6 +102,7 @@ class UserModel {
     bool? isFatherVisible,
     bool? isAvatarVisible,
     bool? isBiographyVisible,
+    String? position,
   }) {
     return UserModel(
       firstName: firstName ?? this.firstName,
@@ -118,6 +120,7 @@ class UserModel {
       isFatherVisible: isFatherVisible ?? this.isFatherVisible,
       isAvatarVisible: isAvatarVisible ?? this.isAvatarVisible,
       isBiographyVisible: isBiographyVisible ?? this.isBiographyVisible,
+      position: position ?? this.position,
     );
   }
 
@@ -132,17 +135,37 @@ class UserModel {
     final map = <String, dynamic>{
       'firstName': firstName,
       'lastName': lastName,
-      'email': email,
-      'phoneNumber': phoneNumber,
+      // 'phoneNumber': phoneNumber,
       'password': password,
       // 'sportId': sportId,
       // 'cityId': cityId,
       // 'stateId': stateId,
       'role': role.name,
       'biography': biography,
-      'address': address ?? '',
-      'google_address': googleAddress ?? '',
+      // 'address': address ?? '',
+      // 'google_address': googleAddress ?? '',
     };
+
+    if (email.isNotEmpty) {
+      map['email'] = email;
+    }
+
+    if (position != null) {
+      map['position'] = position;
+    }
+
+    if (address != null) {
+      map['address'] = address;
+    }
+
+    if (googleAddress != null) {
+      map['google_address'] = googleAddress;
+    }
+
+    if (phoneNumber.isNotEmpty) {
+      map['phoneNumber'] = phoneNumber;
+    }
+
     return map;
   }
 
@@ -203,6 +226,8 @@ class UserModel {
 
   /// Google address when its an organization
   final String? googleAddress;
+
+  final String? position;
 
   String toJson() => json.encode(toMap());
 

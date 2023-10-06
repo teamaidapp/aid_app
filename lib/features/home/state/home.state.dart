@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:team_aid/core/entities/organization.model.dart';
 
 import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/features/home/entities/invitation.model.dart';
@@ -12,6 +13,8 @@ class HomeScreenState {
     required this.userTeams,
     required this.invitations,
     required this.allTeams,
+    required this.organizationTeams,
+    required this.allOrganizations,
   });
 
   /// The function returns a new instance of HomeScreenState with updated userTeams value if provided,
@@ -31,12 +34,16 @@ class HomeScreenState {
   HomeScreenState copyWith({
     AsyncValue<List<TeamModel>>? userTeams,
     AsyncValue<List<TeamModel>>? allTeams,
+    AsyncValue<List<TeamModel>>? organizationTeams,
     AsyncValue<List<InvitationModel>>? invitations,
+    AsyncValue<List<OrganizationModel>>? allOrganizations,
   }) {
     return HomeScreenState(
+      allTeams: allTeams ?? this.allTeams,
       userTeams: userTeams ?? this.userTeams,
       invitations: invitations ?? this.invitations,
-      allTeams: allTeams ?? this.allTeams,
+      organizationTeams: organizationTeams ?? this.organizationTeams,
+      allOrganizations: allOrganizations ?? this.allOrganizations,
     );
   }
 
@@ -46,6 +53,12 @@ class HomeScreenState {
   /// All teams on the DB
   final AsyncValue<List<TeamModel>> allTeams;
 
+  /// All teams on the DB
+  final AsyncValue<List<TeamModel>> organizationTeams;
+
   /// The user invitations
   final AsyncValue<List<InvitationModel>> invitations;
+
+  /// All organizations on the DB
+  final AsyncValue<List<OrganizationModel>> allOrganizations;
 }

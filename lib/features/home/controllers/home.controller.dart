@@ -10,6 +10,8 @@ final homeControllerProvider = StateNotifierProvider.autoDispose<HomeController,
       allTeams: AsyncValue.loading(),
       userTeams: AsyncValue.loading(),
       invitations: AsyncValue.loading(),
+      organizationTeams: AsyncValue.data([]),
+      allOrganizations: AsyncValue.loading(),
     ),
     ref,
     ref.watch(homeServiceProvider),
@@ -103,6 +105,60 @@ class HomeController extends StateNotifier<HomeScreenState> {
     }
   }
 
+  /// The function `getAllOrganizations` retrieves a list of organizations from `_homeService` and updates
+  /// the state with the retrieved data, returning a response indicating success or failure.
+  /// Returns:
+  ///  a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> getAllOrganizations() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _homeService.getAllOrganizations();
+
+      return result.fold(
+        (failure) {
+          state.copyWith(allOrganizations: const AsyncValue.data([]));
+          return response = response.copyWith(message: failure.message);
+        },
+        (list) {
+          state = state.copyWith(allOrganizations: AsyncValue.data(list));
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de HomeService',
+      );
+    }
+  }
+
+  /// The function `getTeamsByOrganization` retrieves a list of teams from `_homeService` and updates the
+  /// state with the retrieved data, returning a response indicating success or failure.
+  /// Args:
+  ///  organizationId (String): The organization id.
+  /// Returns:
+  ///  a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> getTeamsByOrganization({required String organizationId}) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _homeService.getTeamsByOrganization(organizationId: organizationId);
+
+      return result.fold(
+        (failure) {
+          state.copyWith(organizationTeams: const AsyncValue.data([]));
+          return response = response.copyWith(message: failure.message);
+        },
+        (list) {
+          state = state.copyWith(organizationTeams: AsyncValue.data(list));
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de HomeService',
+      );
+    }
+  }
+
   /// The function `getInvitations` retrieves invitations from the `_homeService` and updates the state
   /// with the retrieved data.
   ///
@@ -123,6 +179,46 @@ class HomeController extends StateNotifier<HomeScreenState> {
         },
         (list) {
           state = state.copyWith(invitations: AsyncValue.data(list));
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'Hubo un problema al obtener los datos de HomeService',
+      );
+    }
+  }
+
+  /// This function sends a player invitation and returns a response indicating success or failure.
+  ///
+  /// Args:
+  ///   isCoach (bool): A boolean value indicating whether the player invitation is being sent by a coach
+  /// or not.
+  ///   email (String): The email address of the player or coach being invited to join a team.
+  ///   phone (String): A required String parameter representing the phone number of the player or coach
+  /// being invited to join a team.
+  ///   teamId (String): The ID of the team to which the player invitation is being sent.
+  ///
+  /// Returns:
+  ///   A `Future` of `ResponseFailureModel` is being returned.
+  Future<ResponseFailureModel> sendPlayerInvitation({
+    required String role,
+    required String email,
+    required String phone,
+    required String teamId,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _homeService.sendPlayerInvitation(
+        email: email,
+        role: role,
+        phone: phone,
+        teamId: teamId,
+      );
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) {
           return response = response.copyWith(ok: true);
         },
       );

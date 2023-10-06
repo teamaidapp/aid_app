@@ -78,7 +78,7 @@ class CreateAccountServiceImpl implements CreateAccountService {
     required UserModel user,
   }) async {
     try {
-      final result = await createAccountRepository.createAccount(user: user);
+      final result = await createAccountRepository.createChildAccount(user: user);
 
       return result.fold(
         (failure) => Left(

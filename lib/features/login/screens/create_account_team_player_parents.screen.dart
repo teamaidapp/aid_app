@@ -1,24 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/constants.dart';
+import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
-import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
+import 'package:team_aid/main.dart';
 
 /// The statelessWidget that handles the current screen
-class CreateAccountParentsScreen extends StatelessWidget {
+class CreateAccountParentsScreen extends StatefulHookConsumerWidget {
   /// The constructor.
   const CreateAccountParentsScreen({super.key});
 
   @override
+  ConsumerState<CreateAccountParentsScreen> createState() => _CreateAccountParentsScreenState();
+}
+
+class _CreateAccountParentsScreenState extends ConsumerState<CreateAccountParentsScreen> {
+  @override
+  void initState() {
+    ref.read(homeControllerProvider.notifier).getAllOrganizations();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final allOrganizations = ref.watch(homeControllerProvider).allOrganizations;
+    final teams = ref.watch(homeControllerProvider).organizationTeams;
+    final teamId = useState('');
+    final organizationId = useState('');
+    final prefs = ref.watch(sharedPrefs);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -56,10 +74,10 @@ class CreateAccountParentsScreen extends StatelessWidget {
               builder: (context) {
                 final firstNameController = useTextEditingController();
                 final lastNameController = useTextEditingController();
-                final emailController = useTextEditingController();
+                // final emailController = useTextEditingController();
+                final positionController = useTextEditingController();
                 final phoneNumberController = useTextEditingController();
-                final passwordController =
-                    useTextEditingController(text: '1234');
+                final passwordController = useTextEditingController(text: '1234');
                 final agreeToTerms = useState(false);
                 final sport = useState('');
                 final cityState = useState('');
@@ -88,8 +106,7 @@ class CreateAccountParentsScreen extends StatelessWidget {
                               TAPrimaryInput(
                                 label: 'First name',
                                 textEditingController: firstNameController,
-                                placeholder:
-                                    'Enter the first name of the child',
+                                placeholder: 'Enter the first name of the child',
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
@@ -97,16 +114,22 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                 textEditingController: lastNameController,
                                 placeholder: 'Enter the last name of the child',
                               ),
+                              // const SizedBox(height: 10),
+                              // TAPrimaryInput(
+                              //   label: 'E-mail',
+                              //   textEditingController: emailController,
+                              //   placeholder: 'Enter the email of the child',
+                              //   inputListFormatter: [
+                              //     FilteringTextInputFormatter.allow(
+                              //       RegExp('[a-zA-Z0-9.@_-]'),
+                              //     ),
+                              //   ],
+                              // ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
-                                label: 'E-mail',
-                                textEditingController: emailController,
-                                placeholder: 'Enter the email of the child',
-                                inputListFormatter: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp('[a-zA-Z0-9.@_-]'),
-                                  ),
-                                ],
+                                label: 'Position',
+                                textEditingController: positionController,
+                                placeholder: 'Enter a position',
                               ),
                               const SizedBox(height: 10),
                               TADropdown(
@@ -119,138 +142,80 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                   }
                                 },
                               ),
-                              // const SizedBox(height: 10),
-                              // TADropdown(
-                              //   label: 'State',
-                              //   placeholder: 'Select a state',
-                              //   items: List.generate(
-                              //     TAConstants.statesList.length,
-                              //     (index) => TADropdownModel(
-                              //       item: TAConstants.statesList[index].name,
-                              //       id: TAConstants.statesList[index].id,
-                              //     ),
-                              //   ),
-                              //   onChange: (selectedValue) {
-                              //     if (selectedValue != null) {
-                              //       currentSelectedState.value = selectedValue.id;
-                              //     }
-                              //   },
-                              // ),
-                              // const SizedBox(height: 10),
-                              // Column(
-                              //   crossAxisAlignment: CrossAxisAlignment.start,
-                              //   children: [
-                              //     TATypography.paragraph(
-                              //       text: 'City',
-                              //       fontWeight: FontWeight.w500,
-                              //       color: TAColors.color1,
-                              //     ),
-                              //     SizedBox(height: 0.5.h),
-                              //     DropdownSearch<TADropdownModel>(
-                              //       asyncItems: (filter) async {
-                              //         final response = await http.get(
-                              //           Uri.parse(
-                              //             '${dotenv.env['API_URL']}/cities/cities/${currentSelectedState.value}',
-                              //           ),
-                              //         );
-
-                              //         if (response.statusCode == 200) {
-                              //           final data = (jsonDecode(response.body) as Map)['data'] as List;
-                              //           final list = data.map((e) {
-                              //             final taDropdownModel = TADropdownModel(
-                              //               item: (e as Map)['name'] as String,
-                              //               id: e['id'] as String,
-                              //             );
-                              //             return taDropdownModel;
-                              //           }).toList()
-                              //             ..sort((a, b) => a.item.compareTo(b.item));
-                              //           return list;
-                              //         } else {
-                              //           return [];
-                              //         }
-                              //       },
-                              //       onChanged: (value) {
-                              //         if (value != null) {
-                              //           cityState.value = value.id;
-                              //         }
-                              //       },
-                              //       itemAsString: (item) => item.item,
-                              //       dropdownButtonProps: const DropdownButtonProps(
-                              //         icon: Icon(
-                              //           Iconsax.arrow_down_1,
-                              //           size: 14,
-                              //           color: Colors.black,
-                              //         ),
-                              //       ),
-                              //       dropdownDecoratorProps: DropDownDecoratorProps(
-                              //         baseStyle: GoogleFonts.poppins(
-                              //           fontSize: 16.sp,
-                              //           fontWeight: FontWeight.w500,
-                              //           color: TAColors.color2,
-                              //         ),
-                              //         dropdownSearchDecoration: InputDecoration(
-                              //           hintText: 'Select a city',
-                              //           contentPadding: const EdgeInsets.symmetric(
-                              //             horizontal: 10,
-                              //             vertical: 10,
-                              //           ),
-                              //           border: OutlineInputBorder(
-                              //             borderRadius: BorderRadius.circular(10),
-                              //             borderSide: BorderSide(
-                              //               color: TAColors.color1.withOpacity(0.5),
-                              //             ),
-                              //           ),
-                              //           enabledBorder: OutlineInputBorder(
-                              //             borderRadius: BorderRadius.circular(10),
-                              //             borderSide: BorderSide(
-                              //               color: TAColors.color1.withOpacity(0.5),
-                              //             ),
-                              //           ),
-                              //           focusedBorder: OutlineInputBorder(
-                              //             borderRadius: BorderRadius.circular(10),
-                              //             borderSide: const BorderSide(
-                              //               color: TAColors.color1,
-                              //             ),
-                              //           ),
-                              //           hintStyle: GoogleFonts.poppins(
-                              //             fontSize: 16.sp,
-                              //             fontWeight: FontWeight.w500,
-                              //             color: TAColors.color2,
-                              //           ),
-                              //         ),
-                              //       ),
-                              //       popupProps: PopupProps.menu(
-                              //         fit: FlexFit.loose,
-                              //         constraints: const BoxConstraints.tightFor(),
-                              //         menuProps: MenuProps(
-                              //           borderRadius: BorderRadius.circular(10),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                              // const SizedBox(height: 10),
-                              // TAPrimaryInput(
-                              //   label: 'Phone number',
-                              //   textEditingController: phoneNumberController,
-                              //   placeholder: 'Enter the phone number of the child',
-                              //   inputListFormatter: [
-                              //     FilteringTextInputFormatter.digitsOnly,
-                              //     LengthLimitingTextInputFormatter(12),
-                              //     PhoneInputFormatter(
-                              //       allowEndlessPhone: true,
-                              //     )
-                              //   ],
-                              // ),
-                              // const SizedBox(height: 10),
-                              // TAPrimaryInput(
-                              //   label: 'Password',
-                              //   textEditingController: passwordController,
-                              //   isPassword: true,
-                              //   placeholder: 'Enter the password of the child',
-                              // ),
                               const SizedBox(height: 20),
                             ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TAContainer(
+                          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
+                          margin: const EdgeInsets.only(left: 20, right: 20),
+                          child: allOrganizations.when(
+                            data: (data) {
+                              return TADropdown(
+                                label: 'Organizations',
+                                placeholder: 'Select a organization',
+                                items: List.generate(
+                                  data.length,
+                                  (index) => TADropdownModel(
+                                    item: data[index].name,
+                                    id: data[index].id,
+                                  ),
+                                ),
+                                onChange: (selectedValue) {
+                                  if (selectedValue != null) {
+                                    organizationId.value = selectedValue.id;
+                                    ref.read(homeControllerProvider.notifier).getTeamsByOrganization(
+                                          organizationId: organizationId.value,
+                                        );
+                                  }
+                                },
+                              );
+                            },
+                            error: (e, s) => const SizedBox(),
+                            loading: () => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TAContainer(
+                          margin: const EdgeInsets.only(left: 20, right: 20),
+                          child: teams.when(
+                            data: (data) {
+                              if (data.isEmpty) {
+                                return SizedBox(
+                                  width: double.infinity,
+                                  child: Center(
+                                    child: TATypography.paragraph(
+                                      text: 'Select an organization',
+                                      color: TAColors.grey1,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return TADropdown(
+                                  label: 'Team',
+                                  placeholder: 'Select a team',
+                                  items: List.generate(
+                                    data.length,
+                                    (index) => TADropdownModel(
+                                      item: data[index].teamName,
+                                      id: data[index].id,
+                                    ),
+                                  ),
+                                  onChange: (selectedValue) {
+                                    if (selectedValue != null) {
+                                      teamId.value = selectedValue.id;
+                                    }
+                                  },
+                                );
+                              }
+                            },
+                            error: (e, s) => const SizedBox(),
+                            loading: () => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -268,8 +233,7 @@ class CreateAccountParentsScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: TATypography.subparagraph(
-                                  text:
-                                      'I agree to terms of service and privacy policy',
+                                  text: 'I agree to terms of service and privacy policy',
                                   color: TAColors.grey1,
                                 ),
                               ),
@@ -304,52 +268,42 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                   builder: (context, ref, child) {
                                     final isLoading = useState(false);
                                     return Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20, right: 20),
+                                      padding: const EdgeInsets.only(left: 20, right: 20),
                                       child: TAPrimaryButton(
                                         text: 'CREATE ACCOUNT',
                                         height: 50,
                                         padding: EdgeInsets.zero,
                                         isLoading: isLoading.value,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         onTap: () async {
-                                          if (firstNameController
-                                                      .text.isEmpty ||
-                                                  lastNameController
-                                                      .text.isEmpty ||
-                                                  emailController
-                                                      .text.isEmpty ||
+                                          if (firstNameController.text.isEmpty ||
+                                                  lastNameController.text.isEmpty ||
+                                                  // emailController.text.isEmpty ||
                                                   // phoneNumberController.text.isEmpty ||
                                                   // passwordController.text.isEmpty ||
-                                                  sport.value.isEmpty
+                                                  sport.value.isEmpty ||
+                                                  positionController.text.isEmpty
                                               // currentSelectedState.value.isEmpty
                                               ) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
+                                            ScaffoldMessenger.of(context).showSnackBar(
                                               const SnackBar(
-                                                content: Text(
-                                                    'Please fill all fields'),
+                                                content: Text('Please fill all fields'),
                                               ),
                                             );
                                             return;
                                           }
 
-                                          if (!isValidEmail(
-                                              emailController.text.trim())) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                    'Please enter a valid email'),
-                                              ),
-                                            );
-                                            return;
-                                          }
+                                          // if (!isValidEmail(emailController.text.trim())) {
+                                          //   ScaffoldMessenger.of(context).showSnackBar(
+                                          //     const SnackBar(
+                                          //       content: Text('Please enter a valid email'),
+                                          //     ),
+                                          //   );
+                                          //   return;
+                                          // }
 
                                           if (!agreeToTerms.value) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
+                                            ScaffoldMessenger.of(context).showSnackBar(
                                               const SnackBar(
                                                 content: Text(
                                                   'Please agree to terms of service and privacy policy',
@@ -359,35 +313,52 @@ class CreateAccountParentsScreen extends StatelessWidget {
                                             return;
                                           }
 
-                                          final phone = phoneNumberController
-                                              .text
-                                              .replaceAll(' ', '')
-                                              .replaceAll('+', '');
+                                          final phone = phoneNumberController.text.replaceAll(' ', '').replaceAll('+', '');
 
                                           final user = UserModel(
                                             firstName: firstNameController.text,
                                             lastName: lastNameController.text,
-                                            email: emailController.text
-                                                .toLowerCase(),
+                                            email: '',
                                             phoneNumber: phone,
                                             password: passwordController.text,
                                             sportId: sport.value,
-                                            role: Role.player,
+                                            role: Role.player_under_aged,
                                             cityId: cityState.value,
                                             stateId: currentSelectedState.value,
+                                            position: positionController.text,
                                           );
                                           isLoading.value = true;
                                           final res = await ref
                                               .read(
-                                                  createAccountControllerProvider
-                                                      .notifier)
+                                                createAccountControllerProvider.notifier,
+                                              )
                                               .createChildAccount(user: user);
                                           isLoading.value = false;
                                           if (res.ok && context.mounted) {
-                                            context.go(AppRoutes.home);
+                                            final email = prefs.asData?.value.getString(TAConstants.email) ?? '';
+                                            final parentPhone = prefs.asData?.value.getString(TAConstants.phoneNumber) ?? '';
+
+                                            final invitationResponse = await ref
+                                                .read(
+                                                  homeControllerProvider.notifier,
+                                                )
+                                                .sendPlayerInvitation(
+                                                  role: Role.player_under_aged.name,
+                                                  email: email,
+                                                  phone: parentPhone,
+                                                  teamId: teamId.value,
+                                                );
+                                            if (invitationResponse.ok && context.mounted) {
+                                              context.go(AppRoutes.home);
+                                            } else {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text("We couldn't send the invitation"),
+                                                ),
+                                              );
+                                            }
                                           } else {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
+                                            ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
                                                 content: Text(res.message),
                                               ),

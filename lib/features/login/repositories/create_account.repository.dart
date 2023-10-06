@@ -95,7 +95,7 @@ class CreateAccountRepositoryRepositoryImpl implements CreateAccountRepository {
         '${dotenv.env['API_URL']}/users/create-son',
       );
       final accessToken = await const FlutterSecureStorage().read(key: TAConstants.accessToken);
-      final headers = <String, String>{'Content-Type': 'application/json', 'authorization': 'Bearer $accessToken'};
+      final headers = <String, String>{'authorization': 'Bearer $accessToken'};
 
       final res = await http.post(
         url,
