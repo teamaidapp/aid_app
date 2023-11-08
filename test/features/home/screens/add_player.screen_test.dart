@@ -8,7 +8,7 @@ void main() {
     testWidgets('Renders all required widgets', (WidgetTester tester) async {
       final materialApp = ResponsiveSizer(
         builder: (context, orientation, deviceType) {
-          return const MaterialApp(home: AddPlayerScreen());
+          return const MaterialApp(home: AddPlayerScreen(isPlayer: true));
         },
       );
 

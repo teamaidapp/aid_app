@@ -25,7 +25,10 @@ abstract class MyAccountRepository {
   Future<Either<Failure, Success>> getData();
 
   /// Update user data
-  Future<Either<Failure, Success>> updateUserData({required UserModel user});
+  Future<Either<Failure, Success>> updateUserData({
+    required UserModel user,
+    required String uid,
+  });
 }
 
 /// This class is responsible for implementing the MyAccountRepository
@@ -56,11 +59,13 @@ class MyAccountRepositoryImpl implements MyAccountRepository {
   @override
   Future<Either<Failure, Success>> updateUserData({
     required UserModel user,
+    required String uid,
   }) async {
     try {
       final token = await secureStorage.read(key: TAConstants.accessToken);
+      final uri = uid.isEmpty ? '/users' : '/users?id=$uid';
       final url = Uri.parse(
-        '${dotenv.env['API_URL']}/users',
+        '${dotenv.env['API_URL']}$uri',
       );
 
       final data = <String, dynamic>{};

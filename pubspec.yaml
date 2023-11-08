@@ -1,12 +1,13 @@
 name: team_aid
 description: A new Flutter project.
 publish_to: "none"
-version: 0.2.0+6
+version: 0.3.0+7
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
+  add_2_calendar: ^3.0.1
   animate_do: ^3.0.2
   animated_custom_dropdown: ^1.5.0
   dartz: ^0.10.1
@@ -37,7 +38,7 @@ dependencies:
   url_launcher: ^6.1.11
 
 dev_dependencies:
-  custom_lint:
+  custom_lint: null
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.0
   flutter_test:

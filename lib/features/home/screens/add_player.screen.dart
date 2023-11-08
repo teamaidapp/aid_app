@@ -25,7 +25,13 @@ import 'package:team_aid/features/home/widgets/search_form.widget.dart';
 /// The statelessWidget that handles the current screen
 class AddPlayerScreen extends HookWidget {
   /// The constructor.
-  const AddPlayerScreen({super.key});
+  const AddPlayerScreen({
+    required this.isPlayer,
+    super.key,
+  });
+
+  /// If the current flow is adding a player or a coach.
+  final bool isPlayer;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +58,7 @@ class AddPlayerScreen extends HookWidget {
                     ),
                     const Spacer(),
                     TATypography.h3(
-                      text: 'Add Player',
+                      text: isPlayer ? 'Players' : 'Coaches',
                       color: TAColors.textColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -89,7 +95,7 @@ class AddPlayerScreen extends HookWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     child: Center(
                       child: TATypography.paragraph(
-                        text: 'Add Player',
+                        text: isPlayer ? 'Add Player' : 'Add Coach',
                         key: const Key('add_player_title'),
                         color: addPlayerScreen.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
                         fontWeight: FontWeight.w700,
@@ -118,7 +124,7 @@ class AddPlayerScreen extends HookWidget {
                     ),
                     child: Center(
                       child: TATypography.paragraph(
-                        text: 'Search Player',
+                        text: isPlayer ? 'Search Player' : 'Search Coach',
                         color: !addPlayerScreen.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
                         fontWeight: FontWeight.w700,
                       ),
@@ -139,7 +145,11 @@ class AddPlayerScreen extends HookWidget {
                 ),
               ),
               child: SingleChildScrollView(
-                child: addPlayerScreen.value ? const _AddPlayerWidget() : const _SearchPlayerWidget(),
+                child: addPlayerScreen.value
+                    ? _AddPlayerWidget(
+                        isPlayer: isPlayer,
+                      )
+                    : const _SearchPlayerWidget(),
               ),
             ),
           ),
@@ -150,7 +160,9 @@ class AddPlayerScreen extends HookWidget {
 }
 
 class _AddPlayerWidget extends HookConsumerWidget {
-  const _AddPlayerWidget();
+  const _AddPlayerWidget({required this.isPlayer});
+
+  final bool isPlayer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -219,28 +231,29 @@ class _AddPlayerWidget extends HookConsumerWidget {
                 inputListFormatter: [
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(12),
-                  PhoneInputFormatter(defaultCountryCode: 'US')
+                  PhoneInputFormatter(defaultCountryCode: 'US'),
                 ],
               ),
               const SizedBox(height: 20),
-              Row(
-                children: [
-                  Switch.adaptive(
-                    value: makeAdmin.value,
-                    activeColor: const Color(0xff586DF4),
-                    onChanged: (v) {
-                      makeAdmin.value = v;
-                    },
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TATypography.subparagraph(
-                      text: 'Make an administator',
-                      color: TAColors.grey1,
+              if (!isPlayer)
+                Row(
+                  children: [
+                    Switch.adaptive(
+                      value: makeAdmin.value,
+                      activeColor: const Color(0xff586DF4),
+                      onChanged: (v) {
+                        makeAdmin.value = v;
+                      },
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TATypography.subparagraph(
+                        text: 'Make an administator',
+                        color: TAColors.grey1,
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
@@ -300,7 +313,7 @@ class _AddPlayerWidget extends HookConsumerWidget {
                     email: emailController.text,
                     phone: phoneController.text,
                     teamId: teamId.value,
-                    role: Role.player.name,
+                    role: isPlayer ? Role.player.name : Role.coach.name,
                   );
               isLoading.value = false;
               if (res.ok && context.mounted) {
@@ -364,16 +377,23 @@ class _SearchPlayerWidget extends HookConsumerWidget {
   }
 }
 
+/// The PlayersSearchWidget class is a hook widget in Dart.
 class PlayersSearchWidget extends HookWidget {
+  /// Calls the constructor of the superclass with the given key.
   const PlayersSearchWidget({
-    super.key,
     required this.teamId,
     required this.players,
     required this.showForm,
+    super.key,
   });
 
+  /// The asynchronous value of a list of [PlayerModel] objects.
   final AsyncValue<List<PlayerModel>> players;
+
+  /// A [ValueNotifier] that controls whether to show the form or not.
   final ValueNotifier<bool> showForm;
+
+  /// A [ValueNotifier] that controls the team id.
   final ValueNotifier<String> teamId;
 
   @override

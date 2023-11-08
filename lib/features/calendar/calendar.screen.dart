@@ -30,7 +30,13 @@ import 'package:team_aid/features/home/controllers/home.controller.dart';
 /// The statelessWidget that handles the current screen
 class CalendarScreen extends StatefulHookConsumerWidget {
   /// The constructor.
-  const CalendarScreen({super.key});
+  const CalendarScreen({
+    required this.addToCalendar,
+    super.key,
+  });
+
+  /// If we need to show first the create schedule widget
+  final bool addToCalendar;
 
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
@@ -50,7 +56,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final formattedDay = DateFormat('EEEE').format(DateTime.now()).toUpperCase();
 
     final events = ref.watch(calendarControllerProvider).calendarEvents;
-    final createSchedule = useState(false);
+    final createSchedule = useState(widget.addToCalendar);
 
     return Scaffold(
       backgroundColor: Colors.white,

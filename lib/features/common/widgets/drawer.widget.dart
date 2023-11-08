@@ -37,10 +37,12 @@ class DrawerWidget extends HookConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TATypography.h3(
-                          text: 'Hi $name',
-                          color: TAColors.textColor,
-                          fontWeight: FontWeight.w700,
+                        Expanded(
+                          child: TATypography.h3(
+                            text: 'Hi $name',
+                            color: TAColors.textColor,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         IconButton(
                           onPressed: () {
@@ -50,22 +52,28 @@ class DrawerWidget extends HookConsumerWidget {
                         ),
                       ],
                     ),
-                    if (role == Role.admin.name) const SizedBox(height: 30),
-                    if (role == Role.admin.name)
+                    if (role == Role.admin.name || role == Role.coach.name) const SizedBox(height: 30),
+                    if (role == Role.admin.name || role == Role.coach.name)
                       _DrawerOptionWidget(
                         icon: Iconsax.profile_add,
                         title: 'Coaches',
                         onTap: () {
-                          context.push(AppRoutes.addPlayer);
+                          context.pushNamed(
+                            AppRoutes.addPlayer,
+                            queryParameters: {'isPlayer': 'false'},
+                          );
                         },
                       ),
-                    if (role == Role.coach.name) const SizedBox(height: 30),
-                    if (role == Role.coach.name)
+                    if (role == Role.player.name) const SizedBox(height: 30),
+                    if (role == Role.player.name)
                       _DrawerOptionWidget(
                         icon: Iconsax.profile_add,
                         title: 'Add player',
                         onTap: () {
-                          context.push(AppRoutes.addPlayer);
+                          context.pushNamed(
+                            AppRoutes.addPlayer,
+                            queryParameters: {'isPlayer': 'true'},
+                          );
                         },
                       ),
                     if (role == Role.coach.name || role == Role.parent.name) const SizedBox(height: 30),
@@ -98,7 +106,12 @@ class DrawerWidget extends HookConsumerWidget {
                       icon: Iconsax.clipboard,
                       title: 'Calendar',
                       onTap: () {
-                        context.push(AppRoutes.calendar);
+                        context.pushNamed(
+                          AppRoutes.calendar,
+                          queryParameters: {
+                            'addToCalendar': 'false',
+                          },
+                        );
                       },
                     ),
                     const SizedBox(height: spaceBetweenItems),

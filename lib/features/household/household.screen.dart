@@ -7,6 +7,7 @@ import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/household/controllers/household.controller.dart';
 import 'package:team_aid/features/household/widget/child.screen.dart';
+import 'package:team_aid/main.dart';
 
 /// The statelessWidget that handles the current screen
 class HouseholdScreen extends ConsumerStatefulWidget {
@@ -29,6 +30,7 @@ class _HouseholdScreenState extends ConsumerState<HouseholdScreen> {
   @override
   Widget build(BuildContext context) {
     final houseHoldList = ref.watch(householdControllerProvider).houseHoldList;
+    final prefs = ref.watch(sharedPrefs);
     return Scaffold(
       body: Column(
         children: [
@@ -78,11 +80,34 @@ class _HouseholdScreenState extends ConsumerState<HouseholdScreen> {
               ),
               child: houseHoldList.when(
                 data: (data) {
-                  return ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return ChildWidget(houseHold: data[index]);
+                  return prefs.when(
+                    data: (prefs) {
+                      if (data.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Center(
+                            child: TATypography.paragraph(
+                              text: 'No household members added yet',
+                              color: TAColors.purple,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return ListView.builder(
+                          itemCount: data.length,
+                          padding: EdgeInsets.zero,
+                          itemBuilder: (context, index) {
+                            return ChildWidget(
+                              houseHold: data[index],
+                              sharedPreferences: prefs,
+                            );
+                          },
+                        );
+                      }
                     },
+                    error: (_, __) => const SizedBox(),
+                    loading: () => const SizedBox(),
                   );
                 },
                 error: (_, __) => const SizedBox(),

@@ -2,6 +2,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
+import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/features/household/entities/household.model.dart';
 import 'package:team_aid/features/household/repositories/household.repository.dart';
 
@@ -15,6 +16,11 @@ final householdServiceProvider = Provider<HouseholdServiceImpl>((ref) {
 abstract class HouseholdService {
   /// Get data
   Future<Either<Failure, List<HouseholdModel>>> getHouseholds();
+
+  /// The `deleteHousehold` method in the `HouseholdService` class is responsible for deleting a
+  /// household based on its ID. It returns a `Future` that will either resolve to an `Either`
+  /// containing a `Failure` or a `Success` object.
+  Future<Either<Failure, Success>> deleteHousehold({required String id});
 }
 
 /// This class is responsible for implementing the HouseholdService
@@ -35,6 +41,21 @@ class HouseholdServiceImpl implements HouseholdService {
       return Left(
         Failure(
           message: 'Hubo un problema al obtener los datos de HouseholdServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> deleteHousehold({required String id}) async {
+    try {
+      final result = await householdRepository.deleteHousehold(id: id);
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'Hubo un problema al eliminar el HouseholdServiceImpl',
         ),
       );
     }

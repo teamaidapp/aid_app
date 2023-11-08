@@ -3,7 +3,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Open a link
+/// The function opens a link in the default browser of the device.
+///
+/// Args:
+///   link (String): A string representing the link to be opened.
+///
+/// Returns:
+///   a Future<void> object.
 Future<void> openLink(String link) async {
   final parsedLink = Uri.parse(link);
   if (await canLaunchUrl(parsedLink)) {

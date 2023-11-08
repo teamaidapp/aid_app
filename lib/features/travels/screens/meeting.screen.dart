@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +17,6 @@ import 'package:team_aid/features/calendar/widgets/event.widget.dart';
 import 'package:team_aid/features/common/functions/global_functions.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/location.widget.dart';
-import 'package:team_aid/features/common/widgets/success.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/travels/controllers/travels.controller.dart';
 

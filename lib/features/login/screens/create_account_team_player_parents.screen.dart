@@ -104,13 +104,13 @@ class _CreateAccountParentsScreenState extends ConsumerState<CreateAccountParent
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               TAPrimaryInput(
-                                label: 'First name',
+                                label: 'Child first name',
                                 textEditingController: firstNameController,
                                 placeholder: 'Enter the first name of the child',
                               ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
-                                label: 'Last name',
+                                label: 'Child last name',
                                 textEditingController: lastNameController,
                                 placeholder: 'Enter the last name of the child',
                               ),
@@ -254,7 +254,10 @@ class _CreateAccountParentsScreenState extends ConsumerState<CreateAccountParent
                                 flex: 2,
                                 child: GestureDetector(
                                   onTap: () {
-                                    context.go(AppRoutes.home);
+                                    context
+                                      ..pop()
+                                      ..pop()
+                                      ..push(AppRoutes.household);
                                   },
                                   child: TATypography.paragraph(
                                     text: 'Skip',

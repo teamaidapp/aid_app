@@ -94,7 +94,12 @@ class TeamCardWidget extends StatelessWidget {
                   text: 'SCHEDULE',
                   mainAxisAlignment: MainAxisAlignment.center,
                   onTap: () {
-                    context.push(AppRoutes.calendar);
+                    context.pushNamed(
+                      AppRoutes.calendar,
+                      queryParameters: {
+                        'addToCalendar': 'false',
+                      },
+                    );
                   },
                 ),
               ),

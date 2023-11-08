@@ -146,6 +146,10 @@ class UserModel {
       // 'google_address': googleAddress ?? '',
     };
 
+    if (sportId.isNotEmpty) {
+      map['sportId'] = sportId;
+    }
+
     if (email.isNotEmpty) {
       map['email'] = email;
     }

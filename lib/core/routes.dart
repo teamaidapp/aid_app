@@ -1,10 +1,13 @@
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/features/calendar/calendar.screen.dart';
 import 'package:team_aid/features/home/home.screen.dart';
 import 'package:team_aid/features/home/screens/add_coach.screen.dart';
 import 'package:team_aid/features/home/screens/add_player.screen.dart';
+import 'package:team_aid/features/household/entities/household.model.dart';
 import 'package:team_aid/features/household/household.screen.dart';
+import 'package:team_aid/features/household/screens/edit_household.screen.dart';
 import 'package:team_aid/features/login/login.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_coach.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_team.screen.dart';
@@ -83,6 +86,9 @@ class AppRoutes {
 
   /// Files route
   static const String files = '/home/files';
+
+  /// Edit Household route
+  static const String editHousehold = '/household/editHousehold';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -119,7 +125,10 @@ final routerProvider = Provider((ref) {
       ),
       GoRoute(
         path: AppRoutes.addPlayer,
-        builder: (context, state) => const AddPlayerScreen(),
+        name: AppRoutes.addPlayer,
+        builder: (context, state) => AddPlayerScreen(
+          isPlayer: state.queryParameters['isPlayer'] == 'true',
+        ),
       ),
       GoRoute(
         path: AppRoutes.teams,
@@ -135,7 +144,10 @@ final routerProvider = Provider((ref) {
       ),
       GoRoute(
         path: AppRoutes.calendar,
-        builder: (context, state) => const CalendarScreen(),
+        name: AppRoutes.calendar,
+        builder: (context, state) => CalendarScreen(
+          addToCalendar: state.queryParameters['addToCalendar'] == 'true',
+        ),
       ),
       GoRoute(
         path: AppRoutes.travel,
@@ -147,15 +159,24 @@ final routerProvider = Provider((ref) {
       ),
       GoRoute(
         path: AppRoutes.biography,
-        builder: (context, state) => const BiographyScreen(),
+        name: AppRoutes.biography,
+        builder: (context, state) => BiographyScreen(
+          houseHold: state.extra as HouseholdModel?,
+        ),
       ),
       GoRoute(
         path: AppRoutes.phoneProfile,
-        builder: (context, state) => const PhoneScreen(),
+        name: AppRoutes.phoneProfile,
+        builder: (context, state) => PhoneScreen(
+          houseHold: state.extra as HouseholdModel?,
+        ),
       ),
       GoRoute(
         path: AppRoutes.addressProfile,
-        builder: (context, state) => const AddressScreen(),
+        name: AppRoutes.addressProfile,
+        builder: (context, state) => AddressScreen(
+          houseHold: state.extra as HouseholdModel?,
+        ),
       ),
       GoRoute(
         path: AppRoutes.createAccountTeamPlayer,
@@ -181,6 +202,13 @@ final routerProvider = Provider((ref) {
         name: AppRoutes.files,
         builder: (context, state) => FilesScreen(
           isInTravel: state.queryParameters['isInTravel'] == ' true',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.editHousehold,
+        name: AppRoutes.editHousehold,
+        builder: (context, state) => EditHouseholdScreen(
+          houseHold: state.extra! as HouseholdModel,
         ),
       ),
     ],

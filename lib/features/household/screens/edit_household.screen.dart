@@ -11,29 +11,37 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
-import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
+import 'package:team_aid/features/household/controllers/household.controller.dart';
+import 'package:team_aid/features/household/entities/household.model.dart';
 import 'package:team_aid/features/myAccount/controllers/myAccount.controller.dart';
 import 'package:team_aid/main.dart';
 
 /// The statelessWidget that handles the current screen
-class MyAccountScreen extends StatefulHookConsumerWidget {
+class EditHouseholdScreen extends StatefulHookConsumerWidget {
   /// The constructor.
-  const MyAccountScreen({super.key});
+  const EditHouseholdScreen({
+    required this.houseHold,
+    super.key,
+  });
+
+  /// The household to edit
+  final HouseholdModel houseHold;
 
   @override
-  ConsumerState<MyAccountScreen> createState() => _MyAccountScreenState();
+  ConsumerState<EditHouseholdScreen> createState() => _EditHouseholdScreenState();
 }
 
-class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
+class _EditHouseholdScreenState extends ConsumerState<EditHouseholdScreen> {
   XFile? selectedImage;
+
   @override
   Widget build(BuildContext context) {
-    final nameController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.firstName);
-    final roleController = useSharedPrefsTextEditingController(sharedPreferencesKey: TAConstants.role);
+    final nameController = useTextEditingController(text: widget.houseHold.userId.firstName);
+    final lastNameController = useTextEditingController(text: widget.houseHold.userId.lastName);
     final originalName = useState(nameController.text);
     final isLoading = useState(false);
     final prefs = ref.watch(sharedPrefs);
@@ -61,7 +69,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                     ),
                     const Spacer(),
                     TATypography.h3(
-                      text: 'Edit profile',
+                      text: 'Edit household',
                       color: TAColors.textColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -110,7 +118,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: TATypography.paragraph(
-                                  text: 'Edit profile',
+                                  text: 'Edit household',
                                   textAlign: TextAlign.start,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -123,10 +131,10 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                               ),
                               const SizedBox(height: 20),
                               TAPrimaryInput(
-                                label: 'Role',
+                                label: 'Last Name',
                                 placeholder: '',
                                 isReadOnly: true,
-                                textEditingController: roleController,
+                                textEditingController: lastNameController,
                               ),
                               // const SizedBox(height: 10),
                               // TADropdown(
@@ -153,18 +161,18 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                                 icon: Iconsax.user,
                                 description: 'Add biography',
                                 onTap: () {
-                                  context.push(AppRoutes.biography);
+                                  context.push(AppRoutes.biography, extra: widget.houseHold);
                                 },
                               ),
-                              const Divider(),
-                              _OptionalWidget(
-                                title: 'Phone',
-                                icon: Iconsax.call,
-                                description: 'Add phone number',
-                                onTap: () {
-                                  context.push(AppRoutes.phoneProfile);
-                                },
-                              ),
+                              // const Divider(),
+                              // _OptionalWidget(
+                              //   title: 'Phone',
+                              //   icon: Iconsax.call,
+                              //   description: 'Add phone number',
+                              //   onTap: () {
+                              //     context.push(AppRoutes.phoneProfile, extra: widget.houseHold);
+                              //   },
+                              // ),
                               // const Divider(),
                               // _OptionalWidget(
                               //   title: 'Birthdate',
@@ -172,7 +180,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                               //   description: 'Add your birthdate',
                               //   onTap: () {},
                               // ),
-                              const Divider(),
+                              // const Divider(),
                               const SizedBox(height: 20),
                             ],
                           ),
@@ -266,7 +274,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                                 }
                                 final user = UserModel(
                                   firstName: nameController.text.trim(),
-                                  lastName: '',
+                                  lastName: lastNameController.text.trim(),
                                   email: '',
                                   phoneNumber: '',
                                   password: '',
@@ -279,12 +287,16 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                                 );
 
                                 isLoading.value = true;
-                                final res = await ref.read(myAccountControllerProvider.notifier).updateUserData(user: user, uid: '');
+                                final res = await ref.read(myAccountControllerProvider.notifier).updateUserData(
+                                      user: user,
+                                      uid: widget.houseHold.userId.id,
+                                    );
                                 isLoading.value = false;
 
                                 if (res.ok && context.mounted) {
                                   final prefs = await SharedPreferences.getInstance();
                                   await prefs.setString(TAConstants.firstName, nameController.text.trim());
+                                  await ref.read(householdControllerProvider.notifier).getData();
                                   if (context.mounted) {
                                     await SuccessWidget.build(
                                       title: 'Hurray!',

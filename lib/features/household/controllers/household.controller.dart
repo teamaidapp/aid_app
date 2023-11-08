@@ -48,4 +48,32 @@ class HouseholdController extends StateNotifier<HouseholdScreenState> {
       return response = response.copyWith(message: 'Hubo un problema al obtener los datos de HouseholdService');
     }
   }
+
+  /// The function `deleteHousehold` deletes a household by its ID and returns a `ResponseFailureModel`
+  /// indicating the success or failure of the operation.
+  ///
+  /// Args:
+  ///   id (String): The "id" parameter is a required string that represents the unique identifier of
+  /// the household that needs to be deleted.
+  ///
+  /// Returns:
+  ///   a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> deleteHousehold({required String id}) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _householdService.deleteHousehold(id: id);
+
+      return result.fold(
+        (failure) {
+          return response = response.copyWith(message: failure.message);
+        },
+        (success) async {
+          await getData();
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(message: 'Hubo un problema al eliminar el HouseholdService');
+    }
+  }
 }

@@ -3,11 +3,18 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/household/entities/household.model.dart';
 
 /// The statelessWidget that handles the current screen
 class AddressScreen extends StatelessWidget {
   /// The constructor.
-  const AddressScreen({super.key});
+  const AddressScreen({
+    required this.houseHold,
+    super.key,
+  });
+
+  /// The household to edit
+  final HouseholdModel? houseHold;
 
   @override
   Widget build(BuildContext context) {

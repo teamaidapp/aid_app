@@ -18,7 +18,10 @@ abstract class MyAccountService {
   Future<Either<Failure, Success>> getData();
 
   /// Update user data
-  Future<Either<Failure, Success>> updateUserData({required UserModel user});
+  Future<Either<Failure, Success>> updateUserData({
+    required UserModel user,
+    required String uid,
+  });
 }
 
 /// This class is responsible for implementing the MyAccountService
@@ -47,9 +50,13 @@ class MyAccountServiceImpl implements MyAccountService {
   @override
   Future<Either<Failure, Success>> updateUserData({
     required UserModel user,
+    required String uid,
   }) async {
     try {
-      final result = await myAccountRepository.updateUserData(user: user);
+      final result = await myAccountRepository.updateUserData(
+        user: user,
+        uid: uid,
+      );
 
       return result.fold(Left.new, Right.new);
     } catch (e) {

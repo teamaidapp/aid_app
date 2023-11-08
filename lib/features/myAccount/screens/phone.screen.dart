@@ -14,13 +14,20 @@ import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
+import 'package:team_aid/features/household/entities/household.model.dart';
 import 'package:team_aid/features/myAccount/controllers/myAccount.controller.dart';
 import 'package:team_aid/main.dart';
 
 /// The statelessWidget that handles the current screen
 class PhoneScreen extends HookConsumerWidget {
   /// The constructor.
-  const PhoneScreen({super.key});
+  const PhoneScreen({
+    required this.houseHold,
+    super.key,
+  });
+
+  /// The household to edit
+  final HouseholdModel? houseHold;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -216,7 +223,10 @@ class PhoneScreen extends HookConsumerWidget {
                                 );
 
                                 isLoading.value = true;
-                                final res = await ref.read(myAccountControllerProvider.notifier).updateUserData(user: user);
+                                final res = await ref.read(myAccountControllerProvider.notifier).updateUserData(
+                                      user: user,
+                                      uid: houseHold != null ? houseHold!.userId.id : '',
+                                    );
                                 isLoading.value = false;
 
                                 if (res.ok && context.mounted) {

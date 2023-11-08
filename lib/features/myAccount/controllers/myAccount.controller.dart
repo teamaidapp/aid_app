@@ -48,10 +48,11 @@ class MyAccountController extends StateNotifier<MyAccountScreenState> {
   /// user object and returns a `ResponseFailureModel` object indicating success or failure.
   Future<ResponseFailureModel> updateUserData({
     required UserModel user,
+    required String uid,
   }) async {
     var response = ResponseFailureModel.defaultFailureResponse();
     try {
-      final result = await _myAccountService.updateUserData(user: user);
+      final result = await _myAccountService.updateUserData(user: user, uid: uid);
 
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
