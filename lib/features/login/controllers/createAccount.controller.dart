@@ -41,7 +41,7 @@ class CreateAccountController extends StateNotifier<void> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de CreateAccountService',
+        message: 'There was a problem with CreateAccountService',
       );
     }
   }
@@ -63,7 +63,7 @@ class CreateAccountController extends StateNotifier<void> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de CreateAccountService',
+        message: 'There was a problem with CreateAccountService',
       );
     }
   }
@@ -91,7 +91,7 @@ class CreateAccountController extends StateNotifier<void> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de CreateAccountService',
+        message: 'There was a problem with CreateAccountService',
       );
     }
   }
@@ -119,7 +119,7 @@ class CreateAccountController extends StateNotifier<void> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de CreateAccountService',
+        message: 'There was a problem with CreateAccountService',
       );
     }
   }

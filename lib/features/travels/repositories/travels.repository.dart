@@ -101,7 +101,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en TravelsRepositoyImpl',
+          message: 'There was an error with TravelsRepositoyImpl',
         ),
       );
     }
@@ -132,7 +132,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en CalendarRepositoyImpl',
+          message: 'There was an error with CalendarRepositoyImpl',
         ),
       );
     }
@@ -163,7 +163,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en CalendarRepositoyImpl',
+          message: 'There was an error with CalendarRepositoyImpl',
         ),
       );
     }
@@ -203,7 +203,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en CalendarRepositoyImpl',
+          message: 'There was an error with CalendarRepositoyImpl',
         ),
       );
     }
@@ -243,7 +243,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en CalendarRepositoyImpl',
+          message: 'There was an error with CalendarRepositoyImpl',
         ),
       );
     }
@@ -302,7 +302,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en CalendarRepositoyImpl',
+          message: 'There was an error with CalendarRepositoyImpl',
         ),
       );
     }
@@ -339,7 +339,7 @@ class TravelsRepositoryImpl implements TravelsRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en CalendarRepositoryImpl',
+          message: 'There was an error with CalendarRepositoryImpl',
         ),
       );
     }

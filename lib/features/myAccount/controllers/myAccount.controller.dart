@@ -40,7 +40,7 @@ class MyAccountController extends StateNotifier<MyAccountScreenState> {
         },
       );
     } catch (e) {
-      return response = response.copyWith(message: 'Hubo un problema al obtener los datos de MyAccountService');
+      return response = response.copyWith(message: 'There was a problem with MyAccountService');
     }
   }
 
@@ -62,7 +62,7 @@ class MyAccountController extends StateNotifier<MyAccountScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de CreateAccountService',
+        message: 'There was a problem with CreateAccountService',
       );
     }
   }

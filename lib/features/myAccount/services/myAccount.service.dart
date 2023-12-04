@@ -41,7 +41,7 @@ class MyAccountServiceImpl implements MyAccountService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de MyAccountServiceImpl',
+          message: 'There was a problem with MyAccountServiceImpl',
         ),
       );
     }

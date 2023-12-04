@@ -40,7 +40,7 @@ class CalendarEvent {
       dateKey: key,
       isOwner: map['isOwner'] as bool,
       status: map['status'] as String,
-      event: EventClass.fromMap(map['event'] as Map<String, dynamic>, map['guest'] as List<dynamic>),
+      event: EventClass.fromMap(map['event'] as Map<String, dynamic>, map['guest'] as List<dynamic>?),
     );
   }
 
@@ -95,7 +95,7 @@ class EventClass {
   });
 
   /// The fromMap constructor is used to create a new instance of [EventClass] from a map.
-  factory EventClass.fromMap(Map<String, dynamic> map, List<dynamic> guest) {
+  factory EventClass.fromMap(Map<String, dynamic> map, List<dynamic>? guest) {
     return EventClass(
       id: map['id'] as String,
       eventName: map['eventName'] as String,
@@ -106,7 +106,7 @@ class EventClass {
       location: map['location'] as String,
       createdAt: DateTime.parse(map['createdAt'] as String),
       userCreator: UserCreator2.fromMap(map['userCreator'] as Map<String, dynamic>),
-      guests: guest.map((x) => Guest.fromMap(x as Map<String, dynamic>)).toList(),
+      guests: guest?.map((e) => Guest.fromMap(e as Map<String, dynamic>)).toList() ?? [],
     );
   }
 

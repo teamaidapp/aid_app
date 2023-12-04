@@ -45,7 +45,7 @@ class TeamsServiceImpl implements TeamsService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de TeamsServiceImpl',
+          message: 'There was a problem with TeamsServiceImpl',
         ),
       );
     }

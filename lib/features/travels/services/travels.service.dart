@@ -100,7 +100,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
+          message: 'There was a problem with TravelsServiceImpl',
         ),
       );
     }
@@ -115,7 +115,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de CalendarServiceImpl',
+          message: 'There was a problem with CalendarServiceImpl',
         ),
       );
     }
@@ -164,7 +164,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de CalendarServiceImpl',
+          message: 'There was a problem with CalendarServiceImpl',
         ),
       );
     }
@@ -181,7 +181,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de TeamsServiceImpl',
+          message: 'There was a problem with TeamsServiceImpl',
         ),
       );
     }
@@ -196,7 +196,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
+          message: 'There was a problem with TravelsServiceImpl',
         ),
       );
     }
@@ -211,7 +211,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
+          message: 'There was a problem with TravelsServiceImpl',
         ),
       );
     }
@@ -228,7 +228,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
+          message: 'There was a problem with TravelsServiceImpl',
         ),
       );
     }
@@ -251,7 +251,7 @@ class TravelsServiceImpl implements TravelsService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de TravelsServiceImpl',
+          message: 'There was a problem with TravelsServiceImpl',
         ),
       );
     }

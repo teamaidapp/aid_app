@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:team_aid/core/routes.dart';
+import 'package:team_aid/design_system/components/buttons/secondary_button.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/calendar/entities/event.model.dart';
 
 /// A widget that displays a request
-class EventWidget extends StatelessWidget {
+class EventWidget extends HookWidget {
   /// The constructor
   const EventWidget({
     required this.eventName,
     required this.organizerName,
     required this.startTime,
     required this.endTime,
+    required this.event,
     super.key,
   });
 
@@ -24,6 +30,9 @@ class EventWidget extends StatelessWidget {
 
   /// The end time of the event
   final String endTime;
+
+  /// The event
+  final CalendarEvent event;
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +74,13 @@ class EventWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // const SizedBox(height: 10),
-                  // TASecondaryButton(
-                  //   text: 'INFORMATION',
-                  //   onTap: () {},
-                  // ),
+                  const SizedBox(height: 10),
+                  TASecondaryButton(
+                    text: 'INFORMATION',
+                    onTap: () {
+                      context.pushNamed(AppRoutes.eventDetails, extra: event);
+                    },
+                  ),
                 ],
               ),
             ),
@@ -104,7 +115,7 @@ class EventWidget extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

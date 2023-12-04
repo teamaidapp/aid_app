@@ -61,7 +61,7 @@ class AddPlayerController extends StateNotifier<AddPlayerState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de HomeService',
+        message: 'There was a problem with HomeService',
       );
     }
   }
@@ -97,7 +97,7 @@ class AddPlayerController extends StateNotifier<AddPlayerState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de HomeService',
+        message: 'There was a problem with HomeService',
       );
     }
   }

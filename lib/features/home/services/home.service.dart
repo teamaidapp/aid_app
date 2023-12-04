@@ -77,7 +77,7 @@ class HomeServiceImpl implements HomeService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+          message: 'There was a problem with HomeServiceImpl',
         ),
       );
     }
@@ -92,7 +92,7 @@ class HomeServiceImpl implements HomeService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+          message: 'There was a problem with HomeServiceImpl',
         ),
       );
     }
@@ -107,7 +107,7 @@ class HomeServiceImpl implements HomeService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+          message: 'There was a problem with HomeServiceImpl',
         ),
       );
     }
@@ -132,7 +132,7 @@ class HomeServiceImpl implements HomeService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+          message: 'There was a problem with HomeServiceImpl',
         ),
       );
     }
@@ -163,7 +163,7 @@ class HomeServiceImpl implements HomeService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+          message: 'There was a problem with HomeServiceImpl',
         ),
       );
     }
@@ -178,7 +178,7 @@ class HomeServiceImpl implements HomeService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+          message: 'There was a problem with HomeServiceImpl',
         ),
       );
     }
@@ -193,7 +193,7 @@ class HomeServiceImpl implements HomeService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+          message: 'There was a problem with HomeServiceImpl',
         ),
       );
     }
@@ -208,7 +208,7 @@ class HomeServiceImpl implements HomeService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de HomeServiceImpl',
+          message: 'There was a problem with HomeServiceImpl',
         ),
       );
     }

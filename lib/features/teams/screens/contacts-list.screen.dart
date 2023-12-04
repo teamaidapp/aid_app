@@ -10,7 +10,9 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:searchable_listview/searchable_listview.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
 import 'package:team_aid/design_system/design_system.dart';
+import 'package:team_aid/features/calendar/controllers/calendar.controller.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
+import 'package:team_aid/features/common/widgets/success.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/teams/controllers/teams.controller.dart';
 import 'package:team_aid/features/teams/entities/contact.model.dart';
@@ -21,6 +23,7 @@ class ContactsListScreen extends ConsumerStatefulWidget {
   const ContactsListScreen({
     required this.teamId,
     required this.teamName,
+    required this.isSharingCalendar,
     super.key,
   });
 
@@ -29,6 +32,9 @@ class ContactsListScreen extends ConsumerStatefulWidget {
 
   /// The team name.
   final String teamName;
+
+  /// The is sharing calendar.
+  final bool isSharingCalendar;
 
   @override
   ConsumerState<ContactsListScreen> createState() => _ContactsListScreenState();
@@ -130,7 +136,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                         data: (data) {
                           if (data.isEmpty) {
                             return const Center(
-                              child: Text('No contacts found'),
+                              child: Text('Selected team has no contacts'),
                             );
                           } else {
                             return SizedBox(
@@ -170,18 +176,46 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                           const Spacer(),
                                           GestureDetector(
                                             onTap: () async {
-                                              try {
-                                                await FlutterPhoneDirectCaller.callNumber(
-                                                  user.user.phoneNumber,
-                                                );
-                                              } catch (e) {
-                                                unawaited(
-                                                  FailureWidget.build(
-                                                    title: 'Error',
-                                                    message: "The call wasn't placed",
+                                              if (widget.isSharingCalendar) {
+                                                final result = await ref.read(calendarControllerProvider.notifier).shareCalendar(
+                                                      email: user.user.id,
+                                                    );
+
+                                                if (!context.mounted) return;
+
+                                                if (result.ok) {
+                                                  await SuccessWidget.build(
+                                                    title: 'Success',
+                                                    message: 'Calendar shared successfully',
                                                     context: context,
-                                                  ),
-                                                );
+                                                  );
+                                                  if (mounted) {
+                                                    context.pop();
+                                                  }
+                                                } else {
+                                                  unawaited(
+                                                    FailureWidget.build(
+                                                      title: 'Error',
+                                                      message: result.message,
+                                                      context: context,
+                                                    ),
+                                                  );
+                                                }
+                                              } else {
+                                                try {
+                                                  await FlutterPhoneDirectCaller.callNumber(
+                                                    user.user.phoneNumber,
+                                                  );
+                                                  if (!context.mounted) return;
+                                                } catch (e) {
+                                                  unawaited(
+                                                    FailureWidget.build(
+                                                      title: 'Error',
+                                                      message: "The call wasn't placed",
+                                                      context: context,
+                                                    ),
+                                                  );
+                                                }
                                               }
                                             },
                                             child: const Icon(
@@ -200,7 +234,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                       )
                                       .toList(),
                                   emptyWidget: const Center(
-                                    child: Text('No contacts found'),
+                                    child: Text('Selected team has no contacts'),
                                   ),
                                   displayClearIcon: false,
                                   cursorColor: TAColors.purple,

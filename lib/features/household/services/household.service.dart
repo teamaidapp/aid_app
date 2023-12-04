@@ -40,7 +40,7 @@ class HouseholdServiceImpl implements HouseholdService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de HouseholdServiceImpl',
+          message: 'There was a problem with HouseholdServiceImpl',
         ),
       );
     }

@@ -1,7 +1,10 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:team_aid/features/calendar/entities/calender_invitation.model.dart';
 import 'package:team_aid/features/calendar/entities/event.model.dart';
+import 'package:team_aid/features/calendar/entities/event_shared.model.dart';
 import 'package:team_aid/features/teams/entities/contact.model.dart';
 
 /// State of the calendar screen
@@ -10,6 +13,8 @@ class CalendarScreenState {
   /// Constructor
   const CalendarScreenState({
     required this.calendarEvents,
+    required this.sharedCalendar,
+    required this.calendarInvitationsEvents,
     required this.contactList,
   });
 
@@ -29,16 +34,26 @@ class CalendarScreenState {
   /// value.
   CalendarScreenState copyWith({
     AsyncValue<List<CalendarEvent>>? calendarEvents,
+    AsyncValue<List<EventShared>>? sharedCalendar,
+    AsyncValue<List<CalendarInvitationModel>>? calendarInvitationsEvents,
     AsyncValue<List<ContactModel>>? contactList,
   }) {
     return CalendarScreenState(
       calendarEvents: calendarEvents ?? this.calendarEvents,
+      sharedCalendar: sharedCalendar ?? this.sharedCalendar,
+      calendarInvitationsEvents: calendarInvitationsEvents ?? this.calendarInvitationsEvents,
       contactList: contactList ?? this.contactList,
     );
   }
 
   /// The list of calendar events
   final AsyncValue<List<CalendarEvent>> calendarEvents;
+
+  /// The list of shared calendar events
+  final AsyncValue<List<EventShared>> sharedCalendar;
+
+  /// The invitations of calendar events
+  final AsyncValue<List<CalendarInvitationModel>> calendarInvitationsEvents;
 
   /// The contact list
   final AsyncValue<List<ContactModel>> contactList;

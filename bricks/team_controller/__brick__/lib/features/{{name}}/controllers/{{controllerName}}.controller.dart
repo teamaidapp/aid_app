@@ -38,7 +38,7 @@ class {{#pascalCase}}{{controllerName}} Controller {{/pascalCase}} extends State
   //       },
   //     );
   //   } catch (e) {
-  //     return response = response.copyWith(message: 'Hubo un problema al obtener los datos de {{#pascalCase}}{{name}} Service {{/pascalCase}}');
+  //     return response = response.copyWith(message: 'There was a problem with {{#pascalCase}}{{name}} Service {{/pascalCase}}');
   //   }
   // }
 }

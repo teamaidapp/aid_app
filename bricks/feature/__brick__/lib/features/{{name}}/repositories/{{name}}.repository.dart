@@ -37,7 +37,7 @@ class {{#pascalCase}}{{name}} RepositoryImpl {{/pascalCase}} implements {{#pasca
     } catch (e) {                          
       return Left(
         Failure(          
-          message: 'Hubo un error en {{#pascalCase}}{{name}} RepositoyImpl {{/pascalCase}}',
+          message: 'There was an error with {{#pascalCase}}{{name}} RepositoyImpl {{/pascalCase}}',
         ),
       );
     }

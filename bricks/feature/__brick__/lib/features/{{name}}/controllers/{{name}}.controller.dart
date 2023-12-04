@@ -40,7 +40,7 @@ class {{#pascalCase}}{{name}} Controller {{/pascalCase}} extends StateNotifier<{
         },
       );
     } catch (e) {
-      return response = response.copyWith(message: 'Hubo un problema al obtener los datos de {{#pascalCase}}{{name}} Service {{/pascalCase}}');
+      return response = response.copyWith(message: 'There was a problem with {{#pascalCase}}{{name}} Service {{/pascalCase}}');
     }
   }
 }

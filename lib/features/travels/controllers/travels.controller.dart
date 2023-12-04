@@ -68,7 +68,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TravelsService',
+        message: 'There was a problem with TravelsService',
       );
     }
   }
@@ -94,7 +94,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de CalendarService',
+        message: 'There was a problem with CalendarService',
       );
     }
   }
@@ -122,7 +122,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TravelsService',
+        message: 'There was a problem with TravelsService',
       );
     }
   }
@@ -152,7 +152,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TeamsService',
+        message: 'There was a problem with TeamsService',
       );
     }
   }
@@ -183,7 +183,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TeamsService',
+        message: 'There was a problem with TeamsService',
       );
     }
   }
@@ -216,7 +216,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TeamsService',
+        message: 'There was a problem with TeamsService',
       );
     }
   }
@@ -238,7 +238,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TravelsService',
+        message: 'There was a problem with TravelsService',
       );
     }
   }
@@ -262,7 +262,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TravelsService',
+        message: 'There was a problem with TravelsService',
       );
     }
   }
@@ -284,7 +284,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TravelsService',
+        message: 'There was a problem with TravelsService',
       );
     }
   }

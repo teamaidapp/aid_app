@@ -76,7 +76,7 @@ class LoginServiceImpl implements LoginService {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un problema al obtener los datos de LoginServiceImpl',
+          message: 'There was a problem with LoginServiceImpl',
         ),
       );
     }

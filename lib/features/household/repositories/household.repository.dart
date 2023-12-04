@@ -71,14 +71,14 @@ class HouseholdRepositoryImpl implements HouseholdRepository {
       } catch (e) {
         return Left(
           Failure(
-            message: 'Hubo un error en HomeRepositoryImpl',
+            message: 'There was an error with HomeRepositoryImpl',
           ),
         );
       }
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en HouseholdRepositoyImpl',
+          message: 'There was an error with HouseholdRepositoyImpl',
         ),
       );
     }

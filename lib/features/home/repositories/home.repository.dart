@@ -60,7 +60,7 @@ class HomeRepositoryImpl implements HomeRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en HomeRepositoryImpl',
+          message: 'There was an error with HomeRepositoryImpl',
         ),
       );
     }
@@ -91,7 +91,7 @@ class HomeRepositoryImpl implements HomeRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en HomeRepositoryImpl',
+          message: 'There was an error with HomeRepositoryImpl',
         ),
       );
     }
@@ -119,7 +119,7 @@ class HomeRepositoryImpl implements HomeRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en HomeRepositoryImpl',
+          message: 'There was an error with HomeRepositoryImpl',
         ),
       );
     }
@@ -150,7 +150,7 @@ class HomeRepositoryImpl implements HomeRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en HomeRepositoryImpl',
+          message: 'There was an error with HomeRepositoryImpl',
         ),
       );
     }
@@ -183,7 +183,7 @@ class HomeRepositoryImpl implements HomeRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en HomeRepositoryImpl',
+          message: 'There was an error with HomeRepositoryImpl',
         ),
       );
     }
@@ -214,7 +214,7 @@ class HomeRepositoryImpl implements HomeRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en HomeRepositoryImpl',
+          message: 'There was an error with HomeRepositoryImpl',
         ),
       );
     }

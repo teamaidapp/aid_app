@@ -11,6 +11,8 @@ final calendarControllerProvider = StateNotifierProvider.autoDispose<CalendarCon
     const CalendarScreenState(
       contactList: AsyncValue.loading(),
       calendarEvents: AsyncValue.loading(),
+      calendarInvitationsEvents: AsyncValue.loading(),
+      sharedCalendar: AsyncValue.loading(),
     ),
     ref,
     ref.watch(calendarServiceProvider),
@@ -54,7 +56,54 @@ class CalendarController extends StateNotifier<CalendarScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de CalendarService',
+        message: 'There was a problem with CalendarService',
+      );
+    }
+  }
+
+  /// The function `getSharedCalendar` retrieves shared calendars and handles success and failure cases.
+  ///
+  /// Returns:
+  ///   a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> getSharedCalendar() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _calendarService.getSharedCalendars();
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) {
+          state = state.copyWith(sharedCalendar: AsyncValue.data(success));
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with CalendarService',
+      );
+    }
+  }
+
+  /// The function `getCalendarInvitations` retrieves calendar invitations and handles success and failure
+  /// cases.
+  ///
+  /// Returns:
+  ///   a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> getCalendarInvitations() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _calendarService.getCalendarInvitations();
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) {
+          state = state.copyWith(calendarInvitationsEvents: AsyncValue.data(success));
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with CalendarService',
       );
     }
   }
@@ -83,7 +132,7 @@ class CalendarController extends StateNotifier<CalendarScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de CalendarService',
+        message: 'There was a problem with CalendarService',
       );
     }
   }
@@ -110,7 +159,68 @@ class CalendarController extends StateNotifier<CalendarScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TeamsService',
+        message: 'There was a problem with TeamsService',
+      );
+    }
+  }
+
+  /// The function `changeStatusInvitation` is a Dart function that takes an `id` and `status` as
+  /// parameters, and uses the `_calendarService` to change the status of an invitation, returning a
+  /// `ResponseFailureModel` object.
+  ///
+  /// Args:
+  ///   id (String): The id parameter is a required String that represents the unique identifier of the
+  /// invitation. It is used to identify the specific invitation that needs to have its status changed.
+  ///   status (String): The "status" parameter is a required string that represents the new status of an
+  /// invitation. It is used in the "_calendarService.changeStatusInvitation" method to update the status
+  /// of the invitation with the specified "id".
+  ///
+  /// Returns:
+  ///   a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> changeStatusInvitation({
+    required String id,
+    required String status,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _calendarService.changeStatusInvitation(
+        id: id,
+        status: status,
+      );
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          await getCalendarInvitations();
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with CalendarService',
+      );
+    }
+  }
+
+  /// The function `shareCalendar` is a Dart function that takes an `email` as a parameter, and uses the
+  /// `_calendarService` to share a calendar, returning a `ResponseFailureModel` object.
+  Future<ResponseFailureModel> shareCalendar({
+    required String email,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _calendarService.shareCalendar(email: email);
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          await getSharedCalendar();
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with CalendarService',
       );
     }
   }

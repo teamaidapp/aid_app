@@ -7,7 +7,7 @@ import 'package:team_aid/features/teams/state/teams.state.dart';
 final teamsControllerProvider = StateNotifierProvider.autoDispose<TeamsController, TeamsScreenState>((ref) {
   return TeamsController(
     const TeamsScreenState(
-      contactList: AsyncValue.loading(),
+      contactList: AsyncValue.data([]),
     ),
     ref,
     ref.watch(teamsServiceProvider),
@@ -34,7 +34,7 @@ class TeamsController extends StateNotifier<TeamsScreenState> {
     try {
       final result = await _teamsService.getContactList(teamId: teamId);
 
-      state = state.copyWith(contactList: const AsyncValue.loading());
+      state = state.copyWith(contactList: const AsyncValue.data([]));
 
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
@@ -47,7 +47,7 @@ class TeamsController extends StateNotifier<TeamsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TeamsService',
+        message: 'There was a problem with TeamsService',
       );
     }
   }
@@ -82,7 +82,7 @@ class TeamsController extends StateNotifier<TeamsScreenState> {
       );
     } catch (e) {
       return response = response.copyWith(
-        message: 'Hubo un problema al obtener los datos de TeamsService',
+        message: 'There was a problem with TeamsService',
       );
     }
   }

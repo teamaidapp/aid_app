@@ -45,7 +45,7 @@ class HouseholdController extends StateNotifier<HouseholdScreenState> {
         },
       );
     } catch (e) {
-      return response = response.copyWith(message: 'Hubo un problema al obtener los datos de HouseholdService');
+      return response = response.copyWith(message: 'There was a problem with HouseholdService');
     }
   }
 

@@ -302,6 +302,17 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                               );
                               return;
                             }
+
+                            if (descriptionController.text.isEmpty) {
+                              unawaited(
+                                FailureWidget.build(
+                                  title: 'Oops',
+                                  message: 'Please enter a description',
+                                  context: context,
+                                ),
+                              );
+                              return;
+                            }
                             File newFile;
                             if (selectedFile != null) {
                               newFile = selectedFile!;

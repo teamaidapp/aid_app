@@ -50,7 +50,7 @@ class MyAccountRepositoryImpl implements MyAccountRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en MyAccountRepositoyImpl',
+          message: 'There was an error with MyAccountRepositoyImpl',
         ),
       );
     }
@@ -126,7 +126,7 @@ class MyAccountRepositoryImpl implements MyAccountRepository {
       if (res.statusCode != 200 && res.statusCode != 201) {
         return Left(
           Failure(
-            message: 'Hubo un error en MyAccountRepositoyImpl',
+            message: 'There was an error with MyAccountRepositoyImpl',
           ),
         );
       }
@@ -135,7 +135,7 @@ class MyAccountRepositoryImpl implements MyAccountRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en MyAccountRepositoyImpl',
+          message: 'There was an error with MyAccountRepositoyImpl',
         ),
       );
     }

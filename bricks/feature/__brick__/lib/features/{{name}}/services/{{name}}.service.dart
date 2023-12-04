@@ -35,7 +35,7 @@ class {{#pascalCase}}{{name}} ServiceImpl {{/pascalCase}} implements {{#pascalCa
     } catch (e) {
       return Left(
         Failure(          
-          message: 'Hubo un problema al obtener los datos de {{#pascalCase}}{{name}} ServiceImpl {{/pascalCase}}',
+          message: 'There was a problem with {{#pascalCase}}{{name}} ServiceImpl {{/pascalCase}}',
         ),
       );
     }

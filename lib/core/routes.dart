@@ -2,6 +2,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/features/calendar/calendar.screen.dart';
+import 'package:team_aid/features/calendar/entities/event.model.dart';
+import 'package:team_aid/features/calendar/event_details.screen.dart';
+import 'package:team_aid/features/collaborators/collaborators.screen.dart';
+import 'package:team_aid/features/collaborators/screens/add_collaborator.screen.dart';
 import 'package:team_aid/features/home/home.screen.dart';
 import 'package:team_aid/features/home/screens/add_coach.screen.dart';
 import 'package:team_aid/features/home/screens/add_player.screen.dart';
@@ -89,6 +93,15 @@ class AppRoutes {
 
   /// Edit Household route
   static const String editHousehold = '/household/editHousehold';
+
+  /// Event details route
+  static const String eventDetails = '/home/calendar/eventDetails';
+
+  /// Collaborators route
+  static const String collaborators = '/home/collaborators';
+
+  /// Create Collaborator route
+  static const String createCollaborator = '/home/collaborators/createCollaborator';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -140,6 +153,7 @@ final routerProvider = Provider((ref) {
         builder: (context, state) => ContactsListScreen(
           teamId: state.queryParameters['id']!,
           teamName: state.queryParameters['name']!,
+          isSharingCalendar: state.queryParameters['isSharingCalendar'] == 'true',
         ),
       ),
       GoRoute(
@@ -210,6 +224,30 @@ final routerProvider = Provider((ref) {
         builder: (context, state) => EditHouseholdScreen(
           houseHold: state.extra! as HouseholdModel,
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.eventDetails,
+        name: AppRoutes.eventDetails,
+        builder: (context, state) {
+          final event = state.extra! as CalendarEvent;
+          return EventDetailsScreen(
+            event: event,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.collaborators,
+        name: AppRoutes.collaborators,
+        builder: (context, state) {
+          return const CollaboratorsScreen();
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.createCollaborator,
+        name: AppRoutes.createCollaborator,
+        builder: (context, state) {
+          return const AddCollaboratorScreen();
+        },
       ),
     ],
   );

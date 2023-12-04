@@ -81,7 +81,7 @@ class TeamsRepositoryImpl implements TeamsRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en TeamsRepositoyImpl',
+          message: 'There was an error with TeamsRepositoyImpl',
         ),
       );
     }
@@ -124,7 +124,7 @@ class TeamsRepositoryImpl implements TeamsRepository {
     } catch (e) {
       return Left(
         Failure(
-          message: 'Hubo un error en TeamsRepositoyImpl',
+          message: 'There was an error with TeamsRepositoyImpl',
         ),
       );
     }

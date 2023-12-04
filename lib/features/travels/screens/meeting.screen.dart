@@ -168,6 +168,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                             organizerName: event.event.userCreator?.firstName ?? '',
                             startTime: startTime,
                             endTime: endTime,
+                            event: event,
                           ),
                         ],
                       );

@@ -48,7 +48,7 @@ class PlayerCard extends StatelessWidget {
                     text: player.firstName,
                     fontWeight: FontWeight.w600,
                   ),
-                  TATypography.paragraph(
+                  TATypography.subparagraph(
                     text: player.role,
                     fontWeight: FontWeight.w500,
                     color: TAColors.color1,

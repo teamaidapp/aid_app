@@ -18,6 +18,7 @@ import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/controllers/calendar.controller.dart';
 import 'package:team_aid/features/calendar/entities/event.model.dart';
 import 'package:team_aid/features/calendar/entities/event_hour.model.dart';
+import 'package:team_aid/features/calendar/entities/event_shared.model.dart';
 import 'package:team_aid/features/calendar/entities/hour.model.dart';
 import 'package:team_aid/features/calendar/entities/schedule.model.dart';
 import 'package:team_aid/features/calendar/widgets/event.widget.dart';
@@ -46,16 +47,19 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   @override
   void initState() {
     ref.read(calendarControllerProvider.notifier).getCalendarData();
+    ref.read(calendarControllerProvider.notifier).getSharedCalendar();
+    ref.read(calendarControllerProvider.notifier).getCalendarInvitations();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final showTodayWidget = useState(true);
+    final currentSelectedWidget = useState(0);
     final formattedDate = DateFormat('dd / MMM').format(DateTime.now()).toUpperCase();
     final formattedDay = DateFormat('EEEE').format(DateTime.now()).toUpperCase();
 
     final events = ref.watch(calendarControllerProvider).calendarEvents;
+    final sharedEvents = ref.watch(calendarControllerProvider).sharedCalendar;
     final createSchedule = useState(widget.addToCalendar);
 
     return Scaffold(
@@ -95,66 +99,97 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             ),
           ),
           SizedBox(height: 2.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 120,
-                child: GestureDetector(
-                  key: const Key('today'),
-                  onTap: () {
-                    showTodayWidget.value = true;
-                  },
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: showTodayWidget.value ? const Color(0xffF5F8FB) : Colors.white,
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        topLeft: Radius.circular(20),
+          Container(
+            height: 40,
+            margin: const EdgeInsets.symmetric(horizontal: 34),
+            child: PageView(
+              controller: PageController(viewportFraction: 0.4),
+              padEnds: false,
+              children: [
+                SizedBox(
+                  width: 120,
+                  child: GestureDetector(
+                    key: const Key('today'),
+                    onTap: () {
+                      currentSelectedWidget.value = 0;
+                    },
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: currentSelectedWidget.value == 0 ? const Color(0xffF5F8FB) : Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          topLeft: Radius.circular(20),
+                        ),
                       ),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Center(
-                      child: TATypography.paragraph(
-                        text: 'Today',
-                        key: const Key('today_title'),
-                        color: showTodayWidget.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              SizedBox(
-                width: 160,
-                child: GestureDetector(
-                  key: const Key('full_calendar'),
-                  onTap: () {
-                    showTodayWidget.value = false;
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: !showTodayWidget.value ? const Color(0xffF5F8FB) : Colors.transparent,
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        topLeft: Radius.circular(20),
-                      ),
-                    ),
-                    child: Center(
-                      child: TATypography.paragraph(
-                        text: 'Full Calendar',
-                        color: !showTodayWidget.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
-                        fontWeight: FontWeight.w700,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Center(
+                        child: TATypography.paragraph(
+                          text: 'Today',
+                          key: const Key('today_title'),
+                          color: currentSelectedWidget.value == 0 ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(
+                  width: 160,
+                  child: GestureDetector(
+                    key: const Key('full_calendar'),
+                    onTap: () {
+                      currentSelectedWidget.value = 1;
+                    },
+                    child: Container(
+                      height: 50,
+                      // padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: currentSelectedWidget.value == 1 ? const Color(0xffF5F8FB) : Colors.transparent,
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          topLeft: Radius.circular(20),
+                        ),
+                      ),
+                      child: Center(
+                        child: TATypography.paragraph(
+                          text: 'Full Calendar',
+                          color: currentSelectedWidget.value == 1 ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 160,
+                  child: GestureDetector(
+                    key: const Key('invitations'),
+                    onTap: () {
+                      currentSelectedWidget.value = 2;
+                    },
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: currentSelectedWidget.value == 2 ? const Color(0xffF5F8FB) : Colors.transparent,
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          topLeft: Radius.circular(20),
+                        ),
+                      ),
+                      child: Center(
+                        child: TATypography.paragraph(
+                          text: 'Invitations',
+                          color: currentSelectedWidget.value == 2 ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: Container(
@@ -228,8 +263,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     const Expanded(
                       child: _CreateScheduleWidget(),
                     )
+                  else if (currentSelectedWidget.value == 0)
+                    _TodayWidget(events: events, sharedEvents: sharedEvents)
+                  else if (currentSelectedWidget.value == 1)
+                    _FullCalendarWidget(events: events)
                   else
-                    showTodayWidget.value ? _TodayWidget(events: events) : _FullCalendarWidget(events: events),
+                    const _InvitationsWidget(),
                   const SizedBox(height: 20),
                 ],
               ),
@@ -244,9 +283,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 class _TodayWidget extends StatelessWidget {
   const _TodayWidget({
     required this.events,
+    required this.sharedEvents,
   });
 
   final AsyncValue<List<CalendarEvent>> events;
+
+  final AsyncValue<List<EventShared>> sharedEvents;
 
   @override
   Widget build(BuildContext context) {
@@ -254,43 +296,94 @@ class _TodayWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: events.when(
-          data: (data) {
-            // Filter events by dateKey
-            final filteredEvents = data.where((event) {
-              return event.dateKey.split('T')[0] == DateTime.now().toIso8601String().split('T')[0];
-            }).toList();
+          data: (events) {
+            return sharedEvents.when(
+              data: (shared) {
+                // Filter events by dateKey
+                final filteredEvents = events.where((event) {
+                  return event.dateKey.split('T')[0] == DateTime.now().toIso8601String().split('T')[0];
+                }).toList();
 
-            if (filteredEvents.isNotEmpty) {
-              return ListView.builder(
-                itemCount: filteredEvents.length,
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  final event = filteredEvents[index];
-                  final startTime = DateFormat('hh:mm a').format(event.event.startDate).toUpperCase();
-                  final endTime = DateFormat('hh:mm a').format(event.event.endDate).toUpperCase();
+                final filteredSharedEvents = events.where((event) {
+                  return event.dateKey.split('T')[0] == DateTime.now().toIso8601String().split('T')[0];
+                }).toList();
+
+                if (filteredEvents.isNotEmpty || filteredSharedEvents.isNotEmpty) {
                   return Column(
                     children: [
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: filteredEvents.length,
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            final event = filteredEvents[index];
+                            final startTime = DateFormat('hh:mm a').format(event.event.startDate).toUpperCase();
+                            final endTime = DateFormat('hh:mm a').format(event.event.endDate).toUpperCase();
+                            return Column(
+                              children: [
+                                const SizedBox(height: 20),
+                                EventWidget(
+                                  eventName: event.event.eventName.capitalizeWord(),
+                                  organizerName: event.event.userCreator?.firstName ?? '',
+                                  startTime: startTime,
+                                  endTime: endTime,
+                                  event: event,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
                       const SizedBox(height: 20),
-                      EventWidget(
-                        eventName: event.event.eventName.capitalizeWord(),
-                        organizerName: event.event.userCreator?.firstName ?? '',
-                        startTime: startTime,
-                        endTime: endTime,
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: shared.length,
+                          itemBuilder: (context, index) {
+                            final event = shared[index];
+                            final startTime = DateFormat('hh:mm a').format(event.event.startDate).toUpperCase();
+                            final endTime = DateFormat('hh:mm a').format(event.event.endDate).toUpperCase();
+                            return Column(
+                              children: [
+                                const SizedBox(height: 20),
+                                EventWidget(
+                                  eventName: event.event.eventName.capitalizeWord(),
+                                  organizerName: event.inviteUser.firstName,
+                                  startTime: startTime,
+                                  endTime: endTime,
+                                  event: event,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ),
                     ],
                   );
-                },
-              );
-            } else {
-              return Center(
-                child: TATypography.paragraph(
-                  text: 'Hurrah! You have no events :)',
-                  color: TAColors.textColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              );
-            }
+                } else {
+                  return Center(
+                    child: TATypography.paragraph(
+                      text: 'Hurrah! You have no events for today :)',
+                      color: TAColors.textColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  );
+                }
+              },
+              error: (error, stackTrace) {
+                return const SizedBox();
+              },
+              loading: () {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      TAColors.purple,
+                    ),
+                  ),
+                );
+              },
+            );
           },
           error: (error, stackTrace) {
             return const SizedBox();
@@ -1166,6 +1259,112 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
           );
         }
       },
+    );
+  }
+}
+
+class _InvitationsWidget extends ConsumerWidget {
+  const _InvitationsWidget();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final invitations = ref.watch(calendarControllerProvider).calendarInvitationsEvents;
+
+    return Expanded(
+      child: invitations.when(
+        data: (data) {
+          if (data.isNotEmpty) {
+            return ListView.builder(
+              itemCount: data.length,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemBuilder: (context, index) {
+                return TAContainer(
+                  child: Column(
+                    children: [
+                      TATypography.paragraph(
+                        text: '${data[index].recipientUserId.firstName.trim().capitalizeWord()} shared a calendar with you',
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TASecondaryButton(
+                              text: 'DECLINE',
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              onTap: () async {
+                                final res = await ref.read(calendarControllerProvider.notifier).changeStatusInvitation(
+                                      id: data[index].id,
+                                      status: 'rejected',
+                                    );
+                                if (!context.mounted) return;
+                                if (res.ok) {
+                                  await SuccessWidget.build(
+                                    title: 'Success!',
+                                    message: 'Invitation declined successfully.',
+                                    context: context,
+                                  );
+                                } else {
+                                  unawaited(
+                                    FailureWidget.build(
+                                      title: 'Something went wrong!',
+                                      message: 'There was an error declining the invitation.',
+                                      context: context,
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: TAPrimaryButton(
+                              text: 'ACCEPT',
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              onTap: () async {
+                                final res = await ref.read(calendarControllerProvider.notifier).changeStatusInvitation(
+                                      id: data[index].id,
+                                      status: 'accepted',
+                                    );
+                                if (!context.mounted) return;
+                                if (res.ok) {
+                                  await SuccessWidget.build(
+                                    title: 'Success!',
+                                    message: 'Invitation accepted successfully.',
+                                    context: context,
+                                  );
+                                } else {
+                                  unawaited(
+                                    FailureWidget.build(
+                                      title: 'Something went wrong!',
+                                      message: 'There was an error accepting the invitation.',
+                                      context: context,
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          } else {
+            return Center(
+              child: TATypography.paragraph(
+                text: 'You have no invitations.',
+                color: TAColors.textColor,
+                fontWeight: FontWeight.w600,
+              ),
+            );
+          }
+        },
+        error: (_, __) => const SizedBox(),
+        loading: () => const SizedBox(),
+      ),
     );
   }
 }

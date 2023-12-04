@@ -52,8 +52,8 @@ class DrawerWidget extends HookConsumerWidget {
                         ),
                       ],
                     ),
-                    if (role == Role.admin.name || role == Role.coach.name) const SizedBox(height: 30),
-                    if (role == Role.admin.name || role == Role.coach.name)
+                    if (role == Role.admin.name) const SizedBox(height: 30),
+                    if (role == Role.admin.name)
                       _DrawerOptionWidget(
                         icon: Iconsax.profile_add,
                         title: 'Coaches',
@@ -64,8 +64,16 @@ class DrawerWidget extends HookConsumerWidget {
                           );
                         },
                       ),
-                    if (role == Role.player.name) const SizedBox(height: 30),
-                    if (role == Role.player.name)
+                    const SizedBox(height: 30),
+                    _DrawerOptionWidget(
+                      icon: Iconsax.profile_circle,
+                      title: 'Collaborators',
+                      onTap: () {
+                        context.pushNamed(AppRoutes.collaborators);
+                      },
+                    ),
+                    if (role == Role.player.name || role == Role.coach.name) const SizedBox(height: 30),
+                    if (role == Role.player.name || role == Role.coach.name)
                       _DrawerOptionWidget(
                         icon: Iconsax.profile_add,
                         title: 'Add player',
