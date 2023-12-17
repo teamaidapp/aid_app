@@ -180,7 +180,7 @@ class UserHasSport {
       id: map['id'] as String,
       createdAt: map['createdAt'] as String,
       updateAt: map['updateAt'] as String,
-      sportsId: SportsId.fromMap(map['sportsId'] as Map<String, dynamic>),
+      sportsId: map['sportsId'] != null ? SportsId.fromMap(map['sportsId'] as Map<String, dynamic>) : SportsId.initDefault(),
     );
   }
 
@@ -240,6 +240,20 @@ class SportsId {
     required this.createdAt,
     required this.updateAt,
   });
+
+  /// The function `initDefault` is a factory constructor in Dart that returns a default instance of the
+  /// `SportsId` class.
+  ///
+  /// Returns:
+  ///   An instance of the SportsId class with default values for its properties.
+  factory SportsId.initDefault() {
+    return SportsId(
+      id: '',
+      name: '',
+      createdAt: '',
+      updateAt: '',
+    );
+  }
 
   /// Creates a new instance of the [SportsId] class from a map.
   ///

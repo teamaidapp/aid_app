@@ -163,7 +163,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               TATypography.paragraph(
-                                                text: user.user.firstName,
+                                                text: '${user.user.firstName} ${user.user.lastName}',
                                                 color: TAColors.textColor,
                                                 fontWeight: FontWeight.w700,
                                               ),

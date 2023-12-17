@@ -203,6 +203,7 @@ class PhoneScreen extends HookConsumerWidget {
                                       content: Text('Please enter a valid phone number'),
                                     ),
                                   );
+                                  return;
                                 }
 
                                 final user = UserModel(

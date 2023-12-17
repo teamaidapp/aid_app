@@ -57,6 +57,11 @@ class ChildWidget extends StatelessWidget {
                     color: TAColors.purple,
                     fontWeight: FontWeight.w600,
                   ),
+                  TATypography.paragraph(
+                    text: houseHold.userId.email,
+                    color: TAColors.purple,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ],
               ),
               const Spacer(),

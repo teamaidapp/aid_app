@@ -367,6 +367,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                   //       content: Text('Please enter a valid phone number'),
                                   //     ),
                                   //   );
+                                  // return;
                                   // }
 
                                   final phone = phoneNumberController.text.replaceAll(' ', '').replaceAll('+', '');

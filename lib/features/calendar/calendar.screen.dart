@@ -1121,7 +1121,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                           (index) {
                             final item = guests.valueOrNull?[index];
                             return TADropdownModel(
-                              item: item != null ? item.user.firstName : '',
+                              item: item != null ? '${item.user.firstName} ${item.user.lastName}' : '',
                               id: item != null ? item.user.id : '',
                             );
                           },

@@ -73,67 +73,67 @@ class AddPlayerScreen extends HookWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 120,
-                child: GestureDetector(
-                  key: const Key('add_player'),
-                  onTap: () {
-                    addPlayerScreen.value = true;
-                  },
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: addPlayerScreen.value ? const Color(0xffF5F8FB) : Colors.white,
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        topLeft: Radius.circular(20),
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: Center(
-                      child: TATypography.paragraph(
-                        text: isPlayer ? 'Add Player' : 'Add Coach',
-                        key: const Key('add_player_title'),
-                        color: addPlayerScreen.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              SizedBox(
-                width: 150,
-                child: GestureDetector(
-                  key: const Key('search_player'),
-                  onTap: () {
-                    addPlayerScreen.value = false;
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: !addPlayerScreen.value ? const Color(0xffF5F8FB) : Colors.transparent,
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        topLeft: Radius.circular(20),
-                      ),
-                    ),
-                    child: Center(
-                      child: TATypography.paragraph(
-                        text: isPlayer ? 'Search Player' : 'Search Coach',
-                        color: !addPlayerScreen.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     SizedBox(
+          //       width: 120,
+          //       child: GestureDetector(
+          //         key: const Key('add_player'),
+          //         onTap: () {
+          //           addPlayerScreen.value = true;
+          //         },
+          //         child: Container(
+          //           height: 50,
+          //           decoration: BoxDecoration(
+          //             color: addPlayerScreen.value ? const Color(0xffF5F8FB) : Colors.white,
+          //             borderRadius: const BorderRadius.only(
+          //               topRight: Radius.circular(20),
+          //               topLeft: Radius.circular(20),
+          //             ),
+          //           ),
+          //           padding: const EdgeInsets.symmetric(horizontal: 6),
+          //           child: Center(
+          //             child: TATypography.paragraph(
+          //               text: isPlayer ? 'Add Player' : 'Add Coach',
+          //               key: const Key('add_player_title'),
+          //               color: addPlayerScreen.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
+          //               fontWeight: FontWeight.w700,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //     const SizedBox(width: 10),
+          //     SizedBox(
+          //       width: 150,
+          //       child: GestureDetector(
+          //         key: const Key('search_player'),
+          //         onTap: () {
+          //           addPlayerScreen.value = false;
+          //         },
+          //         child: Container(
+          //           height: 50,
+          //           padding: const EdgeInsets.symmetric(horizontal: 10),
+          //           decoration: BoxDecoration(
+          //             color: !addPlayerScreen.value ? const Color(0xffF5F8FB) : Colors.transparent,
+          //             borderRadius: const BorderRadius.only(
+          //               topRight: Radius.circular(20),
+          //               topLeft: Radius.circular(20),
+          //             ),
+          //           ),
+          //           child: Center(
+          //             child: TATypography.paragraph(
+          //               text: isPlayer ? 'Search Player' : 'Search Coach',
+          //               color: !addPlayerScreen.value ? TAColors.textColor : const Color(0x0D253C4D).withOpacity(0.3),
+          //               fontWeight: FontWeight.w700,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           Expanded(
             child: Container(
               width: double.infinity,
@@ -306,6 +306,7 @@ class _AddPlayerWidget extends HookConsumerWidget {
                     content: Text('Please enter a valid phone number'),
                   ),
                 );
+                return;
               }
 
               isLoading.value = true;

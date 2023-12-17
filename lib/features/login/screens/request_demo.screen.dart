@@ -250,6 +250,7 @@ class RequestDemoScreen extends StatelessWidget {
                                         content: Text('Please enter a valid phone number'),
                                       ),
                                     );
+                                    return;
                                   }
 
                                   isLoading.value = true;
