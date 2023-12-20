@@ -10,6 +10,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/core/extensions.dart';
 import 'package:team_aid/core/routes.dart';
@@ -43,9 +45,20 @@ class _ReplyMessageScreenState extends ConsumerState<ReplyMessageScreen> {
     final id = useState('');
     final toController = useTextEditingController();
     final toId = ref.watch(messagesControllerProvider).toId;
+    final email = useState('');
 
     useEffect(
       () {
+        useEffect(
+          () {
+            SharedPreferences.getInstance().then((prefs) {
+              final emailFromStorage = prefs.getString(TAConstants.email) ?? '';
+              email.value = emailFromStorage;
+            });
+            return () {};
+          },
+          [],
+        );
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (widget.chat == null) {
             /// Split the following pattern string into a list of strings: id;firstname lastname
@@ -53,7 +66,7 @@ class _ReplyMessageScreenState extends ConsumerState<ReplyMessageScreen> {
             id.value = split.first;
             toController.text = split.last;
           } else {
-            if (widget.chat!.sender) {
+            if (widget.chat!.userChatCreator.email == email.value) {
               toController.text = '${widget.chat!.userChatReceiver.firstName.capitalize()} ${widget.chat!.userChatReceiver.lastName.capitalize()}';
               ref.read(messagesControllerProvider.notifier).setToId(widget.chat!.userChatReceiver.id);
             } else {
@@ -344,6 +357,17 @@ class _ReplyMessageScreenState extends ConsumerState<ReplyMessageScreen> {
                                         height: 50,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         onTap: () async {
+                                          if (messageController.text.isEmpty) {
+                                            unawaited(
+                                              FailureWidget.build(
+                                                title: 'Oops',
+                                                message: 'Please enter a message',
+                                                context: context,
+                                              ),
+                                            );
+                                            return;
+                                          }
+
                                           var fileId = '';
 
                                           /// If theres a file or an image we upload it

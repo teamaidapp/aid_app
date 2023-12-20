@@ -7,6 +7,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/extensions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/components/buttons/secondary_button.dart';
@@ -15,7 +17,7 @@ import 'package:team_aid/features/messages/controllers/messages.controller.dart'
 import 'package:team_aid/features/messages/entities/chat.model.dart';
 
 /// The statelessWidget that handles the current screen
-class MessagesScreen extends ConsumerStatefulWidget {
+class MessagesScreen extends StatefulHookConsumerWidget {
   /// The constructor.
   const MessagesScreen({super.key});
 
@@ -38,6 +40,18 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
   @override
   Widget build(BuildContext context) {
     final chats = ref.watch(messagesControllerProvider).chats;
+    final email = useState('');
+
+    useEffect(
+      () {
+        SharedPreferences.getInstance().then((prefs) {
+          final emailFromStorage = prefs.getString(TAConstants.email) ?? '';
+          email.value = emailFromStorage;
+        });
+        return () {};
+      },
+      [],
+    );
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -98,7 +112,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                               padding: const EdgeInsets.only(left: 20),
                               child: TAPrimaryInput(
                                 label: '',
-                                placeholder: 'Search...',
+                                placeholder: 'Search team...',
                                 onChanged: (v) {
                                   if (v != null) {
                                     search(v, data);
@@ -130,11 +144,21 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                           itemCount: list.length,
                           itemBuilder: (context, index) {
                             final chat = list[index];
-                            final firstName = chat.sender ? chat.userChatCreator.firstName : chat.userChatReceiver.firstName;
-                            final lastName = chat.sender ? chat.userChatCreator.lastName : chat.userChatReceiver.lastName;
+                            var name = '';
+
+                            if (chat.sender) {
+                              name = 'me';
+                            } else {
+                              if (chat.userChatCreator.email == email.value) {
+                                name = '${chat.userChatReceiver.firstName} ${chat.userChatReceiver.lastName}';
+                              } else {
+                                name = '${chat.userChatCreator.firstName} ${chat.userChatCreator.lastName}';
+                              }
+                            }
+
                             return _MessageItem(
                               title: chat.team.teamName,
-                              subtitle: '$firstName $lastName',
+                              subtitle: name,
                               date: DateTime.parse(chat.createdAt),
                               body: chat.lastMessage.message,
                               onTap: () {
@@ -339,11 +363,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
 
         filteredChats = data
             .where(
-              (item) =>
-                  item.userChatReceiver.firstName.contains(query.toLowerCase()) ||
-                  item.userChatReceiver.lastName.contains(
-                    query.toLowerCase(),
-                  ),
+              (item) => item.team.teamName.contains(query.toLowerCase()),
             )
             .toList();
       },

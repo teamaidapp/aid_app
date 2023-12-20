@@ -6,7 +6,7 @@ class TAContainer extends StatelessWidget {
   const TAContainer({
     required this.child,
     this.margin,
-    this.radius = 40,
+    this.radius = 20,
     this.padding = const EdgeInsets.all(20),
     super.key,
   });
