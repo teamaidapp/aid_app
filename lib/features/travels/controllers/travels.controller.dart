@@ -224,6 +224,7 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
   /// Upload the file
   Future<ResponseFailureModel> uploadFile({
     required File file,
+    bool isAgnostic = false,
   }) async {
     var response = ResponseFailureModel.defaultFailureResponse();
     try {
@@ -232,8 +233,8 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
         (success) async {
-          state = state.copyWith(fileId: success.message);
-          return response = response.copyWith(ok: true);
+          if (!isAgnostic) state = state.copyWith(fileId: success.message);
+          return response = response.copyWith(ok: true, message: success.message);
         },
       );
     } catch (e) {

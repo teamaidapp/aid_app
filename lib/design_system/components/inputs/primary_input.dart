@@ -18,6 +18,7 @@ class TAPrimaryInput extends StatefulWidget {
     this.isReadOnly = false,
     this.maxLines,
     this.inputListFormatter = const [],
+    this.onChanged,
   });
 
   /// The controller for the text field.
@@ -40,6 +41,9 @@ class TAPrimaryInput extends StatefulWidget {
 
   /// A boolean that is used to determine if the text field is read only.
   final bool isReadOnly;
+
+  /// The callback function that is called when the text field is changed.
+  final void Function(String?)? onChanged;
 
   @override
   State<TAPrimaryInput> createState() => _TAPrimaryInputState();
@@ -72,6 +76,7 @@ class _TAPrimaryInputState extends State<TAPrimaryInput> {
           obscureText: obscureText,
           inputFormatters: widget.inputListFormatter,
           readOnly: widget.isReadOnly,
+          onChanged: widget.onChanged,
           // maxLines: widget.maxLines,
           decoration: InputDecoration(
             filled: true,

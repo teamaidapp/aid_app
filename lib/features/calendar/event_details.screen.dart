@@ -242,7 +242,7 @@ class EventDetailsScreen extends StatelessWidget {
                               queryParameters: {
                                 'id': '',
                                 'name': '',
-                                'isSharingCalendar': 'true',
+                                'action': 'isSharingCalendar',
                               },
                             ).toString(),
                           );

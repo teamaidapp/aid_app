@@ -18,6 +18,9 @@ import 'package:team_aid/features/login/screens/create_account_team.screen.dart'
 import 'package:team_aid/features/login/screens/create_account_team_player.screen.dart';
 import 'package:team_aid/features/login/screens/create_account_team_player_parents.screen.dart';
 import 'package:team_aid/features/login/screens/request_demo.screen.dart';
+import 'package:team_aid/features/messages/entities/chat.model.dart';
+import 'package:team_aid/features/messages/messages.screen.dart';
+import 'package:team_aid/features/messages/screens/reply_message.screen.dart';
 import 'package:team_aid/features/myAccount/myAccount.screen.dart';
 import 'package:team_aid/features/myAccount/screens/address.screen.dart';
 import 'package:team_aid/features/myAccount/screens/biography.screen.dart';
@@ -102,6 +105,12 @@ class AppRoutes {
 
   /// Create Collaborator route
   static const String createCollaborator = '/home/collaborators/createCollaborator';
+
+  /// Messages route
+  static const String messages = '/home/messages';
+
+  /// Reply Message route
+  static const String replyMessage = '/home/messages/replyMessage';
 }
 
 /// The routerProvider is a Provider that returns a GoRouter.
@@ -153,7 +162,7 @@ final routerProvider = Provider((ref) {
         builder: (context, state) => ContactsListScreen(
           teamId: state.queryParameters['id']!,
           teamName: state.queryParameters['name']!,
-          isSharingCalendar: state.queryParameters['isSharingCalendar'] == 'true',
+          action: state.queryParameters['action']!,
         ),
       ),
       GoRoute(
@@ -247,6 +256,22 @@ final routerProvider = Provider((ref) {
         name: AppRoutes.createCollaborator,
         builder: (context, state) {
           return const AddCollaboratorScreen();
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.messages,
+        name: AppRoutes.messages,
+        builder: (context, state) {
+          return const MessagesScreen();
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.replyMessage,
+        name: AppRoutes.replyMessage,
+        builder: (context, state) {
+          return ReplyMessageScreen(
+            chat: state.extra as ChatModel?,
+          );
         },
       ),
     ],

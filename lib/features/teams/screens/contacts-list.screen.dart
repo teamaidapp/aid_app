@@ -9,11 +9,13 @@ import 'package:iconsax/iconsax.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:searchable_listview/searchable_listview.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
+import 'package:team_aid/core/extensions.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/controllers/calendar.controller.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
+import 'package:team_aid/features/messages/controllers/messages.controller.dart';
 import 'package:team_aid/features/teams/controllers/teams.controller.dart';
 import 'package:team_aid/features/teams/entities/contact.model.dart';
 
@@ -23,7 +25,7 @@ class ContactsListScreen extends ConsumerStatefulWidget {
   const ContactsListScreen({
     required this.teamId,
     required this.teamName,
-    required this.isSharingCalendar,
+    required this.action,
     super.key,
   });
 
@@ -34,7 +36,7 @@ class ContactsListScreen extends ConsumerStatefulWidget {
   final String teamName;
 
   /// The is sharing calendar.
-  final bool isSharingCalendar;
+  final String action;
 
   @override
   ConsumerState<ContactsListScreen> createState() => _ContactsListScreenState();
@@ -159,24 +161,25 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                             color: TAColors.purple,
                                           ),
                                           const SizedBox(width: 10),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              TATypography.paragraph(
-                                                text: '${user.user.firstName} ${user.user.lastName}',
-                                                color: TAColors.textColor,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                              TATypography.paragraph(
-                                                text: user.user.role,
-                                                color: TAColors.textColor,
-                                              ),
-                                            ],
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                TATypography.paragraph(
+                                                  text: '${user.user.firstName.capitalize()} ${user.user.lastName.capitalize()}',
+                                                  color: TAColors.textColor,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                                TATypography.paragraph(
+                                                  text: user.user.role,
+                                                  color: TAColors.textColor,
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                          const Spacer(),
                                           GestureDetector(
                                             onTap: () async {
-                                              if (widget.isSharingCalendar) {
+                                              if (widget.action == 'isSharingCalendar') {
                                                 final result = await ref.read(calendarControllerProvider.notifier).shareCalendar(
                                                       email: user.user.id,
                                                     );
@@ -201,7 +204,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                                     ),
                                                   );
                                                 }
-                                              } else {
+                                              } else if (widget.action == 'call') {
                                                 try {
                                                   await FlutterPhoneDirectCaller.callNumber(
                                                     user.user.phoneNumber,
@@ -216,10 +219,14 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                                     ),
                                                   );
                                                 }
+                                              } else {
+                                                final id = '${user.user.id};${user.user.firstName.capitalize()} ${user.user.lastName.capitalize()}';
+                                                ref.read(messagesControllerProvider.notifier).setToId(id);
+                                                context.pop();
                                               }
                                             },
-                                            child: const Icon(
-                                              Iconsax.call_calling,
+                                            child: Icon(
+                                              widget.action == 'isSharingCalendar' ? Iconsax.share : Iconsax.call_calling,
                                               color: TAColors.purple,
                                             ),
                                           ),

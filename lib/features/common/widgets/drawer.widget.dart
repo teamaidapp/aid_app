@@ -103,12 +103,14 @@ class DrawerWidget extends HookConsumerWidget {
                         context.push(AppRoutes.teams);
                       },
                     ),
-                    // const SizedBox(height: spaceBetweenItems),
-                    // _DrawerOptionWidget(
-                    //   icon: Iconsax.sms,
-                    //   title: 'Messages',
-                    //   onTap: () {},
-                    // ),
+                    const SizedBox(height: spaceBetweenItems),
+                    _DrawerOptionWidget(
+                      icon: Iconsax.sms,
+                      title: 'Messages',
+                      onTap: () {
+                        context.push(AppRoutes.messages);
+                      },
+                    ),
                     const SizedBox(height: spaceBetweenItems),
                     _DrawerOptionWidget(
                       icon: Iconsax.clipboard,

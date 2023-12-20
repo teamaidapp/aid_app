@@ -82,7 +82,7 @@ class TeamCardWidget extends StatelessWidget {
                         queryParameters: {
                           'id': team.id,
                           'name': team.teamName,
-                          'isSharingCalendar': 'false',
+                          'action': 'call',
                         },
                       ).toString(),
                     );

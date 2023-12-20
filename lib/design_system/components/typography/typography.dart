@@ -21,6 +21,7 @@ class TATypography extends StatelessWidget {
     this.textAlign = TextAlign.left,
     this.color = Colors.black,
     this.fontWeight = FontWeight.w600,
+    this.maxLines,
   }) : style = h1Style;
 
   /// This is a constructor for the `TATypography` class that creates a text
@@ -34,6 +35,7 @@ class TATypography extends StatelessWidget {
     this.textAlign = TextAlign.left,
     this.color = Colors.black,
     this.fontWeight = FontWeight.w600,
+    this.maxLines,
   }) : style = h2Style;
 
   /// This is a constructor for the `TATypography` class that creates a text
@@ -47,6 +49,7 @@ class TATypography extends StatelessWidget {
     this.textAlign = TextAlign.left,
     this.color = Colors.black,
     this.fontWeight = FontWeight.w600,
+    this.maxLines,
   }) : style = h3Style;
 
   /// This is a constructor for the `TATypography` class that creates a text
@@ -60,6 +63,7 @@ class TATypography extends StatelessWidget {
     this.textAlign = TextAlign.left,
     this.color = Colors.black,
     this.fontWeight = FontWeight.w400,
+    this.maxLines,
   }) : style = parapraphStyle;
 
   /// This is a constructor for the `TATypography` class that creates a text
@@ -73,6 +77,7 @@ class TATypography extends StatelessWidget {
     this.textAlign = TextAlign.left,
     this.color = Colors.black,
     this.fontWeight = FontWeight.w400,
+    this.maxLines,
   }) : style = subParapraphStyle;
 
   /// The text that is displayed.
@@ -93,11 +98,16 @@ class TATypography extends StatelessWidget {
   /// The alignment of the text.
   final TextAlign textAlign;
 
+  /// The maximum number of lines that the text can span.
+  final int? maxLines;
+
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
       textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: maxLines == null ? null : TextOverflow.ellipsis,
       style: style.copyWith(
         color: color,
         fontWeight: fontWeight,
