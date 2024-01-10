@@ -354,7 +354,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                           children: [
                             Expanded(
                               child: TATimePicker(
-                                label: 'Check In',
+                                label: 'Start',
                                 pickedDate: _fromDate,
                                 cupertinoDatePickerMode: CupertinoDatePickerMode.date,
                                 onChanged: (date) {
@@ -367,7 +367,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                             const SizedBox(width: 6),
                             Expanded(
                               child: TATimePicker(
-                                label: 'Check Out',
+                                label: 'End',
                                 pickedDate: _toDate,
                                 cupertinoDatePickerMode: CupertinoDatePickerMode.date,
                                 hourFrom: _toDate != null ? _fromDate!.hour + 1 : null,
@@ -567,7 +567,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                   unawaited(
                                     FailureWidget.build(
                                       title: 'Something went wrong!',
-                                      message: 'Please select the hour of the check out.',
+                                      message: 'Please select the hour of the End.',
                                       context: context,
                                     ),
                                   );
@@ -577,7 +577,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                   unawaited(
                                     FailureWidget.build(
                                       title: 'Something went wrong!',
-                                      message: 'Please select the hour of the check in.',
+                                      message: 'Please select the hour of the Start.',
                                       context: context,
                                     ),
                                   );
@@ -790,7 +790,7 @@ class _ItineraryWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TATypography.subparagraph(
-                                text: 'Check In',
+                                text: 'Start',
                                 color: TAColors.grey1,
                               ),
                               TATypography.paragraph(
@@ -814,7 +814,7 @@ class _ItineraryWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TATypography.subparagraph(
-                                text: 'Check Out',
+                                text: 'End',
                                 color: TAColors.grey1,
                               ),
                               TATypography.paragraph(

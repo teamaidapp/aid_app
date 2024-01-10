@@ -361,7 +361,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                           children: [
                             Expanded(
                               child: TATimePicker(
-                                label: 'Check In',
+                                label: 'Start',
                                 pickedDate: _fromDate,
                                 onChanged: (date) {
                                   setState(() {
@@ -382,7 +382,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                             const SizedBox(width: 6),
                             Expanded(
                               child: TATimePicker(
-                                label: 'Check Out',
+                                label: 'End',
                                 pickedDate: _toDate,
                                 hourFrom: _toDate != null ? _fromDate!.hour + 1 : null,
                                 onChanged: (date) {
@@ -493,7 +493,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                         unawaited(
                                           FailureWidget.build(
                                             title: 'Something went wrong!',
-                                            message: 'Please select the hour of the check out.',
+                                            message: 'Please select the hour of the End.',
                                             context: context,
                                           ),
                                         );
@@ -503,7 +503,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                                         unawaited(
                                           FailureWidget.build(
                                             title: 'Something went wrong!',
-                                            message: 'Please select the hour of the check in.',
+                                            message: 'Please select the hour of the Start.',
                                             context: context,
                                           ),
                                         );

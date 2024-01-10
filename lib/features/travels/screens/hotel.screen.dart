@@ -360,7 +360,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                           children: [
                             Expanded(
                               child: TATimePicker(
-                                label: 'Check In',
+                                label: 'Start',
                                 pickedDate: _fromDate,
                                 cupertinoDatePickerMode: CupertinoDatePickerMode.date,
                                 onChanged: (date) {
@@ -373,7 +373,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                             const SizedBox(width: 6),
                             Expanded(
                               child: TATimePicker(
-                                label: 'Check Out',
+                                label: 'End',
                                 pickedDate: _toDate,
                                 cupertinoDatePickerMode: CupertinoDatePickerMode.date,
                                 hourFrom: _toDate != null ? _fromDate!.hour + 1 : null,
@@ -551,7 +551,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                                   unawaited(
                                     FailureWidget.build(
                                       title: 'Something went wrong!',
-                                      message: 'Please select the hour of the check out.',
+                                      message: 'Please select the hour of the End.',
                                       context: context,
                                     ),
                                   );
@@ -561,7 +561,7 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
                                   unawaited(
                                     FailureWidget.build(
                                       title: 'Something went wrong!',
-                                      message: 'Please select the hour of the check in.',
+                                      message: 'Please select the hour of the Start.',
                                       context: context,
                                     ),
                                   );
@@ -769,7 +769,7 @@ class _HotelWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TATypography.subparagraph(
-                                text: 'Check In',
+                                text: 'Start',
                                 color: TAColors.grey1,
                               ),
                               TATypography.paragraph(
@@ -793,7 +793,7 @@ class _HotelWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TATypography.subparagraph(
-                                text: 'Check Out',
+                                text: 'End',
                                 color: TAColors.grey1,
                               ),
                               TATypography.paragraph(

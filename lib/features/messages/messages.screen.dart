@@ -139,39 +139,47 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                         ],
                       ),
                       Expanded(
-                        child: ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 80),
-                          itemCount: list.length,
-                          itemBuilder: (context, index) {
-                            final chat = list[index];
-                            var name = '';
+                        child: list.isNotEmpty
+                            ? ListView.builder(
+                                padding: const EdgeInsets.only(bottom: 80),
+                                itemCount: list.length,
+                                itemBuilder: (context, index) {
+                                  final chat = list[index];
+                                  var name = '';
 
-                            if (chat.sender) {
-                              name = 'me';
-                            } else {
-                              if (chat.userChatCreator.email == email.value) {
-                                name = '${chat.userChatReceiver.firstName} ${chat.userChatReceiver.lastName}';
-                              } else {
-                                name = '${chat.userChatCreator.firstName} ${chat.userChatCreator.lastName}';
-                              }
-                            }
+                                  if (chat.sender) {
+                                    name = 'me';
+                                  } else {
+                                    if (chat.userChatCreator.email == email.value) {
+                                      name = '${chat.userChatReceiver.firstName} ${chat.userChatReceiver.lastName}';
+                                    } else {
+                                      name = '${chat.userChatCreator.firstName} ${chat.userChatCreator.lastName}';
+                                    }
+                                  }
 
-                            return _MessageItem(
-                              title: chat.team.teamName,
-                              subtitle: name,
-                              date: DateTime.parse(chat.createdAt),
-                              body: chat.lastMessage.message,
-                              onTap: () {
-                                ref.read(messagesControllerProvider.notifier).changeMessageStatus(chat.lastMessage.id, 'READ');
-                                ref.read(messagesControllerProvider.notifier).getChatMessages(chat.id);
-                                _showBottomSheet(
-                                  context,
-                                  chat,
-                                );
-                              },
-                            );
-                          },
-                        ),
+                                  return _MessageItem(
+                                    title: chat.team.teamName,
+                                    subtitle: name,
+                                    date: DateTime.parse(chat.createdAt),
+                                    body: chat.lastMessage.message,
+                                    onTap: () {
+                                      ref.read(messagesControllerProvider.notifier).changeMessageStatus(chat.lastMessage.id, 'READ');
+                                      ref.read(messagesControllerProvider.notifier).getChatMessages(chat.id);
+                                      _showBottomSheet(
+                                        context,
+                                        chat,
+                                      );
+                                    },
+                                  );
+                                },
+                              )
+                            : Center(
+                                child: TATypography.paragraph(
+                                  text: 'No messages',
+                                  color: TAColors.textColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                       ),
                     ],
                   );

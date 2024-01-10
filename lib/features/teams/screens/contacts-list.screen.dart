@@ -43,9 +43,15 @@ class ContactsListScreen extends ConsumerStatefulWidget {
 }
 
 class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
+  TADropdownModel? selectedValue;
+
   @override
   void initState() {
     getContactList(id: widget.teamId);
+    selectedValue = TADropdownModel(
+      item: widget.teamName,
+      id: widget.teamId,
+    );
     super.initState();
   }
 
@@ -110,10 +116,7 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                           return TADropdown(
                             label: 'Team',
                             placeholder: 'Select a team',
-                            selectedValue: TADropdownModel(
-                              item: widget.teamName,
-                              id: widget.teamId,
-                            ),
+                            selectedValue: selectedValue,
                             items: List.generate(
                               data.length,
                               (index) => TADropdownModel(
@@ -152,86 +155,86 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
                                     color: TAColors.textColor,
                                   ),
                                   builder: (ContactModel user) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(bottom: 10),
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Iconsax.user,
-                                            color: TAColors.purple,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                TATypography.paragraph(
-                                                  text: '${user.user.firstName.capitalize()} ${user.user.lastName.capitalize()}',
-                                                  color: TAColors.textColor,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                                TATypography.paragraph(
-                                                  text: user.user.role,
-                                                  color: TAColors.textColor,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              if (widget.action == 'isSharingCalendar') {
-                                                final result = await ref.read(calendarControllerProvider.notifier).shareCalendar(
-                                                      email: user.user.id,
-                                                    );
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        if (widget.action == 'isSharingCalendar') {
+                                          final result = await ref.read(calendarControllerProvider.notifier).shareCalendar(
+                                                email: user.user.id,
+                                              );
 
-                                                if (!context.mounted) return;
+                                          if (!context.mounted) return;
 
-                                                if (result.ok) {
-                                                  await SuccessWidget.build(
-                                                    title: 'Success',
-                                                    message: 'Calendar shared successfully',
-                                                    context: context,
-                                                  );
-                                                  if (mounted) {
-                                                    context.pop();
-                                                  }
-                                                } else {
-                                                  unawaited(
-                                                    FailureWidget.build(
-                                                      title: 'Error',
-                                                      message: result.message,
-                                                      context: context,
-                                                    ),
-                                                  );
-                                                }
-                                              } else if (widget.action == 'call') {
-                                                try {
-                                                  await FlutterPhoneDirectCaller.callNumber(
-                                                    user.user.phoneNumber,
-                                                  );
-                                                  if (!context.mounted) return;
-                                                } catch (e) {
-                                                  unawaited(
-                                                    FailureWidget.build(
-                                                      title: 'Error',
-                                                      message: "The call wasn't placed",
-                                                      context: context,
-                                                    ),
-                                                  );
-                                                }
-                                              } else {
-                                                final id = '${user.user.id};${user.user.firstName.capitalize()} ${user.user.lastName.capitalize()}';
-                                                ref.read(messagesControllerProvider.notifier).setToId(id);
-                                                context.pop();
-                                              }
-                                            },
-                                            child: Icon(
-                                              widget.action == 'isSharingCalendar' ? Iconsax.share : Iconsax.call_calling,
+                                          if (result.ok) {
+                                            await SuccessWidget.build(
+                                              title: 'Success',
+                                              message: 'Calendar shared successfully',
+                                              context: context,
+                                            );
+                                            if (mounted) {
+                                              context.pop();
+                                            }
+                                          } else {
+                                            unawaited(
+                                              FailureWidget.build(
+                                                title: 'Error',
+                                                message: result.message,
+                                                context: context,
+                                              ),
+                                            );
+                                          }
+                                        } else if (widget.action == 'call') {
+                                          try {
+                                            await FlutterPhoneDirectCaller.callNumber(
+                                              user.user.phoneNumber,
+                                            );
+                                            if (!context.mounted) return;
+                                          } catch (e) {
+                                            unawaited(
+                                              FailureWidget.build(
+                                                title: 'Error',
+                                                message: "The call wasn't placed",
+                                                context: context,
+                                              ),
+                                            );
+                                          }
+                                        } else {
+                                          final id = '${user.user.id};${user.user.firstName.capitalize()} ${user.user.lastName.capitalize()}';
+                                          ref.read(messagesControllerProvider.notifier).setToId(id);
+                                          context.pop();
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(bottom: 10),
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Iconsax.user,
                                               color: TAColors.purple,
                                             ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                        ],
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  TATypography.paragraph(
+                                                    text: '${user.user.firstName.capitalize()} ${user.user.lastName.capitalize()}',
+                                                    color: TAColors.textColor,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                  TATypography.paragraph(
+                                                    text: user.user.role,
+                                                    color: TAColors.textColor,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Icon(
+                                              selectIcon(widget.action),
+                                              color: TAColors.purple,
+                                            ),
+                                            const SizedBox(width: 10),
+                                          ],
+                                        ),
                                       ),
                                     );
                                   },
@@ -301,6 +304,19 @@ class _ContactsListScreenState extends ConsumerState<ContactsListScreen> {
         ],
       ),
     );
+  }
+
+  IconData selectIcon(String action) {
+    switch (action) {
+      case 'message':
+        return Iconsax.add_circle;
+      case 'isSharingCalendar':
+        return Iconsax.share;
+      case 'call':
+        return Iconsax.call_calling;
+      default:
+        return Iconsax.user;
+    }
   }
 
   Future<void> getContactList({required String id}) {

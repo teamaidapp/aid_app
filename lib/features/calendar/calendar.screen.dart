@@ -287,7 +287,6 @@ class _TodayWidget extends StatelessWidget {
   });
 
   final AsyncValue<List<CalendarEvent>> events;
-
   final AsyncValue<List<EventShared>> sharedEvents;
 
   @override
@@ -296,69 +295,43 @@ class _TodayWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: events.when(
-          data: (events) {
+          data: (eventsData) {
             return sharedEvents.when(
-              data: (shared) {
+              data: (sharedData) {
                 // Filter events by dateKey
-                final filteredEvents = events.where((event) {
+                final filteredEvents = eventsData.where((event) {
                   return event.dateKey.split('T')[0] == DateTime.now().toIso8601String().split('T')[0];
                 }).toList();
 
-                final filteredSharedEvents = events.where((event) {
+                final filteredSharedEvents = sharedData.where((event) {
                   return event.dateKey.split('T')[0] == DateTime.now().toIso8601String().split('T')[0];
                 }).toList();
 
-                if (filteredEvents.isNotEmpty || filteredSharedEvents.isNotEmpty) {
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: filteredEvents.length,
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            final event = filteredEvents[index];
-                            final startTime = DateFormat('hh:mm a').format(event.event.startDate).toUpperCase();
-                            final endTime = DateFormat('hh:mm a').format(event.event.endDate).toUpperCase();
-                            return Column(
-                              children: [
-                                const SizedBox(height: 20),
-                                EventWidget(
-                                  eventName: event.event.eventName.capitalizeWord(),
-                                  organizerName: event.event.userCreator?.firstName ?? '',
-                                  startTime: startTime,
-                                  endTime: endTime,
-                                  event: event,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: shared.length,
-                          itemBuilder: (context, index) {
-                            final event = shared[index];
-                            final startTime = DateFormat('hh:mm a').format(event.event.startDate).toUpperCase();
-                            final endTime = DateFormat('hh:mm a').format(event.event.endDate).toUpperCase();
-                            return Column(
-                              children: [
-                                const SizedBox(height: 20),
-                                EventWidget(
-                                  eventName: event.event.eventName.capitalizeWord(),
-                                  organizerName: event.inviteUser.firstName,
-                                  startTime: startTime,
-                                  endTime: endTime,
-                                  event: event,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                final combinedEvents = [...filteredEvents, ...filteredSharedEvents];
+
+                if (combinedEvents.isNotEmpty) {
+                  return ListView.builder(
+                    itemCount: combinedEvents.length,
+                    padding: EdgeInsets.zero,
+                    itemBuilder: (context, index) {
+                      final event = combinedEvents[index];
+                      final startTime = DateFormat('hh:mm a').format(event.event.startDate).toUpperCase();
+                      final endTime = DateFormat('hh:mm a').format(event.event.endDate).toUpperCase();
+
+                      return Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          EventWidget(
+                            eventName: event.event.eventName.capitalizeWord(),
+                            organizerName:
+                                event is CalendarEvent ? event.event.userCreator?.firstName ?? '' : (event as EventShared).inviteUser.firstName,
+                            startTime: startTime,
+                            endTime: endTime,
+                            event: event,
+                          ),
+                        ],
+                      );
+                    },
                   );
                 } else {
                   return Center(
@@ -1039,7 +1012,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                         children: [
                           Expanded(
                             child: TATimePicker(
-                              label: 'Check In',
+                              label: 'Start',
                               pickedDate: _fromDate,
                               onChanged: (date) {
                                 setState(() {
@@ -1060,7 +1033,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                           const SizedBox(width: 6),
                           Expanded(
                             child: TATimePicker(
-                              label: 'Check Out',
+                              label: 'End',
                               pickedDate: _toDate,
                               hourFrom: _toDate != null ? _fromDate!.hour + 1 : null,
                               onChanged: (date) {
@@ -1177,7 +1150,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                                       unawaited(
                                         FailureWidget.build(
                                           title: 'Something went wrong!',
-                                          message: 'Please select the hour of the check out.',
+                                          message: 'Please select the hour of the End.',
                                           context: context,
                                         ),
                                       );
@@ -1187,7 +1160,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                                       unawaited(
                                         FailureWidget.build(
                                           title: 'Something went wrong!',
-                                          message: 'Please select the hour of the check in.',
+                                          message: 'Please select the hour of the Start.',
                                           context: context,
                                         ),
                                       );
