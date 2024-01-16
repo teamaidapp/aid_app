@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/routes.dart';
@@ -29,6 +30,7 @@ class DrawerWidget extends HookConsumerWidget {
             final role = prefs.getString(TAConstants.role);
 
             return Drawer(
+              width: Device.screenType == ScreenType.tablet ? 400 : null,
               child: SafeArea(
                 child: ListView(
                   padding: const EdgeInsets.only(left: 32, right: 30),

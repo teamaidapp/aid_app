@@ -300,14 +300,14 @@ class _AddPlayerWidget extends HookConsumerWidget {
                 );
               }
 
-              if (!isValidPhoneNumber(phoneController.text.trim())) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Please enter a valid phone number'),
-                  ),
-                );
-                return;
-              }
+              // if (!isValidPhoneNumber(phoneController.text.trim())) {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     const SnackBar(
+              //       content: Text('Please enter a valid phone number'),
+              //     ),
+              //   );
+              //   return;
+              // }
 
               isLoading.value = true;
               final res = await ref.read(addPlayerControllerProvider.notifier).sendPlayerInvitation(

@@ -243,7 +243,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         Expanded(
                           child: TAPrimaryButton(
                             text: createSchedule.value ? 'BACK' : 'SCHEDULE',
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: Device.screenType == ScreenType.tablet ? MainAxisAlignment.center : MainAxisAlignment.spaceEvenly,
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             icon: createSchedule.value ? null : Iconsax.add,
                             onTap: () {
@@ -524,7 +524,7 @@ class _FullCalendarWidgetState extends ConsumerState<_FullCalendarWidget> {
                                             ),
                                             const SizedBox(height: 6),
                                             SizedBox(
-                                              width: 76,
+                                              width: Device.screenType == ScreenType.tablet ? 140 : 76,
                                               child: TASecondaryButton(
                                                 text: 'VIEW',
                                                 padding: EdgeInsets.zero,

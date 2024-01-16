@@ -123,7 +123,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                           ),
                           const SizedBox(width: 20),
                           SizedBox(
-                            width: 120,
+                            width: 16.w,
                             child: Padding(
                               padding: const EdgeInsets.only(top: 30),
                               child: TAPrimaryButton(
@@ -160,7 +160,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                                   return _MessageItem(
                                     title: chat.team.teamName,
                                     subtitle: name,
-                                    date: DateTime.parse(chat.createdAt),
+                                    date: DateTime.parse(chat.createdAt).toLocal(),
                                     body: chat.lastMessage.message,
                                     onTap: () {
                                       ref.read(messagesControllerProvider.notifier).changeMessageStatus(chat.lastMessage.id, 'READ');
@@ -202,8 +202,9 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
 
   /// Show bottom sheet
   void _showBottomSheet(BuildContext context, ChatModel chat) {
-    final date = DateTime.parse(chat.createdAt);
+    final date = DateTime.parse(chat.createdAt).toLocal();
     final formattedDate = DateFormat('dd MMM').format(date).toUpperCase();
+    final time = DateFormat('hh:mm a').format(date);
     showModalBottomSheet<void>(
       context: context,
       enableDrag: false,
@@ -253,7 +254,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                                 color: TAColors.grey1,
                               ),
                               TATypography.paragraph(
-                                text: '8:00 AM',
+                                text: time,
                                 color: TAColors.grey1,
                               ),
                             ],

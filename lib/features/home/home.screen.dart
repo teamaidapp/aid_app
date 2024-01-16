@@ -193,7 +193,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     },
                                   ),
                                 )
-                              : const SizedBox(),
+                              : TAContainer(
+                                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                                    child: Center(
+                                      child: TATypography.paragraph(
+                                        text: 'No invitations yet',
+                                        color: TAColors.purple,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                         );
                       },
                       error: (_, __) => const SizedBox(),
@@ -205,64 +217,64 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         );
                       },
                     ),
-                    const SizedBox(height: 20),
-                    ExpandablePanel(
-                      controller: messagesExpandableController,
-                      header: TATypography.h3(
-                        text: 'Messages',
-                        color: TAColors.textColor,
-                      ),
-                      collapsed: const SizedBox(),
-                      expanded: const TAContainer(
-                        radius: 28,
-                        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            MessagesWidget(
-                              icon: Iconsax.message_25,
-                              title: 'Alejandro Villegas',
-                              description: 'Hi! the boys and I are...',
-                            ),
-                            Divider(),
-                            MessagesWidget(
-                              icon: Iconsax.message_25,
-                              title: 'Coach Felipe',
-                              description: 'Hi! the boys and I are...',
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    ExpandablePanel(
-                      controller: upcomingEventsExpandableController,
-                      header: TATypography.h3(
-                        text: 'Upcoming Events',
-                        color: TAColors.textColor,
-                      ),
-                      collapsed: const SizedBox(),
-                      expanded: const TAContainer(
-                        radius: 28,
-                        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            UpcomingEventsWidget(
-                              icon: Iconsax.message_25,
-                              title: 'Alejandro Villegas',
-                              description: 'Hi! the boys and I are...',
-                            ),
-                            Divider(),
-                            UpcomingEventsWidget(
-                              icon: Iconsax.message_25,
-                              title: 'Coach Felipe',
-                              description: 'Hi! the boys and I are...',
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // const SizedBox(height: 20),
+                    // ExpandablePanel(
+                    //   controller: messagesExpandableController,
+                    //   header: TATypography.h3(
+                    //     text: 'Messages',
+                    //     color: TAColors.textColor,
+                    //   ),
+                    //   collapsed: const SizedBox(),
+                    //   expanded: const TAContainer(
+                    //     radius: 28,
+                    //     margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    //     child: Column(
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       children: [
+                    //         MessagesWidget(
+                    //           icon: Iconsax.message_25,
+                    //           title: 'Alejandro Villegas',
+                    //           description: 'Hi! the boys and I are...',
+                    //         ),
+                    //         Divider(),
+                    //         MessagesWidget(
+                    //           icon: Iconsax.message_25,
+                    //           title: 'Coach Felipe',
+                    //           description: 'Hi! the boys and I are...',
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 20),
+                    // ExpandablePanel(
+                    //   controller: upcomingEventsExpandableController,
+                    //   header: TATypography.h3(
+                    //     text: 'Upcoming Events',
+                    //     color: TAColors.textColor,
+                    //   ),
+                    //   collapsed: const SizedBox(),
+                    //   expanded: const TAContainer(
+                    //     radius: 28,
+                    //     margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    //     child: Column(
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       children: [
+                    //         UpcomingEventsWidget(
+                    //           icon: Iconsax.message_25,
+                    //           title: 'Alejandro Villegas',
+                    //           description: 'Hi! the boys and I are...',
+                    //         ),
+                    //         Divider(),
+                    //         UpcomingEventsWidget(
+                    //           icon: Iconsax.message_25,
+                    //           title: 'Coach Felipe',
+                    //           description: 'Hi! the boys and I are...',
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(height: 20),
                     // TAPrimaryButton(
                     //   text: 'ADD SCHEDULE',
