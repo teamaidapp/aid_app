@@ -123,7 +123,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                           ),
                           const SizedBox(width: 20),
                           SizedBox(
-                            width: 16.w,
+                            width: Device.screenType == ScreenType.tablet ? 16.w : 120,
                             child: Padding(
                               padding: const EdgeInsets.only(top: 30),
                               child: TAPrimaryButton(
