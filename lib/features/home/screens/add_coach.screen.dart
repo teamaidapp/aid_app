@@ -186,7 +186,7 @@ class _AddCoachScreenState extends ConsumerState<AddCoachScreen> {
                           isLoading.value = true;
                           final res = await ref.read(addPlayerControllerProvider.notifier).sendPlayerInvitation(
                                 email: emailController.text,
-                                phone: phoneController.text,
+                                phone: phoneController.text.replaceAll('(', '').replaceAll(')', ''),
                                 teamId: selectedTeamId.value,
                                 role: Role.coach.name,
                               );

@@ -348,7 +348,8 @@ class CreateAccountTeamPlayerScreen extends StatelessWidget {
                                   // return;
                                   // }
 
-                                  final phone = phoneNumberController.text.replaceAll(' ', '').replaceAll('+', '');
+                                  final phone =
+                                      phoneNumberController.text.replaceAll(' ', '').replaceAll('+', '').replaceAll('(', '').replaceAll(')', '');
 
                                   final user = UserModel(
                                     firstName: firstNameController.text,

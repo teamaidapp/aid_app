@@ -257,7 +257,7 @@ class RequestDemoScreen extends StatelessWidget {
                                   final demo = RequestDemoModel(
                                     name: nameController.text,
                                     email: emailController.text,
-                                    phone: phoneController.text,
+                                    phone: phoneController.text.replaceAll('(', '').replaceAll(')', ''),
                                     leagueOrClub: leagueController.text,
                                   );
                                   final res = await ref
