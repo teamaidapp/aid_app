@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:team_aid/features/calendar/entities/event.model.dart';
 import 'package:team_aid/features/teams/entities/contact.model.dart';
-import 'package:team_aid/features/travels/entities/travel.model.dart';
-import 'package:team_aid/features/travels/entities/travel_api.model.dart';
+import 'package:team_aid/features/travels-legacy/entities/hotel.model.dart';
+import 'package:team_aid/features/travels-legacy/entities/itinerary.model.dart';
+import 'package:team_aid/features/travels-legacy/entities/user_files.model.dart';
 
 /// State of the travels screen
 @immutable
@@ -10,9 +12,11 @@ class TravelsScreenState {
   /// Constructor
   const TravelsScreenState({
     required this.contactList,
+    required this.itineraryList,
+    required this.hotelList,
+    required this.filesList,
+    required this.calendarEvents,
     required this.fileId,
-    required this.travelModel,
-    required this.travels,
   });
 
   /// The function returns a new instance of the TravelsScreenState class with updated contactList if
@@ -31,28 +35,38 @@ class TravelsScreenState {
   /// the `contactList` parameter which is updated with the new value if it is
   TravelsScreenState copyWith({
     AsyncValue<List<ContactModel>>? contactList,
+    AsyncValue<List<ItineraryLegacyModel>>? itineraryList,
+    AsyncValue<List<HotelModel>>? hotelList,
+    AsyncValue<List<UserFiles>>? filesList,
+    AsyncValue<List<CalendarEvent>>? calendarEvents,
     String? fileId,
-    TravelModel? travelModel,
-    AsyncValue<List<TravelAPIModel>>? travels,
   }) {
     return TravelsScreenState(
       contactList: contactList ?? this.contactList,
+      itineraryList: itineraryList ?? this.itineraryList,
+      hotelList: hotelList ?? this.hotelList,
+      filesList: filesList ?? this.filesList,
+      calendarEvents: calendarEvents ?? this.calendarEvents,
       fileId: fileId ?? this.fileId,
-      travelModel: travelModel ?? this.travelModel,
-      travels: travels ?? this.travels,
     );
   }
 
   /// The contact list
   final AsyncValue<List<ContactModel>> contactList;
 
+  /// The itinerary list
+  final AsyncValue<List<ItineraryLegacyModel>> itineraryList;
+
+  /// The hotel list
+  final AsyncValue<List<HotelModel>> hotelList;
+
+  /// The files list
+  final AsyncValue<List<UserFiles>> filesList;
+
+  /// The list of calendar events
+  final AsyncValue<List<CalendarEvent>> calendarEvents;
+
   /// The file id that was uploaded to the server
   /// this is populated by the response of the server
   final String fileId;
-
-  /// The model to be used in the API
-  final TravelModel travelModel;
-
-  /// The list of travels
-  final AsyncValue<List<TravelAPIModel>> travels;
 }

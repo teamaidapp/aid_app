@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -197,30 +198,29 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                               data: (data) {
                                 final avatar = data.getString(TAConstants.avatar);
 
-                                if (avatar != null && avatar.isEmpty) {
-                                  return const CircleAvatar(
+                                if (selectedImage != null) {
+                                  return CircleAvatar(
                                     radius: 48,
                                     backgroundColor: Colors.white,
-                                    backgroundImage: AssetImage(
-                                      'assets/black-logo.png',
+                                    backgroundImage: FileImage(
+                                      File(selectedImage!.path),
                                     ),
                                   );
                                 } else {
-                                  if (selectedImage != null) {
-                                    return CircleAvatar(
+                                  if (avatar == null || avatar.isEmpty) {
+                                    return const CircleAvatar(
                                       radius: 48,
                                       backgroundColor: Colors.white,
-                                      backgroundImage: FileImage(
-                                        File(selectedImage!.path),
+                                      backgroundImage: AssetImage(
+                                        'assets/black-logo.png',
                                       ),
                                     );
-                                  } else {
-                                    return CircleAvatar(
-                                      radius: 48,
-                                      backgroundColor: Colors.white,
-                                      backgroundImage: NetworkImage(avatar!),
-                                    );
                                   }
+                                  return CircleAvatar(
+                                    radius: 48,
+                                    backgroundColor: Colors.white,
+                                    backgroundImage: NetworkImage(avatar),
+                                  );
                                 }
                               },
                               error: (_, __) {
@@ -264,6 +264,52 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                                   );
                                   return;
                                 }
+
+                                String? avatar;
+
+                                /// If theres a file or an image we upload it
+                                if (selectedImage != null) {
+                                  File newFile;
+                                  newFile = File(selectedImage!.path);
+                                  isLoading.value = true;
+
+                                  /// First upload the file
+                                  final res = await ref.read(myAccountControllerProvider.notifier).uploadFile(file: newFile);
+                                  if (!mounted) return;
+
+                                  if (res.ok) {
+                                    /// Ater uploading the file, patch the file and add the guests and description to it
+                                    final patchRes = await ref.read(myAccountControllerProvider.notifier).patchFile(
+                                      description: '',
+                                      fileId: res.message,
+                                      guests: [],
+                                    );
+                                    if (!mounted) return;
+
+                                    if (!patchRes.ok) {
+                                      return unawaited(
+                                        FailureWidget.build(
+                                          title: 'Oops',
+                                          message: 'Something went wrong while trying to upload the file',
+                                          context: context,
+                                        ),
+                                      );
+                                    } else {
+                                      avatar = patchRes.message;
+                                      final prefs = await SharedPreferences.getInstance();
+                                      await prefs.setString(TAConstants.avatar, avatar);
+                                    }
+                                  } else {
+                                    return unawaited(
+                                      FailureWidget.build(
+                                        title: 'Oops',
+                                        message: 'Something went wrong while trying to upload the file',
+                                        context: context,
+                                      ),
+                                    );
+                                  }
+                                }
+
                                 final user = UserModel(
                                   firstName: nameController.text.trim(),
                                   lastName: '',
@@ -276,6 +322,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                                   role: Role.coach,
                                   cityId: '',
                                   stateId: '',
+                                  avatar: avatar,
                                 );
 
                                 isLoading.value = true;
@@ -319,15 +366,23 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
   }
 
   Future<void> pickImage() async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
+    try {
+      final picker = ImagePicker();
+      final image = await picker.pickImage(source: ImageSource.gallery);
 
-    if (image != null) {
-      setState(() {
-        selectedImage = image;
-      });
-    } else {
-      // User canceled the picker
+      if (image != null) {
+        setState(() {
+          selectedImage = image;
+        });
+      } else {
+        // User canceled the picker
+      }
+    } catch (e) {
+      await FailureWidget.build(
+        title: 'Oops',
+        message: 'There was a problem while trying to pick an image, check the format',
+        context: context,
+      );
     }
   }
 }

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/features/calendar/entities/schedule.model.dart';
 import 'package:team_aid/features/calendar/services/calendar.service.dart';
@@ -221,6 +224,51 @@ class CalendarController extends StateNotifier<CalendarScreenState> {
     } catch (e) {
       return response = response.copyWith(
         message: 'There was a problem with CalendarService',
+      );
+    }
+  }
+
+  /// Upload the file
+  Future<ResponseFailureModel> uploadFile({
+    required File file,
+    bool isAgnostic = false,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _calendarService.uploadFile(file: file);
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          return response = response.copyWith(ok: true, message: success.message);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with TravelsService',
+      );
+    }
+  }
+
+  /// Patch the uploaded file
+  Future<ResponseFailureModel> patchFile({
+    required String description,
+    required String fileId,
+    required List<Guest> guests,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _calendarService.patchFile(description: description, fileId: fileId, guests: guests);
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with TravelsService',
       );
     }
   }

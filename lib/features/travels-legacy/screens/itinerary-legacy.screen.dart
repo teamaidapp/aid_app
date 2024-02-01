@@ -22,8 +22,8 @@ import 'package:team_aid/features/common/functions/global_functions.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/location.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
-import 'package:team_aid/features/travels/controllers/travels.controller.dart';
-import 'package:team_aid/features/travels/entities/itinerary.model.dart';
+import 'package:team_aid/features/travels-legacy/controllers/travels-legacy.controller.dart';
+import 'package:team_aid/features/travels-legacy/entities/itinerary.model.dart';
 
 /// The statelessWidget that handles the current screen
 class ItineraryTravelScreen extends StatefulHookConsumerWidget {
@@ -84,8 +84,8 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
     final eventName = useTextEditingController();
     final locationController = useTextEditingController();
     final teams = ref.watch(homeControllerProvider).userTeams;
-    final guests = ref.watch(travelsControllerProvider).contactList;
-    final itineraries = ref.watch(travelsControllerProvider).itineraryList;
+    final guests = ref.watch(travelsLegacyControllerProvider).contactList;
+    final itineraries = ref.watch(travelsLegacyControllerProvider).itineraryList;
     final selectedGuests = useState(<TADropdownModel>[]);
     return Column(
       children: [
@@ -209,7 +209,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                           onChange: (selectedValue) {
                             if (selectedValue != null) {
                               teamId.value = selectedValue.id;
-                              ref.read(travelsControllerProvider.notifier).getContactList(teamId: teamId.value);
+                              ref.read(travelsLegacyControllerProvider.notifier).getContactList(teamId: teamId.value);
                             }
                           },
                         );
@@ -595,7 +595,7 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                   isLoading.value = true;
 
                                   /// First upload the file
-                                  final res = await ref.read(travelsControllerProvider.notifier).uploadFile(file: newFile);
+                                  final res = await ref.read(travelsLegacyControllerProvider.notifier).uploadFile(file: newFile);
 
                                   if (!res.ok && mounted) {
                                     unawaited(
@@ -614,13 +614,13 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                   newGuests.add(Guest(userId: guest.id));
                                 }
 
-                                String? fileId = ref.read(travelsControllerProvider).fileId;
+                                String? fileId = ref.read(travelsLegacyControllerProvider).fileId;
 
                                 if (fileId.isEmpty) {
                                   fileId = null;
                                 }
 
-                                final itinerary = ItineraryModel(
+                                final itinerary = ItineraryLegacyModel(
                                   guests: newGuests,
                                   name: eventName.text.trim(),
                                   endDate: _toDate!.toIso8601String(),
@@ -632,11 +632,11 @@ class _ItineraryScreenState extends ConsumerState<ItineraryTravelScreen> {
                                 );
 
                                 isLoading.value = true;
-                                final res = await ref.read(travelsControllerProvider.notifier).addItinerary(itinerary: itinerary);
+                                final res = await ref.read(travelsLegacyControllerProvider.notifier).addItinerary(itinerary: itinerary);
                                 isLoading.value = false;
 
                                 if (res.ok && mounted) {
-                                  ref.read(travelsControllerProvider.notifier).setFileId(fileId: '');
+                                  ref.read(travelsLegacyControllerProvider.notifier).setFileId(fileId: '');
                                   await widget.pageController.nextPage(
                                     duration: const Duration(milliseconds: 300),
                                     curve: Curves.easeIn,
@@ -705,7 +705,7 @@ class _ItineraryWidget extends StatelessWidget {
     required this.itinerary,
   });
 
-  final ItineraryModel itinerary;
+  final ItineraryLegacyModel itinerary;
 
   @override
   Widget build(BuildContext context) {
@@ -728,7 +728,7 @@ class _ItineraryWidget extends StatelessWidget {
           child: Row(
             children: [
               Icon(
-                itinerary.transportation == 'Airport' ? Iconsax.airplane5 : Iconsax.bus5,
+                itinerary.transportation == 'Airplane' ? Iconsax.airplane5 : Iconsax.bus5,
                 color: TAColors.purple,
               ),
               const SizedBox(width: 10),
@@ -784,7 +784,7 @@ class _ItineraryWidget extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(itinerary.transportation == 'Airport' ? Iconsax.airplane5 : Iconsax.bus),
+                          Icon(itinerary.transportation == 'Airplane' ? Iconsax.airplane5 : Iconsax.bus),
                           const SizedBox(width: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -808,7 +808,7 @@ class _ItineraryWidget extends StatelessWidget {
                       const SizedBox(width: 60),
                       Row(
                         children: [
-                          Icon(itinerary.transportation == 'Airport' ? Iconsax.airplane5 : Iconsax.bus),
+                          Icon(itinerary.transportation == 'Airplane' ? Iconsax.airplane5 : Iconsax.bus),
                           const SizedBox(width: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

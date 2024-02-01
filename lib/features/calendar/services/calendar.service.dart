@@ -1,7 +1,10 @@
 // ignore_for_file: one_member_abstracts
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
+import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/features/calendar/entities/calender_invitation.model.dart';
 import 'package:team_aid/features/calendar/entities/event.model.dart';
@@ -39,6 +42,16 @@ abstract class CalendarService {
 
   /// Share calendar
   Future<Either<Failure, Success>> shareCalendar({required String email});
+
+  /// Upload a file
+  Future<Either<Failure, Success>> uploadFile({required File file});
+
+  /// Patch a file
+  Future<Either<Failure, Success>> patchFile({
+    required String fileId,
+    required String description,
+    required List<Guest> guests,
+  });
 }
 
 /// This class is responsible for implementing the CalendarService
@@ -139,6 +152,46 @@ class CalendarServiceImpl implements CalendarService {
       return Left(
         Failure(
           message: 'There was a problem with CalendarServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> uploadFile({
+    required File file,
+  }) async {
+    try {
+      final result = await calendarRepository.uploadFile(file: file);
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was a problem with TravelsServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> patchFile({
+    required String fileId,
+    required String description,
+    required List<Guest> guests,
+  }) async {
+    try {
+      final result = await calendarRepository.patchFile(
+        fileId: fileId,
+        description: description,
+        guests: guests,
+      );
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was a problem with TravelsServiceImpl',
         ),
       );
     }

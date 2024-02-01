@@ -19,7 +19,7 @@ import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/messages/controllers/messages.controller.dart';
 import 'package:team_aid/features/messages/entities/chat.model.dart';
-import 'package:team_aid/features/travels/controllers/travels.controller.dart';
+import 'package:team_aid/features/travels-legacy/controllers/travels-legacy.controller.dart';
 
 /// The statelessWidget that handles the current screen
 class ReplyMessageScreen extends StatefulHookConsumerWidget {
@@ -381,7 +381,7 @@ class _ReplyMessageScreenState extends ConsumerState<ReplyMessageScreen> {
                                             isLoading.value = true;
 
                                             /// First upload the file
-                                            final res = await ref.read(travelsControllerProvider.notifier).uploadFile(
+                                            final res = await ref.read(travelsLegacyControllerProvider.notifier).uploadFile(
                                                   file: newFile,
                                                   isAgnostic: true,
                                                 );

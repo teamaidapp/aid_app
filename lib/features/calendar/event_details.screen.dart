@@ -7,6 +7,7 @@ import 'package:team_aid/core/extensions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/entities/event.model.dart';
+import 'package:team_aid/features/travels/screens/view_file.screen.dart';
 
 /// The `EventDetails` class is a widget that displays details about an event, including the event name,
 /// organizer name, start and end times, and a list of assistants.
@@ -98,24 +99,126 @@ class EventDetailsScreen extends StatelessWidget {
                               color: TAColors.textColor,
                               fontWeight: FontWeight.w700,
                             ),
-                            // TATypography.paragraph(
-                            //   text: 'Organized by ',
-                            //   color: TAColors.grey1,
-                            // ),
-                            // TATypography.paragraph(
-                            //   text: organizerName,
-                            //   color: TAColors.grey1,
-                            // ),
                           ],
                         ),
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            context.pop();
+                            showModalBottomSheet<void>(
+                              context: context,
+                              backgroundColor: Colors.white,
+                              // barrierColor: Colors.white.withOpacity(0.8),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(40),
+                                  topRight: Radius.circular(40),
+                                ),
+                              ),
+                              builder: (context) {
+                                return Wrap(
+                                  children: [
+                                    SafeArea(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                                        child: Stack(
+                                          children: [
+                                            Wrap(
+                                              children: [
+                                                Align(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      const SizedBox(height: 20),
+                                                      TATypography.h3(
+                                                        text: 'Attachments',
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
+                                                      SizedBox(height: 2.h),
+                                                      if (event.event.files.isNotEmpty)
+                                                        TATypography.paragraph(
+                                                          text: 'Tap to see the attachments of this event',
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      SizedBox(height: 2.h),
+                                                    ],
+                                                  ),
+                                                ),
+                                                if (event.event.files.isNotEmpty)
+                                                  SizedBox(
+                                                    height: 120,
+                                                    child: ListView.builder(
+                                                      itemCount: event.event.files.length,
+                                                      itemBuilder: (context, index) {
+                                                        final fileName = event.event.files[index].fileName.split('_');
+                                                        return GestureDetector(
+                                                          behavior: HitTestBehavior.translucent,
+                                                          onTap: () {
+                                                            Navigator.of(context).push(
+                                                              MaterialPageRoute<void>(
+                                                                builder: (context) => ViewFileScreen(
+                                                                  url: event.event.files[index].fileKey,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Row(
+                                                            children: [
+                                                              const Icon(
+                                                                Iconsax.document_upload,
+                                                                size: 20,
+                                                                color: TAColors.purple,
+                                                              ),
+                                                              const SizedBox(width: 8),
+                                                              TATypography.paragraph(text: fileName[0] + fileName[1]),
+                                                              const Spacer(),
+                                                              TATypography.paragraph(
+                                                                text: 'View',
+                                                                underline: true,
+                                                                fontWeight: FontWeight.w600,
+                                                                color: TAColors.purple,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  )
+                                                else
+                                                  Center(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(bottom: 30),
+                                                      child: TATypography.paragraph(
+                                                        text: 'No attachments added to this event.',
+                                                        color: TAColors.purple,
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                            Positioned(
+                                              right: 10,
+                                              top: 20,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  context.pop();
+                                                },
+                                                child: const Icon(Iconsax.close_circle, color: Colors.black),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                           child: const Icon(
-                            Iconsax.close_circle,
-                            color: TAColors.textColor,
+                            Iconsax.attach_circle,
+                            color: TAColors.purple,
+                            size: 30,
                           ),
                         ),
                       ],
@@ -197,34 +300,30 @@ class EventDetailsScreen extends StatelessWidget {
                   ),
                   const Divider(color: TAColors.color1),
                   const SizedBox(height: 10),
-                  Column(
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          const Icon(Iconsax.people),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TATypography.paragraph(
-                                  text: 'Assistants',
-                                  color: TAColors.grey1,
-                                ),
-                                ...List.generate(
-                                  event.event.guests.length,
-                                  (index) {
-                                    return TATypography.paragraph(
-                                      text:
-                                          '${event.event.guests[index].firstName.capitalizeWord()} ${event.event.guests[index].lastName.capitalizeWord()}',
-                                      fontWeight: FontWeight.w600,
-                                    );
-                                  },
-                                ),
-                              ],
+                      const Icon(Iconsax.people),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TATypography.paragraph(
+                              text: 'Assistants',
+                              color: TAColors.grey1,
                             ),
-                          ),
-                        ],
+                            ...List.generate(
+                              event.event.guests.length,
+                              (index) {
+                                return TATypography.paragraph(
+                                  text:
+                                      '${event.event.guests[index].firstName.capitalizeWord()} ${event.event.guests[index].lastName.capitalizeWord()}',
+                                  fontWeight: FontWeight.w600,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

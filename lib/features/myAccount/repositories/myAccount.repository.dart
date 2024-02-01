@@ -114,6 +114,10 @@ class MyAccountRepositoryImpl implements MyAccountRepository {
         data['isPhoneVisible'] = user.isPhoneVisible;
       }
 
+      if (user.avatar != null) {
+        data['avatar'] = user.avatar;
+      }
+
       final res = await http.patch(
         url,
         body: jsonEncode(data),

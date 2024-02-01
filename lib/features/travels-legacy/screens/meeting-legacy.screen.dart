@@ -18,7 +18,7 @@ import 'package:team_aid/features/common/functions/global_functions.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/location.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
-import 'package:team_aid/features/travels/controllers/travels.controller.dart';
+import 'package:team_aid/features/travels-legacy/controllers/travels-legacy.controller.dart';
 
 /// The statelessWidget that handles the current screen
 class MeetingTravelScreen extends StatefulHookConsumerWidget {
@@ -77,9 +77,9 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
     final eventDescription = useTextEditingController();
     final locationController = useTextEditingController();
     final teams = ref.watch(homeControllerProvider).userTeams;
-    final guests = ref.watch(travelsControllerProvider).contactList;
+    final guests = ref.watch(travelsLegacyControllerProvider).contactList;
     final selectedGuests = useState(<TADropdownModel>[]);
-    final meetings = ref.watch(travelsControllerProvider).calendarEvents;
+    final meetings = ref.watch(travelsLegacyControllerProvider).calendarEvents;
     return Column(
       children: [
         Row(
@@ -212,7 +212,7 @@ class _MeetingTravelScreenState extends ConsumerState<MeetingTravelScreen> {
                           onChange: (selectedValue) {
                             if (selectedValue != null) {
                               teamId.value = selectedValue.id;
-                              ref.read(travelsControllerProvider.notifier).getContactList(teamId: teamId.value);
+                              ref.read(travelsLegacyControllerProvider.notifier).getContactList(teamId: teamId.value);
                             }
                           },
                         );

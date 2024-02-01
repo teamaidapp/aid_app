@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/features/myAccount/services/myAccount.service.dart';
@@ -63,6 +66,51 @@ class MyAccountController extends StateNotifier<MyAccountScreenState> {
     } catch (e) {
       return response = response.copyWith(
         message: 'There was a problem with CreateAccountService',
+      );
+    }
+  }
+
+  /// Upload the file
+  Future<ResponseFailureModel> uploadFile({
+    required File file,
+    bool isAgnostic = false,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _myAccountService.uploadFile(file: file);
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          return response = response.copyWith(ok: true, message: success.message);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with TravelsService',
+      );
+    }
+  }
+
+  /// Patch the uploaded file
+  Future<ResponseFailureModel> patchFile({
+    required String description,
+    required String fileId,
+    required List<Guest> guests,
+  }) async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _myAccountService.patchFile(description: description, fileId: fileId, guests: guests);
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          return response = response.copyWith(ok: true, message: success.message);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with TravelsService',
       );
     }
   }

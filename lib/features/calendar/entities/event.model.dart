@@ -1,5 +1,6 @@
 import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/user_creator.model.dart';
+import 'package:team_aid/features/travels/entities/file.model.dart';
 
 /// A class representing an event.
 class CalendarEvent {
@@ -40,7 +41,11 @@ class CalendarEvent {
       dateKey: key,
       isOwner: map['isOwner'] as bool,
       status: map['status'] as String,
-      event: EventClass.fromMap(map['event'] as Map<String, dynamic>, map['guest'] as List<dynamic>?),
+      event: EventClass.fromMap(
+        map['event'] as Map<String, dynamic>,
+        map['guest'] as List<dynamic>?,
+        map['files'] as List<dynamic>?,
+      ),
     );
   }
 
@@ -91,15 +96,16 @@ class EventClass {
     required this.location,
     required this.createdAt,
     required this.guests,
+    required this.files,
     this.userCreator,
   });
 
   /// The fromMap constructor is used to create a new instance of [EventClass] from a map.
-  factory EventClass.fromMap(Map<String, dynamic> map, List<dynamic>? guest) {
+  factory EventClass.fromMap(Map<String, dynamic> map, List<dynamic>? guest, List<dynamic>? files) {
     return EventClass(
       id: map['id'] as String,
-      eventName: map['eventName'] as String,
-      eventDescription: map['eventDescription'] as String,
+      eventName: (map['eventName'] as String).trim(),
+      eventDescription: (map['eventDescription'] as String).trim(),
       startDate: DateTime.parse(map['startDate'] as String),
       endDate: DateTime.parse(map['endDate'] as String),
       status: map['status'] as String,
@@ -107,6 +113,12 @@ class EventClass {
       createdAt: DateTime.parse(map['createdAt'] as String),
       userCreator: UserCreator2.fromMap(map['userCreator'] as Map<String, dynamic>),
       guests: guest?.map((e) => Guest.fromMap(e as Map<String, dynamic>)).toList() ?? [],
+      files: files
+              ?.map<FileT>(
+                (x) => FileT.fromMap(x as Map<String, dynamic>),
+              )
+              .toList() ??
+          [],
     );
   }
 
@@ -139,4 +151,7 @@ class EventClass {
 
   /// The user creator of the itinerary.
   final UserCreator2? userCreator;
+
+  /// The file URL of the itinerary.
+  final List<FileT> files;
 }

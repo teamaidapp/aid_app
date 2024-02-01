@@ -4,8 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/features/teams/services/teams.service.dart';
-import 'package:team_aid/features/travels/entities/hotel.model.dart';
-import 'package:team_aid/features/travels/entities/itinerary.model.dart';
+import 'package:team_aid/features/travels/entities/travel.model.dart';
 import 'package:team_aid/features/travels/services/travels.service.dart';
 import 'package:team_aid/features/travels/state/travels.state.dart';
 
@@ -14,11 +13,21 @@ final travelsControllerProvider = StateNotifierProvider.autoDispose<TravelsContr
   return TravelsController(
     const TravelsScreenState(
       contactList: AsyncValue.loading(),
-      itineraryList: AsyncValue.loading(),
-      hotelList: AsyncValue.loading(),
-      filesList: AsyncValue.loading(),
-      calendarEvents: AsyncValue.loading(),
       fileId: '',
+      travels: AsyncValue.loading(),
+      travelModel: TravelModel(
+        name: '',
+        transportation: '',
+        startDate: '',
+        endDate: '',
+        location: '',
+        locationDescription: '',
+        files: [],
+        hotel: '',
+        hotelGoogle: '',
+        arrivalDate: '',
+        departureDate: '',
+      ),
     ),
     ref,
     ref.watch(travelsServiceProvider),
@@ -44,87 +53,76 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
 
   final TeamsService _teamsService;
 
-  /// This function adds an itinerary and returns a response indicating success or failure.
-  ///
-  /// Args:
-  ///   itinerary (ItineraryModel): an object of type ItineraryModel that represents the itinerary to be
-  /// added.
-  ///
-  /// Returns:
-  ///   a `Future` of `ResponseFailureModel`.
-  Future<ResponseFailureModel> addItinerary({
-    required ItineraryModel itinerary,
-  }) async {
-    var response = ResponseFailureModel.defaultFailureResponse();
-    try {
-      final result = await _travelsService.addItinerary(itinerary: itinerary);
-
-      return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
-        (success) async {
-          await getItineraries();
-          return response = response.copyWith(ok: true);
-        },
-      );
-    } catch (e) {
-      return response = response.copyWith(
-        message: 'There was a problem with TravelsService',
-      );
-    }
+  void setTravelName({required String name}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(name: name),
+    );
   }
 
-  /// This function retrieves the total earnings and returns a response indicating success or failure.
-  ///
-  /// Returns:
-  ///   A `Future` object that will eventually return a `ResponseFailureModel` object.
-  Future<ResponseFailureModel> getCalendarData() async {
-    var response = ResponseFailureModel.defaultFailureResponse();
-    try {
-      final result = await _travelsService.getCalendarData();
-
-      return result.fold(
-        (failure) {
-          state = state.copyWith(calendarEvents: const AsyncValue.data([]));
-          return response = response.copyWith(message: failure.message);
-        },
-        (success) {
-          state = state.copyWith(calendarEvents: AsyncValue.data(success));
-          return response = response.copyWith(ok: true);
-        },
-      );
-    } catch (e) {
-      return response = response.copyWith(
-        message: 'There was a problem with CalendarService',
-      );
-    }
+  void setTravelTransportation({required String transportation}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(transportation: transportation),
+    );
   }
 
-  /// This function adds a hotel to the travel service and returns a response indicating success or
-  /// failure.
-  ///
-  /// Args:
-  ///   hotel (HotelModel): The `hotel` parameter is a required `HotelModel` object that contains the
-  /// information of the hotel to be added.
-  ///
-  /// Returns:
-  ///   a `Future` of `ResponseFailureModel`.
-  Future<ResponseFailureModel> addHotel({required HotelModel hotel}) async {
-    var response = ResponseFailureModel.defaultFailureResponse();
-    try {
-      final result = await _travelsService.addHotel(hotel: hotel);
+  void setTravelStartDate({required String startDate}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(startDate: startDate),
+    );
+  }
 
-      return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
-        (success) async {
-          await getHotels();
-          return response = response.copyWith(ok: true);
-        },
-      );
-    } catch (e) {
-      return response = response.copyWith(
-        message: 'There was a problem with TravelsService',
-      );
-    }
+  void setTravelEndDate({required String endDate}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(endDate: endDate),
+    );
+  }
+
+  void setTravelLocation({required String location}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(location: location),
+    );
+  }
+
+  void setTravelLocationDescription({required String locationDescription}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(locationDescription: locationDescription),
+    );
+  }
+
+  void setTravelFiles({required List<TravelFile> files}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(files: files),
+    );
+  }
+
+  void setTravelHotel({required String hotel}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(hotel: hotel),
+    );
+  }
+
+  void setTravelHotelGoogle({required String hotelGoogle}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(hotelGoogle: hotelGoogle),
+    );
+  }
+
+  void setFilesIds({required List<TravelFile> filesIds}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(files: filesIds),
+    );
+  }
+
+  void setTravelArrivalDate({required String arrivalDate}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(arrivalDate: arrivalDate),
+    );
+  }
+
+  void setTravelDepartureDate({required String departureDate}) {
+    state = state.copyWith(
+      travelModel: state.travelModel.copyWith(departureDate: departureDate),
+    );
   }
 
   /// This function retrieves the total earnings and returns a response indicating success or failure.
@@ -146,70 +144,6 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
         (list) {
           state = state.copyWith(
             contactList: AsyncValue.data(list),
-          );
-          return response = response.copyWith(ok: true);
-        },
-      );
-    } catch (e) {
-      return response = response.copyWith(
-        message: 'There was a problem with TeamsService',
-      );
-    }
-  }
-
-  /// The function `getItineraries` retrieves a list of itineraries from a travel service and updates the
-  /// state accordingly.
-  ///
-  /// Returns:
-  ///   a `Future<ResponseFailureModel>`.
-  Future<ResponseFailureModel> getItineraries() async {
-    var response = ResponseFailureModel.defaultFailureResponse();
-    try {
-      final result = await _travelsService.getItinerary();
-
-      state = state.copyWith(contactList: const AsyncValue.loading());
-
-      return result.fold(
-        (failure) {
-          state = state.copyWith(itineraryList: const AsyncValue.data([]));
-          return response = response.copyWith(message: failure.message);
-        },
-        (list) {
-          state = state.copyWith(
-            itineraryList: AsyncValue.data(list),
-          );
-          return response = response.copyWith(ok: true);
-        },
-      );
-    } catch (e) {
-      return response = response.copyWith(
-        message: 'There was a problem with TeamsService',
-      );
-    }
-  }
-
-  /// The function `getItineraries` retrieves a list of itineraries from a travel service and updates the
-  /// state accordingly.
-  ///
-  /// Returns:
-  ///   a `Future<ResponseFailureModel>`.
-  Future<ResponseFailureModel> getHotels() async {
-    var response = ResponseFailureModel.defaultFailureResponse();
-    try {
-      final result = await _travelsService.getHotels();
-
-      state = state.copyWith(contactList: const AsyncValue.loading());
-
-      return result.fold(
-        (failure) {
-          state = state.copyWith(
-            hotelList: const AsyncValue.data([]),
-          );
-          return response = response.copyWith(message: failure.message);
-        },
-        (list) {
-          state = state.copyWith(
-            hotelList: AsyncValue.data(list),
           );
           return response = response.copyWith(ok: true);
         },
@@ -257,29 +191,6 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
       return result.fold(
         (failure) => response = response.copyWith(message: failure.message),
         (success) async {
-          await getFiles();
-          return response = response.copyWith(ok: true);
-        },
-      );
-    } catch (e) {
-      return response = response.copyWith(
-        message: 'There was a problem with TravelsService',
-      );
-    }
-  }
-
-  /// Get the files
-  Future<ResponseFailureModel> getFiles() async {
-    var response = ResponseFailureModel.defaultFailureResponse();
-    try {
-      final result = await _travelsService.getFiles();
-
-      return result.fold(
-        (failure) => response = response.copyWith(message: failure.message),
-        (success) async {
-          state = state.copyWith(
-            filesList: AsyncValue.data(success),
-          );
           return response = response.copyWith(ok: true);
         },
       );
@@ -297,5 +208,50 @@ class TravelsController extends StateNotifier<TravelsScreenState> {
   /// identifier of a file.
   void setFileId({required String fileId}) {
     state = state.copyWith(fileId: fileId);
+  }
+
+  /// Create a travel
+  Future<ResponseFailureModel> createTravel() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+
+    try {
+      final result = await _travelsService.createTravel(travel: state.travelModel);
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with TravelsService',
+      );
+    }
+  }
+
+  Future<ResponseFailureModel> getTravels() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+
+    try {
+      final result = await _travelsService.getTravels();
+
+      return result.fold(
+        (failure) {
+          state = state.copyWith(travels: const AsyncValue.data([]));
+          return response = response.copyWith(message: failure.message);
+        },
+        (list) async {
+          state = state.copyWith(
+            travels: AsyncValue.data(list),
+          );
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with TravelsService',
+      );
+    }
   }
 }

@@ -79,18 +79,18 @@ class AddPlayerRepositoryImpl implements AddPlayerRepository {
         body: jsonEncode(data),
       );
 
-      if (res.statusCode != 200 && res.statusCode != 201) {
-        return Left(
-          Failure(
-            message: 'There was an error sending the invitation',
-          ),
-        );
-      }
-
       if (res.statusCode == 409) {
         return Left(
           Failure(
             message: 'The invitation was already sent',
+          ),
+        );
+      }
+
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error sending the invitation',
           ),
         );
       }

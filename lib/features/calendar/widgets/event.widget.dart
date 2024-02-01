@@ -54,23 +54,25 @@ class EventWidget extends HookWidget {
                         color: TAColors.purple,
                       ),
                       const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TATypography.paragraph(
-                            text: eventName,
-                            color: TAColors.textColor,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          TATypography.paragraph(
-                            text: 'Organized by ',
-                            color: TAColors.grey1,
-                          ),
-                          TATypography.paragraph(
-                            text: organizerName,
-                            color: TAColors.grey1,
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TATypography.paragraph(
+                              text: eventName,
+                              color: TAColors.textColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            TATypography.paragraph(
+                              text: 'Organized by ',
+                              color: TAColors.grey1,
+                            ),
+                            TATypography.paragraph(
+                              text: organizerName,
+                              color: TAColors.grey1,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

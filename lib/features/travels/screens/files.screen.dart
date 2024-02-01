@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -8,257 +9,67 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:team_aid/core/entities/dropdown.model.dart';
-import 'package:team_aid/core/entities/guest.model.dart';
-import 'package:team_aid/design_system/components/appbar/appbar.dart';
-import 'package:team_aid/design_system/components/inputs/multi_dropdown.dart';
+import 'package:team_aid/core/entities/response_failure.model.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
-import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/travels/controllers/travels.controller.dart';
-import 'package:team_aid/features/travels/screens/view_file.screen.dart';
+import 'package:team_aid/features/travels/entities/travel.model.dart';
 
 /// The statelessWidget that handles the current screen
 class FilesScreen extends StatefulHookConsumerWidget {
   /// The constructor.
   const FilesScreen({
-    this.isInTravel = true,
     super.key,
   });
-
-  /// If the view comes from travel
-  final bool isInTravel;
 
   @override
   ConsumerState<FilesScreen> createState() => _FilesScreenState();
 }
 
 class _FilesScreenState extends ConsumerState<FilesScreen> {
-  File? selectedFile;
+  List<File> selectedFiles = [];
 
-  XFile? selectedImage;
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(travelsControllerProvider.notifier).getFiles();
-    });
-    super.initState();
-  }
+  List<XFile> selectedImage = [];
 
   @override
   Widget build(BuildContext context) {
     final isLoading = useState(false);
-    final showAddFiles = useState(true);
-    final descriptionController = useTextEditingController();
-    final selectedGuests = useState(<TADropdownModel>[]);
-    final filesList = ref.watch(travelsControllerProvider).filesList;
-    final teams = ref.watch(homeControllerProvider).userTeams;
-    final guests = ref.watch(travelsControllerProvider).contactList;
-    final teamId = useState('');
-    return Scaffold(
-      appBar: !widget.isInTravel
-          ? TAAppBar.build(
-              context,
-              title: 'Attachments',
-              onTap: () {
-                context.pop();
-              },
-            )
-          : null,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              if (!widget.isInTravel) const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            TAContainer(
+              margin: const EdgeInsets.only(left: 20, right: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    width: 120,
-                    child: GestureDetector(
-                      key: const Key('add'),
-                      onTap: () {
-                        showAddFiles.value = true;
-                      },
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: showAddFiles.value ? TAColors.purple : Colors.white,
-                          borderRadius: const BorderRadius.all(Radius.circular(20)),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Center(
-                          child: TATypography.paragraph(
-                            text: 'Add files',
-                            key: const Key('today_title'),
-                            color: showAddFiles.value ? Colors.white : const Color(0x0D253C4D).withOpacity(0.3),
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: 150,
-                    child: GestureDetector(
-                      key: const Key('show_files'),
-                      onTap: () {
-                        showAddFiles.value = false;
-                      },
-                      child: Container(
-                        height: 50,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: !showAddFiles.value ? TAColors.purple : Colors.white,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(20),
-                          ),
-                        ),
-                        child: Center(
-                          child: TATypography.paragraph(
-                            text: 'View files',
-                            color: !showAddFiles.value ? Colors.white : const Color(0x0D253C4D).withOpacity(0.3),
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              if (showAddFiles.value && widget.isInTravel)
-                TAContainer(
-                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
-                  margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
-                  child: teams.when(
-                    data: (data) {
-                      return TADropdown(
-                        label: 'Team',
-                        placeholder: 'Select a team',
-                        items: List.generate(
-                          data.length,
-                          (index) => TADropdownModel(
-                            item: data[index].teamName,
-                            id: data[index].id,
-                          ),
-                        ),
-                        onChange: (selectedValue) {
-                          if (selectedValue != null) {
-                            teamId.value = selectedValue.id;
-                            ref.read(travelsControllerProvider.notifier).getContactList(teamId: teamId.value);
-                          }
-                        },
-                      );
-                    },
-                    error: (e, s) => const SizedBox(),
-                    loading: () => const SizedBox(),
-                  ),
-                ),
-              if (showAddFiles.value)
-                TAContainer(
-                  margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          const Icon(
-                            Iconsax.note_215,
-                            size: 20,
-                            color: TAColors.purple,
-                          ),
-                          const SizedBox(width: 10),
-                          TATypography.h3(text: 'Add files'),
-                        ],
+                      const Icon(
+                        Iconsax.note_215,
+                        size: 20,
+                        color: TAColors.purple,
                       ),
-                      const Divider(),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: TATypography.paragraph(
-                          text: 'Choose file from:',
-                          color: TAColors.color2,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: pickFile,
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Iconsax.document_upload,
-                                  size: 20,
-                                  color: TAColors.purple,
-                                ),
-                                const SizedBox(width: 10),
-                                TATypography.paragraph(
-                                  text: 'Files',
-                                  color: TAColors.purple,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          GestureDetector(
-                            onTap: pickImage,
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Iconsax.gallery_export,
-                                  size: 20,
-                                  color: TAColors.purple,
-                                ),
-                                const SizedBox(width: 10),
-                                TATypography.paragraph(
-                                  text: 'Gallery',
-                                  color: TAColors.purple,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      const Divider(),
-                      const SizedBox(height: 10),
-                      TAPrimaryInput(
-                        label: 'File Description',
-                        textEditingController: descriptionController,
-                        placeholder: '',
-                      ),
-                      if (widget.isInTravel)
-                        Column(
-                          children: [
-                            const SizedBox(height: 10),
-                            TAMultiDropdown(
-                              label: 'Guests',
-                              items: List.generate(
-                                guests.valueOrNull?.length ?? 0,
-                                (index) {
-                                  final item = guests.valueOrNull?[index];
-                                  return TADropdownModel(
-                                    item: item != null ? '${item.user.firstName} ${item.user.lastName}' : '',
-                                    id: item != null ? item.user.id : '',
-                                  );
-                                },
-                              ),
-                              placeholder: '',
-                              onChange: (v) {
-                                selectedGuests.value = v;
-                              },
-                            ),
-                          ],
-                        ),
-                      const SizedBox(height: 30),
-                      if (selectedFile != null || selectedImage != null)
-                        Row(
+                      const SizedBox(width: 10),
+                      TATypography.h3(text: 'Add files'),
+                    ],
+                  ),
+                  const Divider(),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TATypography.paragraph(
+                      text: 'Choose file from:',
+                      color: TAColors.color2,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: pickFile,
+                        child: Row(
                           children: [
                             const Icon(
                               Iconsax.document_upload,
@@ -266,98 +77,177 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                               color: TAColors.purple,
                             ),
                             const SizedBox(width: 10),
-                            if (selectedFile != null)
-                              Expanded(
-                                child: TATypography.paragraph(
-                                  text: selectedFile!.path.split('/').last,
-                                  color: TAColors.color2,
-                                ),
-                              ),
-                            if (selectedImage != null)
-                              Expanded(
-                                child: TATypography.paragraph(
-                                  text: selectedImage!.path.split('/').last,
-                                  color: TAColors.color2,
-                                ),
-                              ),
+                            TATypography.paragraph(
+                              text: 'Files',
+                              color: TAColors.purple,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ],
                         ),
-                      const Divider(),
-                      const SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: TAPrimaryButton(
-                          text: widget.isInTravel ? 'CREATE' : 'UPLOAD',
-                          height: 50,
-                          isLoading: isLoading.value,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          onTap: () async {
-                            if (selectedFile == null && selectedImage == null) {
-                              unawaited(
-                                FailureWidget.build(
-                                  title: 'Oops',
-                                  message: 'Please select a file',
-                                  context: context,
-                                ),
-                              );
-                              return;
-                            }
+                      ),
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: pickImage,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Iconsax.gallery_export,
+                              size: 20,
+                              color: TAColors.purple,
+                            ),
+                            const SizedBox(width: 10),
+                            TATypography.paragraph(
+                              text: 'Gallery',
+                              color: TAColors.purple,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: selectedFiles.length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          const Icon(
+                            Iconsax.document,
+                            size: 20,
+                            color: TAColors.purple,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: TATypography.paragraph(
+                              text: selectedFiles[index].path.split('/').last,
+                              color: TAColors.color2,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: selectedImage.length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          const Icon(
+                            Iconsax.document,
+                            size: 20,
+                            color: TAColors.purple,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: TATypography.paragraph(
+                              text: selectedImage[index].path.split('/').last,
+                              color: TAColors.color2,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          context.pop();
+                        },
+                        child: SizedBox(
+                          width: 100,
+                          child: TATypography.paragraph(
+                            text: 'Cancel',
+                            underline: true,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 120,
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            return TAPrimaryButton(
+                              text: 'SAVE',
+                              isLoading: isLoading.value,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              onTap: () async {
+                                final filesIds = <TravelFile>[];
 
-                            if (descriptionController.text.isEmpty) {
-                              unawaited(
-                                FailureWidget.build(
-                                  title: 'Oops',
-                                  message: 'Please enter a description',
-                                  context: context,
-                                ),
-                              );
-                              return;
-                            }
-                            File newFile;
-                            if (selectedFile != null) {
-                              newFile = selectedFile!;
-                            } else {
-                              newFile = File(selectedImage!.path);
-                            }
-                            isLoading.value = true;
+                                isLoading.value = true;
 
-                            /// First upload the file
-                            final res = await ref.read(travelsControllerProvider.notifier).uploadFile(file: newFile);
+                                if (selectedFiles.isNotEmpty) {
+                                  for (final file in selectedFiles) {
+                                    isLoading.value = true;
 
-                            if (res.ok && mounted) {
-                              if (widget.isInTravel) {
-                                final newGuests = <Guest>[];
+                                    /// First upload the file
+                                    final res = await ref.read(travelsControllerProvider.notifier).uploadFile(file: file);
 
-                                for (final guest in selectedGuests.value) {
-                                  newGuests.add(Guest(userId: guest.id));
+                                    if (!res.ok && mounted) {
+                                      isLoading.value = false;
+                                      unawaited(
+                                        FailureWidget.build(
+                                          title: 'Oops',
+                                          message: 'Something went wrong while trying to upload the file',
+                                          context: context,
+                                        ),
+                                      );
+                                      return;
+                                    } else {
+                                      filesIds.add(TravelFile(fileId: res.message));
+                                    }
+                                  }
                                 }
 
-                                /// Ater uploading the file, patch the file and add the guests and description to it
-                                final patchRes = await ref.read(travelsControllerProvider.notifier).patchFile(
-                                      description: descriptionController.text.trim(),
-                                      fileId: ref.read(travelsControllerProvider).fileId,
-                                      guests: newGuests,
-                                    );
-                                isLoading.value = false;
-                                if (patchRes.ok && mounted) {
-                                  setState(() {
-                                    selectedFile = null;
-                                    selectedImage = null;
-                                    descriptionController.clear();
-                                    selectedGuests.value = [];
-                                    ref.read(travelsControllerProvider.notifier).setFileId(fileId: '');
-                                  });
-                                  unawaited(
-                                    SuccessWidget.build(
-                                      title: 'Success',
-                                      message: 'File uploaded successfully',
-                                      context: context,
-                                    ),
+                                if (selectedImage.isNotEmpty) {
+                                  for (final image in selectedImage) {
+                                    isLoading.value = true;
+
+                                    /// First upload the file
+                                    final res = await ref.read(travelsControllerProvider.notifier).uploadFile(file: File(image.path));
+                                    if (!res.ok && mounted) {
+                                      isLoading.value = false;
+                                      unawaited(
+                                        FailureWidget.build(
+                                          title: 'Oops',
+                                          message: 'Something went wrong while trying to upload the file',
+                                          context: context,
+                                        ),
+                                      );
+                                      return;
+                                    } else {
+                                      filesIds.add(TravelFile(fileId: res.message));
+                                    }
+                                  }
+                                }
+
+                                ref.read(travelsControllerProvider.notifier).setFilesIds(filesIds: filesIds);
+
+                                inspect(filesIds);
+
+                                final res = await ref.read(travelsControllerProvider.notifier).createTravel();
+                                await ref.read(travelsControllerProvider.notifier).getTravels();
+                                if (!mounted) return;
+
+                                if (res.ok && mounted) {
+                                  isLoading.value = false;
+                                  await SuccessWidget.build(
+                                    title: 'Success',
+                                    message: 'Travel created successfully',
+                                    context: context,
                                   );
                                   if (context.mounted) {
                                     context.pop();
                                   }
                                 } else {
+                                  isLoading.value = false;
                                   unawaited(
                                     FailureWidget.build(
                                       title: 'Oops',
@@ -366,124 +256,166 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                                     ),
                                   );
                                 }
-                              } else {
-                                /// Ater uploading the file, patch the file and add the guests and description to it
-                                final patchRes = await ref.read(travelsControllerProvider.notifier).patchFile(
-                                  description: descriptionController.text.trim(),
-                                  fileId: ref.read(travelsControllerProvider).fileId,
-                                  guests: [],
-                                );
-                                isLoading.value = false;
-                                if (patchRes.ok && context.mounted) {
-                                  await SuccessWidget.build(
-                                    title: 'Success',
-                                    message: 'File uploaded successfully',
-                                    context: context,
-                                  );
-                                  if (context.mounted) context.pop();
-                                } else {
-                                  unawaited(
-                                    FailureWidget.build(
-                                      title: 'Oops',
-                                      message: 'Something went wrong',
-                                      context: context,
-                                    ),
-                                  );
-                                }
-                              }
-                            } else {
-                              isLoading.value = false;
-                              unawaited(
-                                FailureWidget.build(
-                                  title: 'Oops',
-                                  message: 'Something went wrong',
-                                  context: context,
-                                ),
-                              );
-                            }
+
+                                /// If theres a file or an image we upload it
+                                // if (selectedFiles.isNotEmpty || selectedImage.isNotEmpty) {
+                                //   File newFile;
+                                //   if (selectedFiles.isNotEmpty) {
+                                //     newFile = selectedFile!;
+                                //   } else {
+                                //     newFile = File(selectedImage!.path);
+                                //   }
+                                //   isLoading.value = true;
+
+                                //   /// First upload the file
+                                //   final res = await ref.read(calendarControllerProvider.notifier).uploadFile(file: newFile);
+
+                                //   if (!res.ok && mounted) {
+                                //     isLoading.value = false;
+                                //     unawaited(
+                                //       FailureWidget.build(
+                                //         title: 'Oops',
+                                //         message: 'Something went wrong while trying to upload the file',
+                                //         context: context,
+                                //       ),
+                                //     );
+                                //     return;
+                                //   } else {
+                                //     fileId = res.message;
+                                //   }
+                                // }
+                              },
+                            );
                           },
                         ),
                       ),
                     ],
                   ),
-                )
-              else
-                TAContainer(
-                  margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(
-                            Iconsax.note_215,
-                            size: 20,
-                            color: TAColors.purple,
-                          ),
-                          const SizedBox(width: 10),
-                          TATypography.h3(text: 'My files'),
-                        ],
-                      ),
-                      filesList.when(
-                        data: (data) {
-                          if (data.isEmpty) {
-                            return TATypography.paragraph(
-                              text: 'Add new files',
-                              color: TAColors.color2,
-                            );
-                          } else {
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              padding: const EdgeInsets.only(top: 30),
-                              itemCount: data.length,
-                              itemBuilder: (context, index) {
-                                final file = data[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute<void>(
-                                        builder: (context) => ViewFileScreen(
-                                          url: file.fileKey,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  behavior: HitTestBehavior.translucent,
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Iconsax.document_upload,
-                                            size: 20,
-                                            color: TAColors.purple,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: TATypography.paragraph(
-                                              text: file.description ?? file.fileName,
-                                              color: TAColors.color2,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const Divider(),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          }
-                        },
-                        error: (_, __) => const SizedBox(),
-                        loading: () => const Center(child: CircularProgressIndicator()),
-                      ),
-                    ],
-                  ),
-                ),
-              const SizedBox(height: 20),
-            ],
-          ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(left: 20, right: 20),
+                  //   child: TAPrimaryButton(
+                  //     text: 'SAVE',
+                  //     height: 50,
+                  //     isLoading: isLoading.value,
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     onTap: () async {
+                  //       if (selectedFile == null && selectedImage == null) {
+                  //         unawaited(
+                  //           FailureWidget.build(
+                  //             title: 'Oops',
+                  //             message: 'Please select a file',
+                  //             context: context,
+                  //           ),
+                  //         );
+                  //         return;
+                  //       }
+
+                  //       if (descriptionController.text.isEmpty) {
+                  //         unawaited(
+                  //           FailureWidget.build(
+                  //             title: 'Oops',
+                  //             message: 'Please enter a description',
+                  //             context: context,
+                  //           ),
+                  //         );
+                  //         return;
+                  //       }
+                  //       File newFile;
+                  //       if (selectedFile != null) {
+                  //         newFile = selectedFile!;
+                  //       } else {
+                  //         newFile = File(selectedImage!.path);
+                  //       }
+                  //       isLoading.value = true;
+
+                  //       /// First upload the file
+                  //       final res = await ref.read(travelsLegacyControllerProvider.notifier).uploadFile(file: newFile);
+
+                  //       if (res.ok && mounted) {
+                  //         if (widget.isInTravel) {
+                  //           final newGuests = <Guest>[];
+
+                  //           for (final guest in selectedGuests.value) {
+                  //             newGuests.add(Guest(userId: guest.id));
+                  //           }
+
+                  //           /// Ater uploading the file, patch the file and add the guests and description to it
+                  //           final patchRes = await ref.read(travelsLegacyControllerProvider.notifier).patchFile(
+                  //                 description: descriptionController.text.trim(),
+                  //                 fileId: ref.read(travelsLegacyControllerProvider).fileId,
+                  //                 guests: newGuests,
+                  //               );
+                  //           isLoading.value = false;
+                  //           if (patchRes.ok && mounted) {
+                  //             setState(() {
+                  //               selectedFile = null;
+                  //               selectedImage = null;
+                  //               descriptionController.clear();
+                  //               selectedGuests.value = [];
+                  //               ref.read(travelsLegacyControllerProvider.notifier).setFileId(fileId: '');
+                  //             });
+                  //             unawaited(
+                  //               SuccessWidget.build(
+                  //                 title: 'Success',
+                  //                 message: 'File uploaded successfully',
+                  //                 context: context,
+                  //               ),
+                  //             );
+                  //             if (context.mounted) {
+                  //               context.pop();
+                  //             }
+                  //           } else {
+                  //             unawaited(
+                  //               FailureWidget.build(
+                  //                 title: 'Oops',
+                  //                 message: 'Something went wrong',
+                  //                 context: context,
+                  //               ),
+                  //             );
+                  //           }
+                  //         } else {
+                  //           /// Ater uploading the file, patch the file and add the guests and description to it
+                  //           final patchRes = await ref.read(travelsLegacyControllerProvider.notifier).patchFile(
+                  //             description: descriptionController.text.trim(),
+                  //             fileId: ref.read(travelsLegacyControllerProvider).fileId,
+                  //             guests: [],
+                  //           );
+                  //           isLoading.value = false;
+                  //           if (patchRes.ok && context.mounted) {
+                  //             await SuccessWidget.build(
+                  //               title: 'Success',
+                  //               message: 'File uploaded successfully',
+                  //               context: context,
+                  //             );
+                  //             if (context.mounted) context.pop();
+                  //           } else {
+                  //             unawaited(
+                  //               FailureWidget.build(
+                  //                 title: 'Oops',
+                  //                 message: 'Something went wrong',
+                  //                 context: context,
+                  //               ),
+                  //             );
+                  //           }
+                  //         }
+                  //       } else {
+                  //         isLoading.value = false;
+                  //         unawaited(
+                  //           FailureWidget.build(
+                  //             title: 'Oops',
+                  //             message: 'Something went wrong',
+                  //             context: context,
+                  //           ),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
+                  // ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );
@@ -495,7 +427,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
     if (result != null) {
       final file = File(result.files.single.path!);
       setState(() {
-        selectedFile = file;
+        selectedFiles.add(file);
       });
     } else {
       // User canceled the picker
@@ -508,7 +440,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
 
     if (image != null) {
       setState(() {
-        selectedImage = image;
+        selectedImage.add(image);
       });
     } else {
       // User canceled the picker

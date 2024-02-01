@@ -11,9 +11,8 @@ import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/failure.dart';
 import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/success.dart';
-import 'package:team_aid/features/travels/entities/hotel.model.dart';
-import 'package:team_aid/features/travels/entities/itinerary.model.dart';
-import 'package:team_aid/features/travels/entities/user_files.model.dart';
+import 'package:team_aid/features/travels/entities/travel.model.dart';
+import 'package:team_aid/features/travels/entities/travel_api.model.dart';
 import 'package:team_aid/main.dart';
 
 /// The provider of TravelsRepository
@@ -25,24 +24,8 @@ final travelsProvider = Provider<TravelsRepository>((ref) {
 
 /// This class is responsible of the abstraction
 abstract class TravelsRepository {
-  /// Get files
-  Future<Either<Failure, List<UserFiles>>> getFiles();
-
-  /// Add itinerary
-  Future<Either<Failure, Success>> addItinerary({
-    required ItineraryModel itinerary,
-  });
-
-  /// Add hotel
-  Future<Either<Failure, Success>> addHotel({
-    required HotelModel hotel,
-  });
-
-  /// Get the itineraries
-  Future<Either<Failure, List<ItineraryModel>>> getItinerary();
-
-  /// Get the hotels
-  Future<Either<Failure, List<HotelModel>>> getHotels();
+  /// Get the travels
+  Future<Either<Failure, List<TravelAPIModel>>> getTravels();
 
   /// Upload a file
   Future<Either<Failure, Success>> uploadFile({required File file});
@@ -53,6 +36,9 @@ abstract class TravelsRepository {
     required String description,
     required List<Guest> guests,
   });
+
+  /// Create travel
+  Future<Either<Failure, Success>> createTravel({required TravelModel travel});
 }
 
 /// This class is responsible for implementing the TravelsRepository
@@ -65,189 +51,6 @@ class TravelsRepositoryImpl implements TravelsRepository {
 
   /// The secure storage
   final FlutterSecureStorage secureStorage;
-
-  /// Get data from backend
-  @override
-  Future<Either<Failure, List<UserFiles>>> getFiles() async {
-    try {
-      final token = await secureStorage.read(key: TAConstants.accessToken);
-      final url = Uri.parse(
-        '${dotenv.env['API_URL']}/file',
-      );
-
-      final res = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
-      );
-
-      if (res.statusCode != 200 && res.statusCode != 201) {
-        return Left(
-          Failure(
-            message: 'There was an error while fetching the files',
-          ),
-        );
-      }
-
-      final files = <UserFiles>[];
-
-      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
-
-      for (final file in data) {
-        final fileModel = UserFiles.fromMap(file as Map<String, dynamic>);
-        files.add(fileModel);
-      }
-
-      return Right(files);
-    } catch (e) {
-      return Left(
-        Failure(
-          message: 'There was an error with TravelsRepositoyImpl',
-        ),
-      );
-    }
-  }
-
-  @override
-  Future<Either<Failure, Success>> addHotel({
-    required HotelModel hotel,
-  }) async {
-    try {
-      final token = await secureStorage.read(key: TAConstants.accessToken);
-      final url = Uri.parse(
-        '${dotenv.env['API_URL']}/hotel',
-      );
-      final res = await http.post(
-        url,
-        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
-        body: jsonEncode(hotel.toMap()),
-      );
-      if (res.statusCode != 200 && res.statusCode != 201) {
-        return Left(
-          Failure(
-            message: 'There was an error while fetching the data',
-          ),
-        );
-      }
-      return Right(Success(ok: true, message: 'Event created'));
-    } catch (e) {
-      return Left(
-        Failure(
-          message: 'There was an error with CalendarRepositoyImpl',
-        ),
-      );
-    }
-  }
-
-  @override
-  Future<Either<Failure, Success>> addItinerary({
-    required ItineraryModel itinerary,
-  }) async {
-    try {
-      final token = await secureStorage.read(key: TAConstants.accessToken);
-      final url = Uri.parse(
-        '${dotenv.env['API_URL']}/itinerary',
-      );
-      final res = await http.post(
-        url,
-        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
-        body: jsonEncode(itinerary.toMap()),
-      );
-      if (res.statusCode != 200 && res.statusCode != 201) {
-        return Left(
-          Failure(
-            message: 'There was an error while fetching the data',
-          ),
-        );
-      }
-      return Right(Success(ok: true, message: 'Event created'));
-    } catch (e) {
-      return Left(
-        Failure(
-          message: 'There was an error with CalendarRepositoyImpl',
-        ),
-      );
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<ItineraryModel>>> getItinerary() async {
-    try {
-      final token = await secureStorage.read(key: TAConstants.accessToken);
-      final url = Uri.parse(
-        '${dotenv.env['API_URL']}/itinerary',
-      );
-      final res = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
-      );
-      final itineraries = <ItineraryModel>[];
-      if (res.statusCode != 200 && res.statusCode != 201) {
-        return Left(
-          Failure(
-            message: 'There was an error while fetching the data',
-          ),
-        );
-      }
-
-      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
-
-      for (final itinerary in data) {
-        final itineraryModel = ItineraryModel.fromMap(
-          (itinerary as Map<String, dynamic>)['itineraryId'] as Map<String, dynamic>,
-          itinerary['guest'] as List<dynamic>,
-        );
-        itineraries.add(itineraryModel);
-      }
-
-      return Right(itineraries);
-    } catch (e) {
-      return Left(
-        Failure(
-          message: 'There was an error with CalendarRepositoyImpl',
-        ),
-      );
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<HotelModel>>> getHotels() async {
-    try {
-      final token = await secureStorage.read(key: TAConstants.accessToken);
-      final url = Uri.parse(
-        '${dotenv.env['API_URL']}/hotel',
-      );
-      final res = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
-      );
-      final hotels = <HotelModel>[];
-      if (res.statusCode != 200 && res.statusCode != 201) {
-        return Left(
-          Failure(
-            message: 'There was an error while fetching the data',
-          ),
-        );
-      }
-
-      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
-
-      for (final hotel in data) {
-        final itineraryModel = HotelModel.fromMap(
-          (hotel as Map<String, dynamic>)['hotelId'] as Map<String, dynamic>,
-          hotel['guest'] as List<dynamic>,
-        );
-        hotels.add(itineraryModel);
-      }
-
-      return Right(hotels);
-    } catch (e) {
-      return Left(
-        Failure(
-          message: 'There was an error with CalendarRepositoyImpl',
-        ),
-      );
-    }
-  }
 
   @override
   Future<Either<Failure, Success>> uploadFile({
@@ -295,9 +98,8 @@ class TravelsRepositoryImpl implements TravelsRepository {
 
       final response = await multi_http.Response.fromStream(res);
 
-      final data = (jsonDecode(response.body) as Map<String, dynamic>)['data'];
+      final data = (jsonDecode(response.body) as Map<String, dynamic>)['data'] as Map<String, dynamic>;
 
-      // ignore: avoid_dynamic_calls
       return Right(Success(ok: true, message: data['id'] as String));
     } catch (e) {
       return Left(
@@ -335,7 +137,73 @@ class TravelsRepositoryImpl implements TravelsRepository {
           ),
         );
       }
-      return Right(Success(ok: true, message: 'File uploaded'));
+
+      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as Map<String, dynamic>;
+      return Right(Success(ok: true, message: data['fileKey'] as String));
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was an error with CalendarRepositoryImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> createTravel({
+    required TravelModel travel,
+  }) async {
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/itinerary',
+      );
+      final res = await http.post(
+        url,
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+        body: jsonEncode(travel.toMap()),
+      );
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error while creating the travel',
+          ),
+        );
+      }
+
+      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as Map<String, dynamic>;
+      return Right(Success(ok: true, message: data['id'] as String));
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was an error with CalendarRepositoryImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TravelAPIModel>>> getTravels() async {
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/itinerary',
+      );
+      final res = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+      );
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error while getting the travels',
+          ),
+        );
+      }
+
+      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List<dynamic>;
+      final travels = data.map((e) => TravelAPIModel.fromMap(e as Map<String, dynamic>)).toList();
+      return Right(travels);
     } catch (e) {
       return Left(
         Failure(

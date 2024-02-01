@@ -17,6 +17,10 @@ class ScheduleModel {
   /// The [guest] parameter is required and represents the list of guests for the event.
   ///
   /// The [periodicity] parameter is required and represents the periodicity of the event.
+  ///
+  /// The [locationDescription] parameter is required and represents the description of the location.
+  ///
+  /// The [fileId] parameter is optional and represents the fileId for the event.
   const ScheduleModel({
     required this.eventName,
     required this.startDate,
@@ -26,6 +30,7 @@ class ScheduleModel {
     required this.guest,
     required this.periodicity,
     required this.locationDescription,
+    this.fileId,
   });
 
   /// Converts this [ScheduleModel] instance to a map.
@@ -41,6 +46,7 @@ class ScheduleModel {
       'guest': guest.map((x) => x.toMap()).toList(),
       'periodicity': periodicity,
       'locationDescription': locationDescription,
+      'fileId': fileId,
     };
   }
 
@@ -67,4 +73,7 @@ class ScheduleModel {
 
   /// The periodicity of the event.
   final String periodicity;
+
+  /// A list of files for the event.
+  final String? fileId;
 }

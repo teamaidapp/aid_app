@@ -2,8 +2,8 @@ import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/user_creator.model.dart';
 
 /// A class representing an itinerary for an event.
-class ItineraryModel {
-  /// Creates a new instance of [ItineraryModel].
+class ItineraryLegacyModel {
+  /// Creates a new instance of [ItineraryLegacyModel].
   ///
   /// The [name] parameter is required and represents the name of the itinerary.
   ///
@@ -18,7 +18,7 @@ class ItineraryModel {
   /// The [guests] parameter is required and represents the list of guests for the itinerary.
   ///
   /// The [userCreator] parameter is required and represents the user creator of the itinerary.
-  const ItineraryModel({
+  const ItineraryLegacyModel({
     required this.name,
     required this.transportation,
     required this.startDate,
@@ -30,11 +30,11 @@ class ItineraryModel {
     this.fileId,
   });
 
-  /// Creates a new instance of [ItineraryModel] from a map.
+  /// Creates a new instance of [ItineraryLegacyModel] from a map.
   ///
-  /// The [map] parameter is required and represents the map to convert to an [ItineraryModel] instance.
-  factory ItineraryModel.fromMap(Map<String, dynamic> map, List<dynamic> guest) {
-    return ItineraryModel(
+  /// The [map] parameter is required and represents the map to convert to an [ItineraryLegacyModel] instance.
+  factory ItineraryLegacyModel.fromMap(Map<String, dynamic> map, List<dynamic> guest) {
+    return ItineraryLegacyModel(
       name: map['name'] as String,
       transportation: map['transportation'] as String,
       startDate: map['startDate'] as String,
@@ -74,12 +74,12 @@ class ItineraryModel {
   /// The user creator of the itinerary.
   final UserCreator? userCreator;
 
-  /// Creates a copy of this [ItineraryModel] instance with the specified properties replaced.
+  /// Creates a copy of this [ItineraryLegacyModel] instance with the specified properties replaced.
   ///
   /// The [name], [transportation], [startDate], [endDate], [location], and [guests] parameters are optional and represent the properties to replace.
   ///
-  /// Returns a new [ItineraryModel] instance with the specified properties replaced.
-  ItineraryModel copyWith({
+  /// Returns a new [ItineraryLegacyModel] instance with the specified properties replaced.
+  ItineraryLegacyModel copyWith({
     String? name,
     String? transportation,
     String? locationDescription,
@@ -90,7 +90,7 @@ class ItineraryModel {
     UserCreator? userCreator,
     String? fileId,
   }) {
-    return ItineraryModel(
+    return ItineraryLegacyModel(
       name: name ?? this.name,
       transportation: transportation ?? this.transportation,
       startDate: startDate ?? this.startDate,
@@ -103,9 +103,9 @@ class ItineraryModel {
     );
   }
 
-  /// Converts this [ItineraryModel] instance to a map.
+  /// Converts this [ItineraryLegacyModel] instance to a map.
   ///
-  /// Returns a map representation of this [ItineraryModel] instance.
+  /// Returns a map representation of this [ItineraryLegacyModel] instance.
   Map<String, dynamic> toMap() {
     final guests = this.guests.map((x) => x.toMap()).toList();
 

@@ -51,9 +51,9 @@ class LoginScreen extends HookWidget {
                   ),
                   const SizedBox(height: 50),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: Device.screenType == ScreenType.desktop ? 120 : 20),
                     child: TAPrimaryButton(
-                      height: 60,
+                      height: Device.screenType == ScreenType.desktop ? 90 : 60,
                       text: 'GET STARTED',
                       icon: Iconsax.arrow_right_2,
                       onTap: () {

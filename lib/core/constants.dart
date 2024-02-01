@@ -114,8 +114,8 @@ class TAConstants {
   /// A list of the transportations
   static final transportsList = <TADropdownModel>[
     TADropdownModel(
-      item: 'Airport',
-      id: 'Airport',
+      item: 'Airplane',
+      id: 'Airplane',
     ),
     TADropdownModel(
       item: 'Bus',

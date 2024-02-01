@@ -1,4 +1,3 @@
-// ignore_for_file: one_member_abstracts
 import 'dart:convert';
 import 'dart:io';
 
@@ -12,43 +11,38 @@ import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/failure.dart';
 import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/entities/success.dart';
-import 'package:team_aid/features/calendar/entities/calender_invitation.model.dart';
-import 'package:team_aid/features/calendar/entities/event.model.dart';
-import 'package:team_aid/features/calendar/entities/event_shared.model.dart';
-import 'package:team_aid/features/calendar/entities/schedule.model.dart';
+import 'package:team_aid/features/travels-legacy/entities/hotel.model.dart';
+import 'package:team_aid/features/travels-legacy/entities/itinerary.model.dart';
+import 'package:team_aid/features/travels-legacy/entities/user_files.model.dart';
 import 'package:team_aid/main.dart';
 
-/// The provider of CalendarRepository
-final calendarProvider = Provider<CalendarRepository>((ref) {
+/// The provider of TravelsRepository
+final travelsProvider = Provider<TravelsRepository>((ref) {
   final http = ref.watch(httpProvider);
   const secureStorage = FlutterSecureStorage();
-  return CalendarRepositoryImpl(http, secureStorage);
+  return TravelsRepositoryImpl(http, secureStorage);
 });
 
 /// This class is responsible of the abstraction
-abstract class CalendarRepository {
-  /// Get data
-  Future<Either<Failure, List<CalendarEvent>>> getCalendarData();
+abstract class TravelsRepository {
+  /// Get files
+  Future<Either<Failure, List<UserFiles>>> getFiles();
 
-  /// Get shared calendars
-  Future<Either<Failure, List<EventShared>>> getSharedCalendars();
-
-  /// Add schedule
-  Future<Either<Failure, Success>> addSchedule(
-    ScheduleModel schedule,
-  );
-
-  /// Get calendar invitations
-  Future<Either<Failure, List<CalendarInvitationModel>>> getCalendarInvitations();
-
-  /// Change status of invitation
-  Future<Either<Failure, Success>> changeStatusInvitation({
-    required String id,
-    required String status,
+  /// Add itinerary
+  Future<Either<Failure, Success>> addItinerary({
+    required ItineraryLegacyModel itinerary,
   });
 
-  /// Share calendar
-  Future<Either<Failure, Success>> shareCalendar({required String email});
+  /// Add hotel
+  Future<Either<Failure, Success>> addHotel({
+    required HotelModel hotel,
+  });
+
+  /// Get the itineraries
+  Future<Either<Failure, List<ItineraryLegacyModel>>> getItinerary();
+
+  /// Get the hotels
+  Future<Either<Failure, List<HotelModel>>> getHotels();
 
   /// Upload a file
   Future<Either<Failure, Success>> uploadFile({required File file});
@@ -61,10 +55,10 @@ abstract class CalendarRepository {
   });
 }
 
-/// This class is responsible for implementing the CalendarRepository
-class CalendarRepositoryImpl implements CalendarRepository {
+/// This class is responsible for implementing the TravelsRepository
+class TravelsRepositoryImpl implements TravelsRepository {
   /// Constructor
-  CalendarRepositoryImpl(this.http, this.secureStorage);
+  TravelsRepositoryImpl(this.http, this.secureStorage);
 
   /// The http client
   final Client http;
@@ -74,98 +68,58 @@ class CalendarRepositoryImpl implements CalendarRepository {
 
   /// Get data from backend
   @override
-  Future<Either<Failure, List<CalendarEvent>>> getCalendarData() async {
-    final list = <CalendarEvent>[];
+  Future<Either<Failure, List<UserFiles>>> getFiles() async {
     try {
       final token = await secureStorage.read(key: TAConstants.accessToken);
       final url = Uri.parse(
-        '${dotenv.env['API_URL']}/calendar/get-events',
+        '${dotenv.env['API_URL']}/file',
       );
+
       final res = await http.get(
         url,
-        headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
       );
+
       if (res.statusCode != 200 && res.statusCode != 201) {
         return Left(
           Failure(
-            message: 'There was an error while fetching the data',
+            message: 'There was an error while fetching the files',
           ),
         );
       }
-      ((jsonDecode(res.body) as Map)['data'] as Map).forEach((key, value) {
-        for (final element in value as List) {
-          final event = CalendarEvent.fromMap(
-            map: element as Map<String, dynamic>,
-            key: key.toString(),
-          );
-          list.add(event);
-        }
-      });
-      return Right(list);
+
+      final files = <UserFiles>[];
+
+      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
+
+      for (final file in data) {
+        final fileModel = UserFiles.fromMap(file as Map<String, dynamic>);
+        files.add(fileModel);
+      }
+
+      return Right(files);
     } catch (e) {
-      return const Right([]);
+      return Left(
+        Failure(
+          message: 'There was an error with TravelsRepositoyImpl',
+        ),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, List<EventShared>>> getSharedCalendars() async {
-    final list = <EventShared>[];
+  Future<Either<Failure, Success>> addHotel({
+    required HotelModel hotel,
+  }) async {
     try {
       final token = await secureStorage.read(key: TAConstants.accessToken);
       final url = Uri.parse(
-        '${dotenv.env['API_URL']}/calendar/share-calendar',
-      );
-      final res = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-      );
-      if (res.statusCode != 200 && res.statusCode != 201) {
-        return Left(
-          Failure(
-            message: 'There was an error while fetching the data',
-          ),
-        );
-      }
-      ((jsonDecode(res.body) as Map)['data'] as Map).forEach((key, value) {
-        for (final element in value as List) {
-          if (element['inviterUser'] != null) {
-            final event = CalendarEvent.fromMap(
-              map: element as Map<String, dynamic>,
-              key: key.toString(),
-            );
-            final sharedEvent = EventShared(
-              id: event.id,
-              isOwner: event.isOwner,
-              status: event.status,
-              event: event.event,
-              dateKey: event.dateKey,
-              inviteUser: InviteUserModel.fromMap(
-                element['inviterUser'] as Map<String, dynamic>,
-              ),
-            );
-            list.add(sharedEvent);
-          }
-        }
-      });
-      return Right(list);
-    } catch (e) {
-      return const Right([]);
-    }
-  }
-
-  @override
-  Future<Either<Failure, Success>> addSchedule(
-    ScheduleModel schedule,
-  ) async {
-    try {
-      final token = await secureStorage.read(key: TAConstants.accessToken);
-      final url = Uri.parse(
-        '${dotenv.env['API_URL']}/calendar/create-event',
+        '${dotenv.env['API_URL']}/hotel',
       );
       final res = await http.post(
         url,
         headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
-        body: jsonEncode(schedule.toMap()),
+        body: jsonEncode(hotel.toMap()),
       );
       if (res.statusCode != 200 && res.statusCode != 201) {
         return Left(
@@ -184,57 +138,19 @@ class CalendarRepositoryImpl implements CalendarRepository {
     }
   }
 
-  /// Get data from backend
   @override
-  Future<Either<Failure, List<CalendarInvitationModel>>> getCalendarInvitations() async {
-    final list = <CalendarInvitationModel>[];
-    try {
-      final token = await secureStorage.read(key: TAConstants.accessToken);
-      final url = Uri.parse(
-        '${dotenv.env['API_URL']}/calendar/share-calendar-pending',
-      );
-      final res = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-      );
-      if (res.statusCode != 200 && res.statusCode != 201) {
-        return Left(
-          Failure(
-            message: 'There was an error while fetching the data',
-          ),
-        );
-      }
-      final tmpList = (jsonDecode(res.body) as Map)['data'] as List;
-      for (final element in tmpList) {
-        final event = CalendarInvitationModel.fromMap(
-          element as Map<String, dynamic>,
-        );
-        list.add(event);
-      }
-      return Right(list);
-    } catch (e) {
-      return const Right([]);
-    }
-  }
-
-  @override
-  Future<Either<Failure, Success>> changeStatusInvitation({
-    required String id,
-    required String status,
+  Future<Either<Failure, Success>> addItinerary({
+    required ItineraryLegacyModel itinerary,
   }) async {
     try {
       final token = await secureStorage.read(key: TAConstants.accessToken);
       final url = Uri.parse(
-        '${dotenv.env['API_URL']}/calendar/share-calendar/$id',
+        '${dotenv.env['API_URL']}/itinerary',
       );
-      final res = await http.patch(
+      final res = await http.post(
         url,
         headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
-        body: jsonEncode(
-          {
-            'status': status,
-          },
-        ),
+        body: jsonEncode(itinerary.toMap()),
       );
       if (res.statusCode != 200 && res.statusCode != 201) {
         return Left(
@@ -243,7 +159,7 @@ class CalendarRepositoryImpl implements CalendarRepository {
           ),
         );
       }
-      return Right(Success(ok: true, message: 'Event status changed'));
+      return Right(Success(ok: true, message: 'Event created'));
     } catch (e) {
       return Left(
         Failure(
@@ -254,31 +170,76 @@ class CalendarRepositoryImpl implements CalendarRepository {
   }
 
   @override
-  Future<Either<Failure, Success>> shareCalendar({
-    required String email,
-  }) async {
+  Future<Either<Failure, List<ItineraryLegacyModel>>> getItinerary() async {
     try {
       final token = await secureStorage.read(key: TAConstants.accessToken);
       final url = Uri.parse(
-        '${dotenv.env['API_URL']}/calendar/share-calendar',
+        '${dotenv.env['API_URL']}/itinerary',
       );
-      final res = await http.post(
+      final res = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
-        body: jsonEncode(
-          {
-            'id': email,
-          },
-        ),
       );
+      final itineraries = <ItineraryLegacyModel>[];
       if (res.statusCode != 200 && res.statusCode != 201) {
         return Left(
           Failure(
-            message: 'There was an error while sharing the calendar',
+            message: 'There was an error while fetching the data',
           ),
         );
       }
-      return Right(Success(ok: true, message: 'Event status changed'));
+
+      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
+
+      for (final itinerary in data) {
+        final itineraryModel = ItineraryLegacyModel.fromMap(
+          (itinerary as Map<String, dynamic>)['itineraryId'] as Map<String, dynamic>,
+          itinerary['guest'] as List<dynamic>,
+        );
+        itineraries.add(itineraryModel);
+      }
+
+      return Right(itineraries);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was an error with CalendarRepositoyImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<HotelModel>>> getHotels() async {
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/hotel',
+      );
+      final res = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+      );
+      final hotels = <HotelModel>[];
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error while fetching the data',
+          ),
+        );
+      }
+
+      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as List;
+
+      for (final hotel in data) {
+        final itineraryModel = HotelModel.fromMap(
+          (hotel as Map<String, dynamic>)['hotelId'] as Map<String, dynamic>,
+          hotel['guest'] as List<dynamic>,
+        );
+        hotels.add(itineraryModel);
+      }
+
+      return Right(hotels);
     } catch (e) {
       return Left(
         Failure(
@@ -334,8 +295,9 @@ class CalendarRepositoryImpl implements CalendarRepository {
 
       final response = await multi_http.Response.fromStream(res);
 
-      final data = (jsonDecode(response.body) as Map<String, dynamic>)['data'] as Map<String, dynamic>;
+      final data = (jsonDecode(response.body) as Map<String, dynamic>)['data'];
 
+      // ignore: avoid_dynamic_calls
       return Right(Success(ok: true, message: data['id'] as String));
     } catch (e) {
       return Left(
@@ -373,9 +335,7 @@ class CalendarRepositoryImpl implements CalendarRepository {
           ),
         );
       }
-
-      final data = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as Map<String, dynamic>;
-      return Right(Success(ok: true, message: data['fileKey'] as String));
+      return Right(Success(ok: true, message: 'File uploaded'));
     } catch (e) {
       return Left(
         Failure(

@@ -28,7 +28,8 @@ import 'package:team_aid/features/myAccount/screens/phone.screen.dart';
 import 'package:team_aid/features/teams/screens/contacts-list.screen.dart';
 import 'package:team_aid/features/teams/screens/join_team.screen.dart';
 import 'package:team_aid/features/teams/teams.screen.dart';
-import 'package:team_aid/features/travels/screens/files.screen.dart';
+import 'package:team_aid/features/travels-legacy/screens/files-legacy.screen.dart';
+import 'package:team_aid/features/travels-legacy/travels-legacy.screen.dart';
 import 'package:team_aid/features/travels/travels.screen.dart';
 
 /// This class defines the routes for a GoRouter in a Flutter app, including
@@ -223,7 +224,7 @@ final routerProvider = Provider((ref) {
       GoRoute(
         path: AppRoutes.files,
         name: AppRoutes.files,
-        builder: (context, state) => FilesScreen(
+        builder: (context, state) => FilesLegacyScreen(
           isInTravel: state.queryParameters['isInTravel'] == ' true',
         ),
       ),

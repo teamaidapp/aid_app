@@ -3,26 +3,22 @@ import 'dart:io';
 
 import 'package:expandable/expandable.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:team_aid/core/entities/dropdown.model.dart';
-import 'package:team_aid/core/entities/guest.model.dart';
 import 'package:team_aid/core/functions.dart';
-import 'package:team_aid/design_system/components/inputs/multi_dropdown.dart';
-import 'package:team_aid/design_system/components/inputs/time_picker.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/entities/hour.model.dart';
 import 'package:team_aid/features/common/functions/global_functions.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/location.widget.dart';
-import 'package:team_aid/features/home/controllers/home.controller.dart';
+import 'package:team_aid/features/travels-legacy/entities/hotel.model.dart';
 import 'package:team_aid/features/travels/controllers/travels.controller.dart';
-import 'package:team_aid/features/travels/entities/hotel.model.dart';
 
 /// The statelessWidget that handles the current screen
 class HotelTravelScreen extends StatefulHookConsumerWidget {
@@ -42,11 +38,19 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
   final fromHours = <HourModel>[];
   final tohours = <HourModel>[];
   final days = <DateTime>[];
+  final departureDays = <DateTime>[];
   final months = <String>[];
   final years = <String>[];
-  final currentDay = DateTime.now().day;
+
+  /// Arrival variables
+  var currentDay = DateTime.now().day;
   var _currentSelectedMonth = DateTime.now().month;
   var _currentSelectedYear = DateTime.now().year;
+
+  /// Departure variables
+  var departureDay = DateTime.now().day;
+  var _currentDepartureSelectedMonth = DateTime.now().month;
+  var _currentDepartureSelectedYear = DateTime.now().year;
 
   DateTime? _fromDate;
   DateTime? _toDate;
@@ -57,9 +61,17 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
 
   @override
   void initState() {
+    _fromDate = DateTime(_currentSelectedYear, _currentSelectedMonth, currentDay);
+    _toDate = DateTime(_currentSelectedYear, _currentSelectedMonth, currentDay);
     fromHours.addAll(GlobalFunctions.generateHourModels(8));
     tohours.addAll(GlobalFunctions.generateHourModels(8));
     days.addAll(
+      GlobalFunctions.getDaysInMonth(
+        year: _currentSelectedYear,
+        month: _currentSelectedMonth,
+      ),
+    );
+    departureDays.addAll(
       GlobalFunctions.getDaysInMonth(
         year: _currentSelectedYear,
         month: _currentSelectedMonth,
@@ -76,582 +88,421 @@ class _HotelTravelScreenState extends ConsumerState<HotelTravelScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final teamId = useState('');
-    final placeDescription = useState('');
     final isLoading = useState(false);
-    final showHotels = useState(false);
     final name = useTextEditingController();
-    final description = useTextEditingController();
+    final googleDescription = useTextEditingController();
+    // final description = useTextEditingController();
     final reservationController = useTextEditingController();
-    final teams = ref.watch(homeControllerProvider).userTeams;
-    final guests = ref.watch(travelsControllerProvider).contactList;
-    final selectedGuests = useState(<TADropdownModel>[]);
-    final hotels = ref.watch(travelsControllerProvider).hotelList;
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 120,
-              child: GestureDetector(
-                key: const Key('add_hotel'),
-                onTap: () {
-                  showHotels.value = false;
-                },
-                child: Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: !showHotels.value ? TAColors.purple : Colors.white,
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Center(
-                    child: TATypography.paragraph(
-                      text: 'Add hotel',
-                      key: const Key('add_hotel_title'),
-                      color: !showHotels.value ? Colors.white : const Color(0x0D253C4D).withOpacity(0.3),
-                      fontWeight: FontWeight.w700,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          // TAContainer(
+          //   padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
+          //   margin: const EdgeInsets.only(top: 20),
+          //   child: teams.when(
+          //     data: (data) {
+          //       return TADropdown(
+          //         label: 'Team',
+          //         placeholder: 'Select a team',
+          //         items: List.generate(
+          //           data.length,
+          //           (index) => TADropdownModel(
+          //             item: data[index].teamName,
+          //             id: data[index].id,
+          //           ),
+          //         ),
+          //         onChange: (selectedValue) {
+          //           if (selectedValue != null) {
+          //             teamId.value = selectedValue.id;
+          //             ref.read(travelsLegacyControllerProvider.notifier).getContactList(teamId: teamId.value);
+          //           }
+          //         },
+          //       );
+          //     },
+          //     error: (e, s) => const SizedBox(),
+          //     loading: () => const SizedBox(),
+          //   ),
+          // ),
+          const SizedBox(height: 10),
+          TAContainer(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Iconsax.note_215,
+                      size: 20,
+                      color: TAColors.purple,
                     ),
+                    const SizedBox(width: 10),
+                    TATypography.h3(text: 'Add a hotel'),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                LocationWidget(
+                  title: 'Hotel address',
+                  onChanged: (v) {
+                    if (v != null) {
+                      name.text = v.item;
+                      googleDescription.text = v.id;
+                    }
+                  },
+                ),
+                // const SizedBox(height: 10),
+                // TAPrimaryInput(
+                //   label: 'Description',
+                //   textEditingController: description,
+                //   placeholder: '',
+                // ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TATypography.paragraph(
+                    text: 'Arrival date',
+                    fontWeight: FontWeight.w600,
+                    color: TAColors.color1,
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            SizedBox(
-              width: 170,
-              child: GestureDetector(
-                key: const Key('show_hotels'),
-                onTap: () {
-                  showHotels.value = true;
-                },
-                child: Container(
-                  height: 50,
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  decoration: BoxDecoration(
-                    color: showHotels.value ? TAColors.purple : Colors.white,
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(20),
-                    ),
-                  ),
-                  child: Center(
-                    child: TATypography.paragraph(
-                      text: 'View hotels',
-                      color: showHotels.value ? Colors.white : const Color(0x0D253C4D).withOpacity(0.3),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        if (showHotels.value)
-          Expanded(
-            child: hotels.when(
-              data: (data) {
-                if (data.isEmpty) {
-                  return Center(
-                    child: TATypography.paragraph(
-                      text: 'No hotels added yet',
-                      color: const Color(0x0D253C4D).withOpacity(0.3),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  );
-                } else {
-                  return ListView.builder(
-                    itemCount: data.length,
-                    padding: const EdgeInsets.all(20),
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          _HotelWidget(
-                            hotel: data[index],
-                          ),
-                          const SizedBox(height: 10),
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              error: (error, stackTrace) {
-                return const SizedBox();
-              },
-              loading: () {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: TAColors.purple,
-                  ),
-                );
-              },
-            ),
-          )
-        else
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  TAContainer(
-                    padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
-                    margin: const EdgeInsets.only(top: 20),
-                    child: teams.when(
-                      data: (data) {
-                        return TADropdown(
-                          label: 'Team',
-                          placeholder: 'Select a team',
-                          items: List.generate(
-                            data.length,
-                            (index) => TADropdownModel(
-                              item: data[index].teamName,
-                              id: data[index].id,
-                            ),
-                          ),
-                          onChange: (selectedValue) {
-                            if (selectedValue != null) {
-                              teamId.value = selectedValue.id;
-                              ref.read(travelsControllerProvider.notifier).getContactList(teamId: teamId.value);
-                            }
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TADropdown(
+                        label: 'Day',
+                        selectedValue: TADropdownModel(
+                          item: currentDay.toString(),
+                          id: currentDay.toString(),
+                        ),
+                        items: List.generate(
+                          days.length,
+                          (index) {
+                            final item = days[index];
+                            return TADropdownModel(
+                              item: item.day.toString(),
+                              id: item.day.toString(),
+                            );
                           },
-                        );
-                      },
-                      error: (e, s) => const SizedBox(),
-                      loading: () => const SizedBox(),
+                        ),
+                        placeholder: '',
+                        onChange: (v) {
+                          if (v != null) {
+                            currentDay = int.parse(v.id);
+                            _fromDate = DateTime(
+                              _currentSelectedYear,
+                              _currentSelectedMonth,
+                              currentDay,
+                            );
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  TAContainer(
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Iconsax.note_215,
-                              size: 20,
-                              color: TAColors.purple,
-                            ),
-                            const SizedBox(width: 10),
-                            TATypography.h3(text: 'Add a hotel'),
-                          ],
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: TADropdown(
+                        label: 'Month',
+                        selectedValue: TADropdownModel(
+                          item: _currentSelectedMonth.toString(),
+                          id: _currentSelectedMonth.toString(),
                         ),
-                        const SizedBox(height: 20),
-                        TAPrimaryInput(
-                          label: 'Name',
-                          textEditingController: name,
-                          placeholder: '',
+                        items: List.generate(
+                          months.length,
+                          (index) {
+                            final item = months[index];
+                            return TADropdownModel(
+                              item: item,
+                              id: item,
+                            );
+                          },
                         ),
-                        const SizedBox(height: 10),
-                        TAPrimaryInput(
-                          label: 'Description',
-                          textEditingController: description,
-                          placeholder: '',
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TADropdown(
-                                label: 'Day',
-                                selectedValue: TADropdownModel(
-                                  item: currentDay.toString(),
-                                  id: currentDay.toString(),
-                                ),
-                                items: List.generate(
-                                  days.length,
-                                  (index) {
-                                    final item = days[index];
-                                    return TADropdownModel(
-                                      item: item.day.toString(),
-                                      id: item.day.toString(),
-                                    );
-                                  },
-                                ),
-                                placeholder: '',
-                                onChange: (v) {
-                                  _fromDate = DateTime(
-                                    _currentSelectedYear,
-                                    _currentSelectedMonth,
-                                    currentDay,
-                                  );
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: TADropdown(
-                                label: 'Month',
-                                selectedValue: TADropdownModel(
-                                  item: _currentSelectedMonth.toString(),
-                                  id: _currentSelectedMonth.toString(),
-                                ),
-                                items: List.generate(
-                                  months.length,
-                                  (index) {
-                                    final item = months[index];
-                                    return TADropdownModel(
-                                      item: item,
-                                      id: item,
-                                    );
-                                  },
-                                ),
-                                placeholder: '',
-                                onChange: (v) {
-                                  if (v != null) {
-                                    setState(() {
-                                      _currentSelectedMonth = int.parse(v.id);
+                        placeholder: '',
+                        onChange: (v) {
+                          if (v != null) {
+                            setState(() {
+                              _currentSelectedMonth = int.parse(v.id);
 
-                                      _fromDate = DateTime(
-                                        _currentSelectedYear,
-                                        _currentSelectedMonth,
-                                        currentDay,
-                                      );
-
-                                      days
-                                        ..clear()
-                                        ..addAll(
-                                          GlobalFunctions.getDaysInMonth(
-                                            month: _currentSelectedMonth,
-                                            year: _currentSelectedYear,
-                                          ),
-                                        );
-                                    });
-                                  }
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: TADropdown(
-                                label: 'Year',
-                                selectedValue: TADropdownModel(
-                                  item: _currentSelectedYear.toString(),
-                                  id: _currentSelectedYear.toString(),
-                                ),
-                                items: List.generate(
-                                  years.length,
-                                  (index) {
-                                    final item = years[index];
-                                    return TADropdownModel(
-                                      item: item,
-                                      id: item,
-                                    );
-                                  },
-                                ),
-                                placeholder: '',
-                                onChange: (v) {
-                                  if (v != null) {
-                                    setState(() {
-                                      _fromDate = DateTime(
-                                        _currentSelectedYear,
-                                        _currentSelectedMonth,
-                                        currentDay,
-                                      );
-                                      _currentSelectedYear = int.parse(v.id);
-                                    });
-                                  }
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TATimePicker(
-                                label: 'Start',
-                                pickedDate: _fromDate,
-                                cupertinoDatePickerMode: CupertinoDatePickerMode.date,
-                                onChanged: (date) {
-                                  setState(() {
-                                    _fromDate = date;
-                                  });
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: TATimePicker(
-                                label: 'End',
-                                pickedDate: _toDate,
-                                cupertinoDatePickerMode: CupertinoDatePickerMode.date,
-                                hourFrom: _toDate != null ? _fromDate!.hour + 1 : null,
-                                onChanged: (date) {
-                                  setState(() {
-                                    _toDate = date;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        TAPrimaryInput(
-                          placeholder: '',
-                          textEditingController: reservationController,
-                          label: 'Reservation Code',
-                        ),
-                        const SizedBox(height: 10),
-                        TAMultiDropdown(
-                          label: 'Guests',
-                          items: List.generate(
-                            guests.valueOrNull?.length ?? 0,
-                            (index) {
-                              final item = guests.valueOrNull?[index];
-                              return TADropdownModel(
-                                item: item != null ? '${item.user.firstName} ${item.user.lastName}' : '',
-                                id: item != null ? item.user.id : '',
+                              _fromDate = DateTime(
+                                _currentSelectedYear,
+                                _currentSelectedMonth,
+                                currentDay,
                               );
-                            },
-                          ),
-                          placeholder: '',
-                          onChange: (v) {
-                            selectedGuests.value = v;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        LocationWidget(
-                          onChanged: (v) {
-                            if (v != null) {
-                              placeDescription.value = v.id;
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  TAContainer(
-                    child: ExpandablePanel(
-                      controller: fileExpandableController,
-                      header: TATypography.h3(
-                        text: 'Add a file',
-                        color: TAColors.textColor,
-                      ),
-                      collapsed: const SizedBox(),
-                      expanded: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: TATypography.paragraph(
-                              text: 'Choose file from:',
-                              color: TAColors.color2,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: pickFile,
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Iconsax.document_upload,
-                                      size: 20,
-                                      color: TAColors.purple,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    TATypography.paragraph(
-                                      text: 'Files',
-                                      color: TAColors.purple,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              GestureDetector(
-                                onTap: pickImage,
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Iconsax.gallery_export,
-                                      size: 20,
-                                      color: TAColors.purple,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    TATypography.paragraph(
-                                      text: 'Gallery',
-                                      color: TAColors.purple,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          const Divider(),
-                          const SizedBox(height: 20),
-                          if (selectedFile != null || selectedImage != null)
-                            Row(
-                              children: [
-                                const Icon(
-                                  Iconsax.document_upload,
-                                  size: 20,
-                                  color: TAColors.purple,
-                                ),
-                                const SizedBox(width: 10),
-                                if (selectedFile != null)
-                                  Expanded(
-                                    child: TATypography.paragraph(
-                                      text: selectedFile!.path.split('/').last,
-                                      color: TAColors.color2,
-                                    ),
+
+                              days
+                                ..clear()
+                                ..addAll(
+                                  GlobalFunctions.getDaysInMonth(
+                                    month: _currentSelectedMonth,
+                                    year: _currentSelectedYear,
                                   ),
-                                if (selectedImage != null)
-                                  Expanded(
-                                    child: TATypography.paragraph(
-                                      text: selectedImage!.path.split('/').last,
-                                      color: TAColors.color2,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                        ],
+                                );
+                            });
+                          }
+                        },
                       ),
                     ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: TADropdown(
+                        label: 'Year',
+                        selectedValue: TADropdownModel(
+                          item: _currentSelectedYear.toString(),
+                          id: _currentSelectedYear.toString(),
+                        ),
+                        items: List.generate(
+                          years.length,
+                          (index) {
+                            final item = years[index];
+                            return TADropdownModel(
+                              item: item,
+                              id: item,
+                            );
+                          },
+                        ),
+                        placeholder: '',
+                        onChange: (v) {
+                          if (v != null) {
+                            setState(() {
+                              _fromDate = DateTime(
+                                _currentSelectedYear,
+                                _currentSelectedMonth,
+                                currentDay,
+                              );
+                              _currentSelectedYear = int.parse(v.id);
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TATypography.paragraph(
+                    text: 'Departure date',
+                    fontWeight: FontWeight.w600,
+                    color: TAColors.color1,
                   ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TADropdown(
+                        label: 'Day',
+                        selectedValue: TADropdownModel(
+                          item: departureDay.toString(),
+                          id: departureDay.toString(),
+                        ),
+                        items: List.generate(
+                          departureDays.length,
+                          (index) {
+                            final item = days[index];
+                            return TADropdownModel(
+                              item: item.day.toString(),
+                              id: item.day.toString(),
+                            );
+                          },
+                        ),
+                        placeholder: '',
+                        onChange: (v) {
+                          if (v != null) {
+                            departureDay = int.parse(v.id);
+                            _toDate = DateTime(
+                              _currentDepartureSelectedYear,
+                              _currentDepartureSelectedMonth,
+                              departureDay,
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: TADropdown(
+                        label: 'Month',
+                        selectedValue: TADropdownModel(
+                          item: _currentDepartureSelectedMonth.toString(),
+                          id: _currentDepartureSelectedMonth.toString(),
+                        ),
+                        items: List.generate(
+                          months.length,
+                          (index) {
+                            final item = months[index];
+                            return TADropdownModel(
+                              item: item,
+                              id: item,
+                            );
+                          },
+                        ),
+                        placeholder: '',
+                        onChange: (v) {
+                          if (v != null) {
+                            setState(() {
+                              _currentDepartureSelectedMonth = int.parse(v.id);
+
+                              _toDate = DateTime(
+                                _currentDepartureSelectedYear,
+                                _currentDepartureSelectedMonth,
+                                departureDay,
+                              );
+
+                              departureDays
+                                ..clear()
+                                ..addAll(
+                                  GlobalFunctions.getDaysInMonth(
+                                    month: _currentDepartureSelectedMonth,
+                                    year: _currentDepartureSelectedYear,
+                                  ),
+                                );
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: TADropdown(
+                        label: 'Year',
+                        selectedValue: TADropdownModel(
+                          item: _currentDepartureSelectedYear.toString(),
+                          id: _currentDepartureSelectedYear.toString(),
+                        ),
+                        items: List.generate(
+                          years.length,
+                          (index) {
+                            final item = years[index];
+                            return TADropdownModel(
+                              item: item,
+                              id: item,
+                            );
+                          },
+                        ),
+                        placeholder: '',
+                        onChange: (v) {
+                          if (v != null) {
+                            setState(() {
+                              _toDate = DateTime(
+                                _currentDepartureSelectedYear,
+                                _currentDepartureSelectedMonth,
+                                departureDay,
+                              );
+                              _currentDepartureSelectedYear = int.parse(v.id);
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                TAPrimaryInput(
+                  placeholder: '',
+                  textEditingController: reservationController,
+                  label: 'Reservation Code',
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        context.pop();
+                      },
+                      child: SizedBox(
                         width: 100,
                         child: TATypography.paragraph(
                           text: 'Cancel',
                           underline: true,
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      SizedBox(
-                        width: 140,
-                        child: Consumer(
-                          builder: (context, ref, child) {
-                            return TAPrimaryButton(
-                              text: 'NEXT',
-                              isLoading: isLoading.value,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              onTap: () async {
-                                if (name.text.isEmpty) {
-                                  unawaited(
-                                    FailureWidget.build(
-                                      title: 'Something went wrong!',
-                                      message: 'Please enter event name to continue.',
-                                      context: context,
-                                    ),
-                                  );
-                                  return;
-                                }
-
-                                if (_fromDate == null) {
-                                  unawaited(
-                                    FailureWidget.build(
-                                      title: 'Something went wrong!',
-                                      message: 'Please select the hour of the End.',
-                                      context: context,
-                                    ),
-                                  );
-                                  return;
-                                }
-                                if (_toDate == null) {
-                                  unawaited(
-                                    FailureWidget.build(
-                                      title: 'Something went wrong!',
-                                      message: 'Please select the hour of the Start.',
-                                      context: context,
-                                    ),
-                                  );
-                                  return;
-                                }
-
-                                /// If theres a file or an image we upload it
-                                if (selectedFile != null || selectedImage != null) {
-                                  File newFile;
-                                  if (selectedFile != null) {
-                                    newFile = selectedFile!;
-                                  } else {
-                                    newFile = File(selectedImage!.path);
-                                  }
-                                  isLoading.value = true;
-
-                                  /// First upload the file
-                                  final res = await ref.read(travelsControllerProvider.notifier).uploadFile(file: newFile);
-
-                                  if (!res.ok && mounted) {
-                                    unawaited(
-                                      FailureWidget.build(
-                                        title: 'Oops',
-                                        message: 'Something went wrong while trying to upload the file',
-                                        context: context,
-                                      ),
-                                    );
-                                  }
-                                }
-
-                                final newGuests = <Guest>[];
-
-                                for (final guest in selectedGuests.value) {
-                                  newGuests.add(Guest(userId: guest.id));
-                                }
-
-                                String? fileId = ref.read(travelsControllerProvider).fileId;
-
-                                if (fileId.isEmpty) {
-                                  fileId = null;
-                                }
-
-                                isLoading.value = true;
-                                final hotel = HotelModel(
-                                  place: name.text.trim(),
-                                  placeDescription: placeDescription.value,
-                                  description: description.text.trim(),
-                                  startDate: _fromDate!.toIso8601String(),
-                                  endDate: _toDate!.toIso8601String(),
-                                  reservationCode: reservationController.text.trim(),
-                                  guests: newGuests,
+                    ),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      width: 140,
+                      child: Consumer(
+                        builder: (context, ref, child) {
+                          return TAPrimaryButton(
+                            text: 'NEXT',
+                            isLoading: isLoading.value,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            onTap: () async {
+                              if (name.text.isEmpty) {
+                                unawaited(
+                                  FailureWidget.build(
+                                    title: 'Something went wrong!',
+                                    message: 'Please enter event name to continue.',
+                                    context: context,
+                                  ),
                                 );
-                                final res = await ref.read(travelsControllerProvider.notifier).addHotel(hotel: hotel);
-                                isLoading.value = false;
+                                return;
+                              }
 
-                                if (res.ok && mounted) {
-                                  ref.read(travelsControllerProvider.notifier).setFileId(fileId: '');
-                                  await widget.pageController.nextPage(
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeIn,
-                                  );
-                                  // await SuccessWidget.build(
-                                  //   title: 'Success!',
-                                  //   message: 'Event has been added successfully.',
-                                  //   context: context,
-                                  // );
-                                  // if (context.mounted) {
-                                  //   context.pop();
-                                  // }
-                                } else {
-                                  unawaited(
-                                    FailureWidget.build(
-                                      title: 'Something went wrong!',
-                                      message: 'There was an error adding the event.',
-                                      context: context,
-                                    ),
-                                  );
-                                }
-                              },
-                            );
-                          },
-                        ),
+                              if (_fromDate == null) {
+                                unawaited(
+                                  FailureWidget.build(
+                                    title: 'Something went wrong!',
+                                    message: 'Please select the arrival date.',
+                                    context: context,
+                                  ),
+                                );
+                                return;
+                              }
+                              if (_toDate == null) {
+                                unawaited(
+                                  FailureWidget.build(
+                                    title: 'Something went wrong!',
+                                    message: 'Please select the departure date.',
+                                    context: context,
+                                  ),
+                                );
+                                return;
+                              }
+                              ref.read(travelsControllerProvider.notifier).setTravelHotel(hotel: name.text);
+                              ref.read(travelsControllerProvider.notifier).setTravelHotelGoogle(hotelGoogle: googleDescription.text);
+                              ref.read(travelsControllerProvider.notifier).setTravelArrivalDate(arrivalDate: _fromDate!.toIso8601String());
+                              ref.read(travelsControllerProvider.notifier).setTravelDepartureDate(departureDate: _toDate!.toIso8601String());
+
+                              await widget.pageController.nextPage(
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.easeInOut,
+                              );
+
+                              /// If theres a file or an image we upload it
+                              // if (selectedFile != null || selectedImage != null) {
+                              //   File newFile;
+                              //   if (selectedFile != null) {
+                              //     newFile = selectedFile!;
+                              //   } else {
+                              //     newFile = File(selectedImage!.path);
+                              //   }
+                              //   isLoading.value = true;
+
+                              //   /// First upload the file
+                              //   final res = await ref.read(travelsLegacyControllerProvider.notifier).uploadFile(file: newFile);
+
+                              //   if (!res.ok && mounted) {
+                              //     unawaited(
+                              //       FailureWidget.build(
+                              //         title: 'Oops',
+                              //         message: 'Something went wrong while trying to upload the file',
+                              //         context: context,
+                              //       ),
+                              //     );
+                              //   }
+                              // }
+                            },
+                          );
+                        },
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-      ],
+        ],
+      ),
     );
   }
 
