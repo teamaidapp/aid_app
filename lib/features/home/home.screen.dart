@@ -142,7 +142,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   icon: Iconsax.add,
                                   onTap: () {
-                                    context.push(AppRoutes.addPlayer);
+                                    context.pushNamed(
+                                      AppRoutes.addPlayer,
+                                      queryParameters: {'isPlayer': 'true'},
+                                    );
                                   },
                                 ),
                               );

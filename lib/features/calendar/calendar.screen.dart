@@ -5,7 +5,9 @@ import 'package:expandable/expandable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_neat_and_clean_calendar/flutter_neat_and_clean_calendar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
@@ -427,212 +429,29 @@ class _FullCalendarWidgetState extends ConsumerState<_FullCalendarWidget> {
     return Expanded(
       child: widget.events.when(
         data: (events) {
-          // todayHours.addAll(generateHourListFromCurrentHour(events: events));
-          // hours.addAll(generateHourList(events: events));
-          calendar.addAll(generateCalendar(events: events));
-          return Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TATypography.h3(
-                    text: previousMonth.toUpperCase(),
-                    color: TAColors.textColor.withOpacity(0.25),
-                  ),
-                  const SizedBox(width: 20),
-                  GestureDetector(
-                    onTap: () {
-                      _initialDate = _initialDate.subtract(const Duration(days: 30));
-                      setState(getMonths);
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: const Icon(
-                      Iconsax.arrow_left_2,
-                      size: 20,
-                      color: TAColors.textColor,
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  TATypography.h3(
-                    text: currentMonth.toUpperCase(),
-                    color: TAColors.textColor,
-                  ),
-                  const SizedBox(width: 20),
-                  GestureDetector(
-                    onTap: () {
-                      _initialDate = _initialDate.add(const Duration(days: 30));
-                      setState(getMonths);
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: const Icon(
-                      Iconsax.arrow_right_3,
-                      size: 20,
-                      color: TAColors.textColor,
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  TATypography.h3(
-                    text: nextMonth.toUpperCase(),
-                    color: TAColors.textColor.withOpacity(0.25),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: currentMonthDays.length,
-                  controller: _scrollController,
-                  itemBuilder: (context, index) {
-                    final dayName = calendar[index].dayLabel;
-                    final dayNumber = calendar[index].dayNumber;
-                    final monthName = getMonthName(currentMonthDays[index]);
-
-                    return AutoScrollTag(
-                      key: ValueKey(index),
-                      index: index,
-                      controller: _scrollController,
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final hoursWidth = calendar[index].hours.length * 120.0;
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.only(left: 10),
-                            child: SizedBox(
-                              width: hoursWidth,
-                              child: Column(
-                                children: [
-                                  TAContainer(
-                                    radius: 28,
-                                    child: Row(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            TATypography.subparagraph(
-                                              text: dayName,
-                                              color: TAColors.color3,
-                                            ),
-                                            Row(
-                                              children: [
-                                                TATypography.paragraph(
-                                                  text: dayNumber.toString(),
-                                                  fontWeight: FontWeight.w600,
-                                                  color: TAColors.textColor,
-                                                ),
-                                                const SizedBox(width: 10),
-                                                TATypography.paragraph(
-                                                  text: monthName,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: TAColors.textColor,
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 6),
-                                            SizedBox(
-                                              width: Device.screenType == ScreenType.tablet ? 140 : 76,
-                                              child: TASecondaryButton(
-                                                text: 'VIEW',
-                                                padding: EdgeInsets.zero,
-                                                onTap: () {},
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 20),
-                                        const SizedBox(
-                                          height: 80,
-                                          child: VerticalDivider(),
-                                        ),
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 100,
-                                            child: ListView.builder(
-                                              itemCount: calendar[index].hours.length,
-                                              // shrinkWrap: true,
-                                              physics: const NeverScrollableScrollPhysics(),
-                                              scrollDirection: Axis.horizontal,
-                                              itemBuilder: (context, hoursIndex) {
-                                                return SizedBox(
-                                                  width: 110,
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          const SizedBox(
-                                                            height: 20,
-                                                            child: VerticalDivider(),
-                                                          ),
-                                                          TATypography.paragraph(
-                                                            text: calendar[index].hours[hoursIndex].label,
-                                                            color: TAColors.textColor.withOpacity(0.25),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                      if (calendar[index].hours[hoursIndex].event != null)
-                                                        Expanded(
-                                                          child: ListView.builder(
-                                                            itemCount: calendar[index].hours[hoursIndex].event!.length,
-                                                            itemBuilder: (context, indexFromVerticalList) {
-                                                              return Container(
-                                                                decoration: BoxDecoration(
-                                                                  color: TAColors.purple,
-                                                                  borderRadius: BorderRadius.circular(28),
-                                                                ),
-                                                                padding: const EdgeInsets.all(10),
-                                                                margin: const EdgeInsets.only(bottom: 4),
-                                                                child: TATypography.subparagraph(
-                                                                  color: Colors.white,
-                                                                  text:
-                                                                      calendar[index].hours[hoursIndex].event![indexFromVerticalList].event.eventName,
-                                                                  fontWeight: FontWeight.w600,
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        )
-                                                      // else if (hours[index].event != null)
-                                                      //   Expanded(
-                                                      //     child: ListView.builder(
-                                                      //       itemCount: hours[index].event!.length,
-                                                      //       itemBuilder: (context, indexFromVerticalList) {
-                                                      //         return Container(
-                                                      //           decoration: BoxDecoration(
-                                                      //             color: TAColors.purple,
-                                                      //             borderRadius: BorderRadius.circular(28),
-                                                      //           ),
-                                                      //           padding: const EdgeInsets.all(10),
-                                                      //           margin: const EdgeInsets.only(bottom: 4),
-                                                      //           child: TATypography.subparagraph(
-                                                      //             color: Colors.white,
-                                                      //             text: hours[index].event![indexFromVerticalList].event.eventName,
-                                                      //             fontWeight: FontWeight.w600,
-                                                      //           ),
-                                                      //         );
-                                                      //       },
-                                                      //     ),
-                                                      //   )
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
+          return Calendar(
+            startOnMonday: true,
+            eventsList: events.map((event) {
+              return NeatCleanCalendarEvent(
+                event.event.eventName,
+                startTime: event.event.startDate,
+                endTime: event.event.endDate,
+              );
+            }).toList(),
+            isExpandable: true,
+            eventDoneColor: Colors.green,
+            selectedColor: TAColors.purple,
+            selectedTodayColor: TAColors.purple,
+            todayColor: TAColors.purple,
+            isExpanded: true,
+            expandableDateFormat: 'EEEE, dd MMMM yyyy',
+            datePickerType: DatePickerType.date,
+            onEventSelected: (value) {},
+            dayOfWeekStyle: GoogleFonts.poppins(
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+              fontSize: 11,
+            ),
           );
         },
         error: (error, stackTrace) {
@@ -650,6 +469,232 @@ class _FullCalendarWidgetState extends ConsumerState<_FullCalendarWidget> {
         },
       ),
     );
+    // return Expanded(
+    //   child: widget.events.when(
+    //     data: (events) {
+    //       // todayHours.addAll(generateHourListFromCurrentHour(events: events));
+    //       // hours.addAll(generateHourList(events: events));
+    //       calendar.addAll(generateCalendar(events: events));
+    //       return Column(
+    //         children: [
+    //           Row(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               TATypography.h3(
+    //                 text: previousMonth.toUpperCase(),
+    //                 color: TAColors.textColor.withOpacity(0.25),
+    //               ),
+    //               const SizedBox(width: 20),
+    //               GestureDetector(
+    //                 onTap: () {
+    //                   _initialDate = _initialDate.subtract(const Duration(days: 30));
+    //                   setState(getMonths);
+    //                 },
+    //                 behavior: HitTestBehavior.translucent,
+    //                 child: const Icon(
+    //                   Iconsax.arrow_left_2,
+    //                   size: 20,
+    //                   color: TAColors.textColor,
+    //                 ),
+    //               ),
+    //               const SizedBox(width: 20),
+    //               TATypography.h3(
+    //                 text: currentMonth.toUpperCase(),
+    //                 color: TAColors.textColor,
+    //               ),
+    //               const SizedBox(width: 20),
+    //               GestureDetector(
+    //                 onTap: () {
+    //                   _initialDate = _initialDate.add(const Duration(days: 30));
+    //                   setState(getMonths);
+    //                 },
+    //                 behavior: HitTestBehavior.translucent,
+    //                 child: const Icon(
+    //                   Iconsax.arrow_right_3,
+    //                   size: 20,
+    //                   color: TAColors.textColor,
+    //                 ),
+    //               ),
+    //               const SizedBox(width: 20),
+    //               TATypography.h3(
+    //                 text: nextMonth.toUpperCase(),
+    //                 color: TAColors.textColor.withOpacity(0.25),
+    //               ),
+    //             ],
+    //           ),
+    //           Expanded(
+    //             child: ListView.builder(
+    //               itemCount: currentMonthDays.length,
+    //               controller: _scrollController,
+    //               itemBuilder: (context, index) {
+    //                 final dayName = calendar[index].dayLabel;
+    //                 final dayNumber = calendar[index].dayNumber;
+    //                 final monthName = getMonthName(currentMonthDays[index]);
+
+    //                 return AutoScrollTag(
+    //                   key: ValueKey(index),
+    //                   index: index,
+    //                   controller: _scrollController,
+    //                   child: LayoutBuilder(
+    //                     builder: (context, constraints) {
+    //                       final hoursWidth = calendar[index].hours.length * 120.0;
+    //                       return SingleChildScrollView(
+    //                         scrollDirection: Axis.horizontal,
+    //                         padding: const EdgeInsets.only(left: 10),
+    //                         child: SizedBox(
+    //                           width: hoursWidth,
+    //                           child: Column(
+    //                             children: [
+    //                               TAContainer(
+    //                                 radius: 28,
+    //                                 child: Row(
+    //                                   children: [
+    //                                     Column(
+    //                                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                                       children: [
+    //                                         TATypography.subparagraph(
+    //                                           text: dayName,
+    //                                           color: TAColors.color3,
+    //                                         ),
+    //                                         Row(
+    //                                           children: [
+    //                                             TATypography.paragraph(
+    //                                               text: dayNumber.toString(),
+    //                                               fontWeight: FontWeight.w600,
+    //                                               color: TAColors.textColor,
+    //                                             ),
+    //                                             const SizedBox(width: 10),
+    //                                             TATypography.paragraph(
+    //                                               text: monthName,
+    //                                               fontWeight: FontWeight.w600,
+    //                                               color: TAColors.textColor,
+    //                                             ),
+    //                                           ],
+    //                                         ),
+    //                                         const SizedBox(height: 6),
+    //                                         SizedBox(
+    //                                           width: Device.screenType == ScreenType.tablet ? 140 : 76,
+    //                                           child: TASecondaryButton(
+    //                                             text: 'VIEW',
+    //                                             padding: EdgeInsets.zero,
+    //                                             onTap: () {},
+    //                                           ),
+    //                                         ),
+    //                                       ],
+    //                                     ),
+    //                                     const SizedBox(width: 20),
+    //                                     const SizedBox(
+    //                                       height: 80,
+    //                                       child: VerticalDivider(),
+    //                                     ),
+    //                                     Expanded(
+    //                                       child: SizedBox(
+    //                                         height: 100,
+    //                                         child: ListView.builder(
+    //                                           itemCount: calendar[index].hours.length,
+    //                                           // shrinkWrap: true,
+    //                                           physics: const NeverScrollableScrollPhysics(),
+    //                                           scrollDirection: Axis.horizontal,
+    //                                           itemBuilder: (context, hoursIndex) {
+    //                                             return SizedBox(
+    //                                               width: 110,
+    //                                               child: Column(
+    //                                                 children: [
+    //                                                   Row(
+    //                                                     children: [
+    //                                                       const SizedBox(
+    //                                                         height: 20,
+    //                                                         child: VerticalDivider(),
+    //                                                       ),
+    //                                                       TATypography.paragraph(
+    //                                                         text: calendar[index].hours[hoursIndex].label,
+    //                                                         color: TAColors.textColor.withOpacity(0.25),
+    //                                                       ),
+    //                                                     ],
+    //                                                   ),
+    //                                                   const SizedBox(height: 10),
+    //                                                   if (calendar[index].hours[hoursIndex].event != null)
+    //                                                     Expanded(
+    //                                                       child: ListView.builder(
+    //                                                         itemCount: calendar[index].hours[hoursIndex].event!.length,
+    //                                                         itemBuilder: (context, indexFromVerticalList) {
+    //                                                           return Container(
+    //                                                             decoration: BoxDecoration(
+    //                                                               color: TAColors.purple,
+    //                                                               borderRadius: BorderRadius.circular(28),
+    //                                                             ),
+    //                                                             padding: const EdgeInsets.all(10),
+    //                                                             margin: const EdgeInsets.only(bottom: 4),
+    //                                                             child: TATypography.subparagraph(
+    //                                                               color: Colors.white,
+    //                                                               text:
+    //                                                                   calendar[index].hours[hoursIndex].event![indexFromVerticalList].event.eventName,
+    //                                                               fontWeight: FontWeight.w600,
+    //                                                             ),
+    //                                                           );
+    //                                                         },
+    //                                                       ),
+    //                                                     )
+    //                                                   // else if (hours[index].event != null)
+    //                                                   //   Expanded(
+    //                                                   //     child: ListView.builder(
+    //                                                   //       itemCount: hours[index].event!.length,
+    //                                                   //       itemBuilder: (context, indexFromVerticalList) {
+    //                                                   //         return Container(
+    //                                                   //           decoration: BoxDecoration(
+    //                                                   //             color: TAColors.purple,
+    //                                                   //             borderRadius: BorderRadius.circular(28),
+    //                                                   //           ),
+    //                                                   //           padding: const EdgeInsets.all(10),
+    //                                                   //           margin: const EdgeInsets.only(bottom: 4),
+    //                                                   //           child: TATypography.subparagraph(
+    //                                                   //             color: Colors.white,
+    //                                                   //             text: hours[index].event![indexFromVerticalList].event.eventName,
+    //                                                   //             fontWeight: FontWeight.w600,
+    //                                                   //           ),
+    //                                                   //         );
+    //                                                   //       },
+    //                                                   //     ),
+    //                                                   //   )
+    //                                                 ],
+    //                                               ),
+    //                                             );
+    //                                           },
+    //                                         ),
+    //                                       ),
+    //                                     ),
+    //                                   ],
+    //                                 ),
+    //                               ),
+    //                               const SizedBox(height: 20),
+    //                             ],
+    //                           ),
+    //                         ),
+    //                       );
+    //                     },
+    //                   ),
+    //                 );
+    //               },
+    //             ),
+    //           ),
+    //         ],
+    //       );
+    //     },
+    //     error: (error, stackTrace) {
+    //       return const SizedBox();
+    //     },
+    //     loading: () {
+    //       return const Center(
+    //         child: CircularProgressIndicator(
+    //           strokeWidth: 2,
+    //           valueColor: AlwaysStoppedAnimation<Color>(
+    //             TAColors.purple,
+    //           ),
+    //         ),
+    //       );
+    //     },
+    //   ),
+    // );
   }
 
   // List<EventHourModel> generateHourListFromCurrentHour({required List<CalendarEvent> events}) {
