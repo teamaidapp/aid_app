@@ -77,6 +77,7 @@ class _TAPrimaryInputState extends State<TAPrimaryInput> {
           inputFormatters: widget.inputListFormatter,
           readOnly: widget.isReadOnly,
           onChanged: widget.onChanged,
+          autocorrect: false,
           // maxLines: widget.maxLines,
           decoration: InputDecoration(
             filled: true,
