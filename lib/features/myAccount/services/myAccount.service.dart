@@ -37,6 +37,9 @@ abstract class MyAccountService {
     required String description,
     required List<Guest> guests,
   });
+
+  /// Delete account
+  Future<Either<Failure, Success>> deleteAccount();
 }
 
 /// This class is responsible for implementing the MyAccountService
@@ -121,6 +124,21 @@ class MyAccountServiceImpl implements MyAccountService {
       return Left(
         Failure(
           message: 'There was a problem with TravelsServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> deleteAccount() async {
+    try {
+      final result = await myAccountRepository.deleteAccount();
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was a problem deleting the account',
         ),
       );
     }

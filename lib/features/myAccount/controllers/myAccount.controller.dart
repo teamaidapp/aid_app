@@ -114,4 +114,27 @@ class MyAccountController extends StateNotifier<MyAccountScreenState> {
       );
     }
   }
+
+  /// This Dart function attempts to delete an account using a service, handling success and failure
+  /// responses accordingly.
+  ///
+  /// Returns:
+  ///   The function `deleteAccount()` returns a `Future` that resolves to a `ResponseFailureModel`.
+  Future<ResponseFailureModel> deleteAccount() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _myAccountService.deleteAccount();
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) async {
+          return response = response.copyWith(ok: true, message: success.message);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem with TravelsService',
+      );
+    }
+  }
 }

@@ -14,6 +14,7 @@ import 'package:team_aid/core/entities/user.model.dart';
 import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
+import 'package:team_aid/design_system/components/buttons/secondary_button.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/failure.widget.dart';
 import 'package:team_aid/features/common/widgets/success.widget.dart';
@@ -233,6 +234,52 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TASecondaryButton(
+                        text: 'Delete account',
+                        height: 50,
+                        onTap: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Delete account'),
+                                content: const Text('Are you sure you want to delete your account?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      context.pop();
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      final res = await ref.read(myAccountControllerProvider.notifier).deleteAccount();
+                                      if (!context.mounted) return;
+                                      if (res.ok) {
+                                        final prefs = await SharedPreferences.getInstance();
+                                        await prefs.clear();
+                                        if (!context.mounted) return;
+                                        context.go(AppRoutes.login);
+                                      } else {
+                                        await FailureWidget.build(
+                                          title: 'Oops',
+                                          message: res.message,
+                                          context: context,
+                                        );
+                                      }
+                                    },
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(20),

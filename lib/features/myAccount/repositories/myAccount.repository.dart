@@ -29,6 +29,9 @@ abstract class MyAccountRepository {
     required UserModel user,
     required String uid,
   });
+
+  /// Delete account
+  Future<Either<Failure, Success>> deleteAccount();
 }
 
 /// This class is responsible for implementing the MyAccountRepository
@@ -140,6 +143,40 @@ class MyAccountRepositoryImpl implements MyAccountRepository {
       return Left(
         Failure(
           message: 'There was an error with MyAccountRepositoyImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> deleteAccount() async {
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/users/delete-account',
+      );
+
+      final res = await http.delete(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error with deleting the account',
+          ),
+        );
+      }
+
+      return Right(Success(ok: true, message: 'Success'));
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was an error with deleting the account',
         ),
       );
     }

@@ -165,6 +165,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const SizedBox(height: 30),
                     invitations.when(
                       data: (data) {
+                        var hasPendingInvitations = false;
+                        if (data.every((element) => element.invitations.every((n) => n.status == 'accepted'))) {
+                          hasPendingInvitations = false;
+                        } else {
+                          hasPendingInvitations = true;
+                        }
+                        final list = data.take(6).toList();
                         return ExpandablePanel(
                           controller: requestsExpandableController,
                           header: TATypography.h3(
@@ -172,24 +179,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             color: TAColors.textColor,
                           ),
                           collapsed: const SizedBox(),
-                          expanded: data.isNotEmpty
+                          expanded: list.isNotEmpty && hasPendingInvitations
                               ? TAContainer(
                                   radius: 28,
                                   margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                   child: ListView.builder(
                                     shrinkWrap: true,
-                                    itemCount: data.length,
+                                    itemCount: list.length,
                                     padding: EdgeInsets.zero,
                                     physics: const NeverScrollableScrollPhysics(),
                                     itemBuilder: (context, index) {
-                                      final invitation = data[index];
+                                      final invitation = list[index];
                                       if (invitation.invitations.isNotEmpty) {
-                                        return Column(
-                                          children: [
-                                            RequestsWidget(invitation: invitation),
-                                            const Divider(),
-                                          ],
-                                        );
+                                        if (invitation.invitations.where((element) => element.status == 'pending').isNotEmpty) {
+                                          return Column(
+                                            children: [
+                                              RequestsWidget(invitation: invitation),
+                                              const Divider(),
+                                            ],
+                                          );
+                                        } else {
+                                          return const SizedBox();
+                                        }
                                       } else {
                                         return const SizedBox();
                                       }

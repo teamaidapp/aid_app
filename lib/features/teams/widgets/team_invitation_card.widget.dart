@@ -36,19 +36,21 @@ class TeamInvitationCardWidget extends StatelessWidget {
                 color: TAColors.purple,
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TATypography.paragraph(
-                    text: '${invitation.invitation.userId.firstName.capitalize()} ${invitation.invitation.userId.lastName.capitalize()}',
-                    color: TAColors.textColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  TATypography.subparagraph(
-                    text: invitation.invitation.userId.email,
-                    color: TAColors.grey1,
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TATypography.paragraph(
+                      text: '${invitation.invitation.userId.firstName.capitalize()} ${invitation.invitation.userId.lastName.capitalize()}',
+                      color: TAColors.textColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    TATypography.subparagraph(
+                      text: invitation.invitation.userId.email,
+                      color: TAColors.grey1,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -79,90 +81,100 @@ class TeamInvitationCardWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          HookConsumer(
-            builder: (context, ref, child) {
-              final declineIsLoading = useState(false);
-              final acceptedIsLoading = useState(false);
-              return Row(
-                children: [
-                  Expanded(
-                    child: TASecondaryButton(
-                      text: 'DECLINE',
-                      isLoading: declineIsLoading.value,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      onTap: () async {
-                        declineIsLoading.value = true;
-                        final res = await ref.read(teamsControllerProvider.notifier).updateInvitation(
-                              status: 'rejected',
-                              invitationId: invitation.invitation.id,
-                            );
-                        declineIsLoading.value = false;
+          if (invitation.invitation.status != 'accepted')
+            HookConsumer(
+              builder: (context, ref, child) {
+                final declineIsLoading = useState(false);
+                final acceptedIsLoading = useState(false);
+                return Row(
+                  children: [
+                    Expanded(
+                      child: TASecondaryButton(
+                        text: 'DECLINE',
+                        isLoading: declineIsLoading.value,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        onTap: () async {
+                          declineIsLoading.value = true;
+                          final res = await ref.read(teamsControllerProvider.notifier).updateInvitation(
+                                status: 'rejected',
+                                invitationId: invitation.invitation.id,
+                              );
+                          declineIsLoading.value = false;
 
-                        if (res.ok && context.mounted) {
-                          await ref.read(homeControllerProvider.notifier).getInvitations(isCoach: true);
-                          if (context.mounted) {
+                          if (res.ok && context.mounted) {
+                            await ref.read(homeControllerProvider.notifier).getInvitations(isCoach: true);
+                            if (context.mounted) {
+                              unawaited(
+                                SuccessWidget.build(
+                                  title: 'Success!',
+                                  message: 'The invitation was declined.',
+                                  context: context,
+                                ),
+                              );
+                            }
+                          } else {
                             unawaited(
-                              SuccessWidget.build(
-                                title: 'Success!',
-                                message: 'The invitation was declined.',
+                              FailureWidget.build(
+                                title: 'Something went wrong!',
+                                message: res.message,
                                 context: context,
                               ),
                             );
                           }
-                        } else {
-                          unawaited(
-                            FailureWidget.build(
-                              title: 'Something went wrong!',
-                              message: res.message,
-                              context: context,
-                            ),
-                          );
-                        }
-                      },
+                        },
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TAPrimaryButton(
-                      text: 'ACCEPT',
-                      isLoading: acceptedIsLoading.value,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      onTap: () async {
-                        acceptedIsLoading.value = true;
-                        final res = await ref.read(teamsControllerProvider.notifier).updateInvitation(
-                              status: 'accepted',
-                              invitationId: invitation.invitation.id,
-                            );
-                        acceptedIsLoading.value = false;
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TAPrimaryButton(
+                        text: 'ACCEPT',
+                        isLoading: acceptedIsLoading.value,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        onTap: () async {
+                          acceptedIsLoading.value = true;
+                          final res = await ref.read(teamsControllerProvider.notifier).updateInvitation(
+                                status: 'accepted',
+                                invitationId: invitation.invitation.id,
+                              );
+                          acceptedIsLoading.value = false;
 
-                        if (res.ok && context.mounted) {
-                          await ref.read(homeControllerProvider.notifier).getInvitations(isCoach: true);
-                          if (context.mounted) {
+                          if (res.ok && context.mounted) {
+                            await ref.read(homeControllerProvider.notifier).getInvitations(isCoach: true);
+                            if (context.mounted) {
+                              unawaited(
+                                SuccessWidget.build(
+                                  title: 'Success!',
+                                  message: 'The invitation was accepted.',
+                                  context: context,
+                                ),
+                              );
+                            }
+                          } else {
                             unawaited(
-                              SuccessWidget.build(
-                                title: 'Success!',
-                                message: 'The invitation was accepted.',
+                              FailureWidget.build(
+                                title: 'Something went wrong!',
+                                message: res.message,
                                 context: context,
                               ),
                             );
                           }
-                        } else {
-                          unawaited(
-                            FailureWidget.build(
-                              title: 'Something went wrong!',
-                              message: res.message,
-                              context: context,
-                            ),
-                          );
-                        }
-                      },
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              );
-            },
-          ),
+                  ],
+                );
+              },
+            )
+          else
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TATypography.paragraph(
+                text: invitation.invitation.status,
+                color: TAColors.purple,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
         ],
       ),
     );

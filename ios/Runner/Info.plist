@@ -31,13 +31,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Used to add events to your calendar</string>
+	<string>We require access to add events to your calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Used to take a photo an upload it to your cloud files</string>
+	<string>We require access to your microphone to upload photos to your record</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Used to take a photo an upload it to your cloud files</string>
+	<string>We require access to your microphone to upload files to your record</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Used to select images from the library </string>
+	<string>We require access to your library to attach photos to your record</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
