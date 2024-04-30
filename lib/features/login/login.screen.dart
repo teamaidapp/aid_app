@@ -319,13 +319,13 @@ class _CreateAccountPage extends HookWidget {
                   color: TAColors.textColor,
                 ),
               ),
-              const SizedBox(height: 20),
-              Align(
-                child: TATypography.paragraph(
-                  text: 'Free trial for 15 days',
-                  color: TAColors.color2,
-                ),
-              ),
+              // const SizedBox(height: 20),
+              // Align(
+              //   child: TATypography.paragraph(
+              //     text: 'Free trial for 15 days',
+              //     color: TAColors.color2,
+              //   ),
+              // ),
             ],
           ),
       ],

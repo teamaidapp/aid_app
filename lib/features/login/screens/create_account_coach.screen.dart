@@ -11,7 +11,6 @@ import 'package:team_aid/core/enums/role.enum.dart';
 import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
-import 'package:team_aid/features/common/widgets/location.widget.dart';
 import 'package:team_aid/features/login/controllers/createAccount.controller.dart';
 
 /// The statelessWidget that handles the current screen
@@ -77,7 +76,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                 final sport = useState('');
                 final cityState = useState('');
                 final currentSelectedState = useState('');
-                final address = useState('');
+                // final address = useState('');
                 final googleAddress = useState('');
                 return Container(
                   width: double.infinity,
@@ -266,16 +265,16 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 10),
-                              if (isAdmin)
-                                LocationWidget(
-                                  title: 'Organization address',
-                                  onChanged: (v) {
-                                    if (v != null) {
-                                      address.value = v.item;
-                                      googleAddress.value = v.id;
-                                    }
-                                  },
-                                ),
+                              // if (isAdmin)
+                              //   LocationWidget(
+                              //     title: 'Organization address',
+                              //     onChanged: (v) {
+                              //       if (v != null) {
+                              //         address.value = v.item;
+                              //         googleAddress.value = v.id;
+                              //       }
+                              //     },
+                              //   ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
                                 label: '$labelPrefix password',
@@ -382,7 +381,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                     role: isAdmin ? Role.admin : Role.coach,
                                     cityId: cityState.value,
                                     stateId: currentSelectedState.value,
-                                    address: isAdmin ? address.value : null,
+                                    address: '',
                                     googleAddress: isAdmin ? googleAddress.value : null,
                                   );
                                   isLoading.value = true;

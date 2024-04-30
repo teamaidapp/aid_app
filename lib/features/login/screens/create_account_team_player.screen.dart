@@ -76,7 +76,7 @@ class CreateAccountTeamPlayerScreen extends StatelessWidget {
                 final sport = useState('');
                 final cityState = useState('');
                 final currentSelectedState = useState('');
-                final address = useState('');
+                // final address = useState('');
                 final googleAddress = useState('');
                 return Container(
                   width: double.infinity,
@@ -249,16 +249,16 @@ class CreateAccountTeamPlayerScreen extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 10),
-                              if (!isCreatingSon)
-                                LocationWidget(
-                                  title: 'Address',
-                                  onChanged: (v) {
-                                    if (v != null) {
-                                      address.value = v.item;
-                                      googleAddress.value = v.id;
-                                    }
-                                  },
-                                ),
+                              // if (!isCreatingSon)
+                              //   LocationWidget(
+                              //     title: 'Address',
+                              //     onChanged: (v) {
+                              //       if (v != null) {
+                              //         address.value = v.item;
+                              //         googleAddress.value = v.id;
+                              //       }
+                              //     },
+                              //   ),
                               const SizedBox(height: 10),
                               TAPrimaryInput(
                                 label: 'Password',
@@ -361,7 +361,7 @@ class CreateAccountTeamPlayerScreen extends StatelessWidget {
                                     role: isCreatingSon ? Role.parent : Role.player,
                                     cityId: cityState.value,
                                     stateId: currentSelectedState.value,
-                                    address: !isCreatingSon ? address.value : null,
+                                    address: '',
                                     googleAddress: !isCreatingSon ? googleAddress.value : null,
                                   );
                                   isLoading.value = true;
