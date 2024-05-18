@@ -254,10 +254,7 @@ class _CreateAccountParentsScreenState extends ConsumerState<CreateAccountParent
                                 flex: 2,
                                 child: GestureDetector(
                                   onTap: () {
-                                    context
-                                      ..pop()
-                                      ..pop()
-                                      ..push(AppRoutes.household);
+                                    context.go(AppRoutes.home);
                                   },
                                   child: TATypography.paragraph(
                                     text: 'Skip',

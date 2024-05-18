@@ -21,6 +21,18 @@ abstract class LoginService {
     required String email,
     required String password,
   });
+
+  /// Send email to reset password
+  Future<Either<Failure, Success>> sendForgotEmail({
+    required String email,
+  });
+
+  /// Recover password
+  Future<Either<Failure, Success>> recoverPassword({
+    required String email,
+    required String otp,
+    required String password,
+  });
 }
 
 /// This class is responsible for implementing the LoginService
@@ -73,6 +85,46 @@ class LoginServiceImpl implements LoginService {
           );
         },
       );
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was a problem with LoginServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> recoverPassword({
+    required String email,
+    required String otp,
+    required String password,
+  }) async {
+    try {
+      final result = await loginRepository.recoverPassword(
+        email: email,
+        otp: otp,
+        password: password,
+      );
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was a problem with LoginServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> sendForgotEmail({
+    required String email,
+  }) async {
+    try {
+      final result = await loginRepository.sendForgotEmail(email: email);
+
+      return result.fold(Left.new, Right.new);
     } catch (e) {
       return Left(
         Failure(

@@ -261,7 +261,7 @@ class CreateAccountCoachScreen extends StatelessWidget {
                                 inputListFormatter: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(12),
-                                  PhoneInputFormatter(defaultCountryCode: 'US')
+                                  PhoneInputFormatter(),
                                 ],
                               ),
                               const SizedBox(height: 10),

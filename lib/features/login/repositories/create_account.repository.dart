@@ -67,11 +67,19 @@ class CreateAccountRepositoryRepositoryImpl implements CreateAccountRepository {
       );
 
       if (res.statusCode != 200 && res.statusCode != 201) {
-        return Left(
-          Failure(
-            message: 'There was an error creating the account',
-          ),
-        );
+        if (res.statusCode == 409) {
+          return Left(
+            Failure(
+              message: 'Email already exists. Please try another email.',
+            ),
+          );
+        } else {
+          return Left(
+            Failure(
+              message: 'There was an error creating the account',
+            ),
+          );
+        }
       }
 
       final token = (jsonDecode(res.body) as Map<String, dynamic>)['data'] as String;

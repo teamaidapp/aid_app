@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:team_aid/core/entities/failure.dart';
+import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/main.dart';
 
 /// The provider of LoginRepository
@@ -19,6 +20,18 @@ abstract class LoginRepository {
   /// Get data
   Future<Either<Failure, Map<String, dynamic>>> login({
     required String email,
+    required String password,
+  });
+
+  /// Send email to reset password
+  Future<Either<Failure, Success>> sendForgotEmail({
+    required String email,
+  });
+
+  /// Recover password
+  Future<Either<Failure, Success>> recoverPassword({
+    required String email,
+    required String otp,
     required String password,
   });
 }
@@ -60,6 +73,76 @@ class LoginRepositoryImpl implements LoginRepository {
       return Right(
         (jsonDecode(res.body) as Map)['data'] as Map<String, dynamic>,
       );
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was an error logging in',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> sendForgotEmail({
+    required String email,
+  }) async {
+    try {
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/users/forgot-password-email',
+      );
+
+      final res = await http.post(
+        url,
+        body: {
+          'email': email,
+        },
+      );
+
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error sending the email',
+          ),
+        );
+      }
+      return Right(Success(ok: true, message: ''));
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was an error logging in',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Success>> recoverPassword({
+    required String email,
+    required String otp,
+    required String password,
+  }) async {
+    try {
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/users/password-recovery',
+      );
+
+      final res = await http.post(
+        url,
+        body: {
+          'email': email,
+          'otp': otp,
+          'password': password,
+        },
+      );
+
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        return Left(
+          Failure(
+            message: 'There was an error sending the email',
+          ),
+        );
+      }
+      return Right(Success(ok: true, message: ''));
     } catch (e) {
       return Left(
         Failure(
