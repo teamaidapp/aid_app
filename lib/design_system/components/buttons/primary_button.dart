@@ -13,6 +13,7 @@ class TAPrimaryButton extends StatelessWidget {
     this.icon,
     this.height = 40,
     this.isLoading = false,
+    this.isDisabled = false,
     this.padding = const EdgeInsets.symmetric(horizontal: 32),
     this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
   });
@@ -38,10 +39,16 @@ class TAPrimaryButton extends StatelessWidget {
   /// A boolean that is used to show a loading indicator when the button
   /// is tapped.
   final bool isLoading;
+
+  /// Check if the buttons should be disabled
+  final bool isDisabled;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        if (!isDisabled) onTap();
+      },
       behavior: HitTestBehavior.translucent,
       child: Container(
         height: height,

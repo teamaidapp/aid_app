@@ -306,6 +306,7 @@ class _LoginPage extends HookWidget {
                                                 text: 'Send',
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 isLoading: isLoading.value,
+                                                isDisabled: isLoading.value,
                                                 onTap: () async {
                                                   if (emailForgotController.text.isEmpty) {
                                                     error.value = 'Enter your email';
@@ -380,6 +381,7 @@ class _LoginPage extends HookWidget {
                                               return TAPrimaryButton(
                                                 text: 'Verify',
                                                 isLoading: isLoading.value,
+                                                isDisabled: isLoading.value,
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 onTap: () async {
                                                   if (otpController.text.isEmpty) {
