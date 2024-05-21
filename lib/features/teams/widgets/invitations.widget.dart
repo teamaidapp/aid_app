@@ -19,6 +19,7 @@ class _MyInvitationsWidgetState extends ConsumerState<MyInvitationsWidget> {
   @override
   Widget build(BuildContext context) {
     final invitations = ref.watch(homeControllerProvider).invitations;
+
     return invitations.when(
       data: (data) {
         if (data.isNotEmpty) {

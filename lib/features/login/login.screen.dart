@@ -394,8 +394,10 @@ class _LoginPage extends HookWidget {
                                                   }
 
                                                   isLoading.value = true;
-                                                  final res = await ref.read(loginControllerProvider.notifier).sendForgotEmail(
+                                                  final res = await ref.read(loginControllerProvider.notifier).recoverPassword(
                                                         email: emailForgotController.text.trim(),
+                                                        otp: otpController.text,
+                                                        password: passwordController.text,
                                                       );
                                                   isLoading.value = false;
                                                   if (!context.mounted) return;

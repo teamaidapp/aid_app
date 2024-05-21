@@ -317,6 +317,10 @@ class _AddPlayerWidget extends HookConsumerWidget {
                   );
               isLoading.value = false;
               if (res.ok && context.mounted) {
+                await ref.read(homeControllerProvider.notifier).getInvitations(
+                      isCoach: false,
+                    );
+                if (!context.mounted) return;
                 await SuccessWidget.build(
                   title: 'Success',
                   message: 'Your invitation has been sent successfully.',

@@ -126,13 +126,18 @@ class LoginRepositoryImpl implements LoginRepository {
         '${dotenv.env['API_URL']}/users/password-recovery',
       );
 
+      final parsedOtp = int.parse(otp);
+
       final res = await http.post(
         url,
-        body: {
-          'email': email,
-          'otp': otp,
-          'password': password,
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: jsonEncode({
+          'email': email,
+          'otp': parsedOtp,
+          'password': password,
+        }),
       );
 
       if (res.statusCode != 200 && res.statusCode != 201) {
