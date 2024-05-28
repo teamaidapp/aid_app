@@ -112,7 +112,7 @@ class _TAPrimaryInputState extends State<TAPrimaryInput> {
                       });
                     },
                     icon: Icon(
-                      obscureText ? Icons.visibility : Icons.visibility_off,
+                      obscureText ? Icons.visibility_off : Icons.visibility,
                       color: TAColors.color1,
                     ),
                   )

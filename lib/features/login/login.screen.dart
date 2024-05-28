@@ -232,7 +232,7 @@ class _LoginPage extends HookWidget {
             showModalBottomSheet<void>(
               context: context,
               backgroundColor: Colors.white,
-              // barrierColor: Colors.white.withOpacity(0.8),
+              isScrollControlled: true,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(40),
@@ -252,177 +252,178 @@ class _LoginPage extends HookWidget {
                         final isLoading = useState(false);
                         final height = useState(32.h);
 
-                        return Wrap(
-                          children: [
-                            SafeArea(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  height: height.value,
-                                  child: PageView(
-                                    controller: controller,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(height: 20),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              TATypography.h3(
-                                                text: 'Enter your email',
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  context.pop();
-                                                },
-                                                child: const Icon(Iconsax.close_circle, color: Colors.black),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          TATypography.paragraph(
-                                            text: 'If the email exists, we will send you an OTP to reset your password',
-                                            color: TAColors.color2,
-                                          ),
-                                          const SizedBox(height: 20),
-                                          TAPrimaryInput(
-                                            label: 'Email',
-                                            textEditingController: emailForgotController,
-                                            placeholder: 'Enter your email',
-                                          ),
-                                          if (error.value.isNotEmpty)
-                                            TATypography.subparagraph(
-                                              text: error.value,
-                                              color: Colors.red,
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                          child: SafeArea(
+                            bottom: false,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                height: height.value,
+                                child: PageView(
+                                  controller: controller,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            TATypography.h3(
+                                              text: 'Enter your email',
+                                              fontWeight: FontWeight.w700,
                                             ),
-                                          const SizedBox(height: 20),
-                                          Consumer(
-                                            builder: (context, ref, child) {
-                                              return TAPrimaryButton(
-                                                text: 'Send',
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                isLoading: isLoading.value,
-                                                isDisabled: isLoading.value,
-                                                onTap: () async {
-                                                  if (emailForgotController.text.isEmpty) {
-                                                    error.value = 'Enter your email';
-                                                    return;
-                                                  }
-                                                  isLoading.value = true;
-                                                  final res = await ref.read(loginControllerProvider.notifier).sendForgotEmail(
-                                                        email: emailForgotController.text.trim(),
-                                                      );
-                                                  isLoading.value = false;
-                                                  if (res.ok) {
-                                                    height.value = 50.h;
-                                                    unawaited(
-                                                      controller.nextPage(
-                                                        duration: const Duration(milliseconds: 400),
-                                                        curve: Curves.easeInOut,
-                                                      ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                context.pop();
+                                              },
+                                              child: const Icon(Iconsax.close_circle, color: Colors.black),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        TATypography.paragraph(
+                                          text: 'If the email exists, we will send you an OTP to reset your password',
+                                          color: TAColors.color2,
+                                        ),
+                                        const SizedBox(height: 20),
+                                        TAPrimaryInput(
+                                          label: 'Email',
+                                          textEditingController: emailForgotController,
+                                          placeholder: 'Enter your email',
+                                        ),
+                                        if (error.value.isNotEmpty)
+                                          TATypography.subparagraph(
+                                            text: error.value,
+                                            color: Colors.red,
+                                          ),
+                                        const SizedBox(height: 20),
+                                        Consumer(
+                                          builder: (context, ref, child) {
+                                            return TAPrimaryButton(
+                                              text: 'Send',
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              isLoading: isLoading.value,
+                                              isDisabled: isLoading.value,
+                                              onTap: () async {
+                                                if (emailForgotController.text.isEmpty) {
+                                                  error.value = 'Enter your email';
+                                                  return;
+                                                }
+                                                isLoading.value = true;
+                                                final res = await ref.read(loginControllerProvider.notifier).sendForgotEmail(
+                                                      email: emailForgotController.text.trim(),
                                                     );
-                                                  } else {
-                                                    error.value = 'There was an error sending the email, try again later';
-                                                  }
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(height: 20),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              TATypography.h3(
-                                                text: 'Enter the OTP code',
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  context.pop();
-                                                },
-                                                child: const Icon(Iconsax.close_circle, color: Colors.black),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          TATypography.paragraph(
-                                            text: 'Enter the code sent to your email',
-                                            color: TAColors.color2,
-                                          ),
-                                          const SizedBox(height: 20),
-                                          TAPrimaryInput(
-                                            label: 'OTP code',
-                                            textEditingController: otpController,
-                                            placeholder: 'Enter the code',
-                                          ),
-                                          const SizedBox(height: 10),
-                                          TAPrimaryInput(
-                                            label: 'New password',
-                                            textEditingController: passwordController,
-                                            placeholder: 'Enter the password',
-                                          ),
-                                          if (error.value.isNotEmpty)
-                                            TATypography.subparagraph(
-                                              text: error.value,
-                                              color: Colors.red,
+                                                isLoading.value = false;
+                                                if (res.ok) {
+                                                  error.value = '';
+                                                  height.value = 50.h;
+                                                  unawaited(
+                                                    controller.nextPage(
+                                                      duration: const Duration(milliseconds: 400),
+                                                      curve: Curves.easeInOut,
+                                                    ),
+                                                  );
+                                                } else {
+                                                  error.value = 'There was an error sending the email, try again later';
+                                                }
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            TATypography.h3(
+                                              text: 'Enter the OTP code',
+                                              fontWeight: FontWeight.w700,
                                             ),
-                                          const SizedBox(height: 20),
-                                          Consumer(
-                                            builder: (context, ref, child) {
-                                              return TAPrimaryButton(
-                                                text: 'Verify',
-                                                isLoading: isLoading.value,
-                                                isDisabled: isLoading.value,
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                onTap: () async {
-                                                  if (otpController.text.isEmpty) {
-                                                    error.value = 'Enter the OTP sent to your email.';
-                                                    return;
-                                                  }
-                                                  if (passwordController.text.isEmpty) {
-                                                    error.value = 'Enter your new password.';
-                                                    return;
-                                                  }
+                                            GestureDetector(
+                                              onTap: () {
+                                                context.pop();
+                                              },
+                                              child: const Icon(Iconsax.close_circle, color: Colors.black),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        TATypography.paragraph(
+                                          text: 'Enter the code sent to your email',
+                                          color: TAColors.color2,
+                                        ),
+                                        const SizedBox(height: 20),
+                                        TAPrimaryInput(
+                                          label: 'OTP code',
+                                          textEditingController: otpController,
+                                          placeholder: 'Enter the code',
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TAPrimaryInput(
+                                          label: 'New password',
+                                          textEditingController: passwordController,
+                                          placeholder: 'Enter the password',
+                                        ),
+                                        if (error.value.isNotEmpty)
+                                          TATypography.subparagraph(
+                                            text: error.value,
+                                            color: Colors.red,
+                                          ),
+                                        const SizedBox(height: 20),
+                                        Consumer(
+                                          builder: (context, ref, child) {
+                                            return TAPrimaryButton(
+                                              text: 'Verify',
+                                              isLoading: isLoading.value,
+                                              isDisabled: isLoading.value,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              onTap: () async {
+                                                if (otpController.text.isEmpty) {
+                                                  error.value = 'Enter the OTP sent to your email.';
+                                                  return;
+                                                }
+                                                if (passwordController.text.isEmpty) {
+                                                  error.value = 'Enter your new password.';
+                                                  return;
+                                                }
 
-                                                  isLoading.value = true;
-                                                  final res = await ref.read(loginControllerProvider.notifier).recoverPassword(
-                                                        email: emailForgotController.text.trim(),
-                                                        otp: otpController.text,
-                                                        password: passwordController.text,
-                                                      );
-                                                  isLoading.value = false;
-                                                  if (!context.mounted) return;
-                                                  if (res.ok) {
-                                                    context.pop();
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text('The passwords has been restored.'),
-                                                      ),
+                                                isLoading.value = true;
+                                                final res = await ref.read(loginControllerProvider.notifier).recoverPassword(
+                                                      email: emailForgotController.text.trim(),
+                                                      otp: otpController.text,
+                                                      password: passwordController.text,
                                                     );
-                                                  } else {
-                                                    error.value = 'There was an error sending the email, try again later';
-                                                  }
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                                isLoading.value = false;
+                                                if (!context.mounted) return;
+                                                if (res.ok) {
+                                                  context.pop();
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text('The passwords has been restored.'),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  error.value = 'There was an error sending the email, try again later';
+                                                }
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         );
                       },
                     );
