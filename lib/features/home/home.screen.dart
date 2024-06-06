@@ -11,9 +11,7 @@ import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/common/widgets/drawer.widget.dart';
 import 'package:team_aid/features/common/widgets/today.widget.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
-import 'package:team_aid/features/home/widgets/messages.widget.dart';
 import 'package:team_aid/features/home/widgets/requests.widget.dart';
-import 'package:team_aid/features/home/widgets/upcoming_events.widget.dart';
 import 'package:team_aid/main.dart';
 
 /// The statelessWidget that handles the current screen
@@ -36,13 +34,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     ref.read(homeControllerProvider.notifier).getUserTeams();
     ref.read(homeControllerProvider.notifier).getInvitations(isCoach: true);
+    ref.read(homeControllerProvider.notifier).getSentInvitations();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final prefs = ref.watch(sharedPrefs);
     final prefsProvider = ref.watch(sharedPrefs);
     final invitations = ref.watch(homeControllerProvider).invitations;
+    final sentInvitations = ref.watch(homeControllerProvider).sentInvitations;
+    final role = prefs.asData?.value.getString(TAConstants.role) ?? '';
+
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
@@ -163,6 +166,84 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 30),
+
+                    if (role == 'admin' || role == 'coach')
+                      sentInvitations.when(
+                        data: (data) {
+                          final hasPendingInvitations = data.noRegisteredUsers.any((element) => element.status.toLowerCase() == 'pending') ||
+                              data.registeredUsers.any((element) => element.status.toLowerCase() == 'pending');
+
+                          final pendingInvitations = <dynamic>[];
+                          final uniqueTeamIds = <String>{};
+
+                          for (final item in data.noRegisteredUsers) {
+                            if (item.status.toLowerCase() == 'pending' && !uniqueTeamIds.contains(item.teamId.id)) {
+                              pendingInvitations.add(item);
+                              uniqueTeamIds.add(item.teamId.id);
+                            }
+                          }
+
+                          for (final item in data.registeredUsers) {
+                            if (item.status.toLowerCase() == 'pending' && !uniqueTeamIds.contains(item.teamId.id)) {
+                              pendingInvitations.add(item);
+                              uniqueTeamIds.add(item.teamId.id);
+                            }
+                          }
+
+                          return ExpandablePanel(
+                            controller: requestsExpandableController,
+                            header: TATypography.h3(
+                              text: 'Sent Invitations',
+                              color: TAColors.textColor,
+                            ),
+                            collapsed: const SizedBox(),
+                            expanded: pendingInvitations.isNotEmpty && hasPendingInvitations
+                                ? TAContainer(
+                                    radius: 28,
+                                    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: pendingInvitations.length,
+                                      padding: EdgeInsets.zero,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        final invitation = pendingInvitations[index];
+                                        return Column(
+                                          children: [
+                                            RequestsWidget(
+                                              teamName: invitation.teamId.teamName.toString(),
+                                            ),
+                                            const Divider(),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : TAContainer(
+                                    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      child: Center(
+                                        child: TATypography.paragraph(
+                                          text: 'No invitations sent yet',
+                                          color: TAColors.purple,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                          );
+                        },
+                        error: (_, __) => const SizedBox(),
+                        loading: () {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: TAColors.purple,
+                            ),
+                          );
+                        },
+                      ),
+                    const SizedBox(height: 20),
                     invitations.when(
                       data: (data) {
                         var hasPendingInvitations = false;
@@ -175,7 +256,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         return ExpandablePanel(
                           controller: requestsExpandableController,
                           header: TATypography.h3(
-                            text: 'Invitations',
+                            text: 'My Invitations',
                             color: TAColors.textColor,
                           ),
                           collapsed: const SizedBox(),
@@ -194,7 +275,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         if (invitation.invitations.where((element) => element.status == 'pending').isNotEmpty) {
                                           return Column(
                                             children: [
-                                              RequestsWidget(invitation: invitation),
+                                              RequestsWidget(teamName: invitation.teamName),
                                               const Divider(),
                                             ],
                                           );
@@ -231,6 +312,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         );
                       },
                     ),
+
                     // const SizedBox(height: 20),
                     // ExpandablePanel(
                     //   controller: messagesExpandableController,

@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:team_aid/core/entities/failure.dart';
 import 'package:team_aid/core/entities/organization.model.dart';
+import 'package:team_aid/core/entities/sent_invitations.model.dart';
 import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/features/home/entities/invitation.model.dart';
@@ -55,6 +56,9 @@ abstract class HomeService {
 
   /// Get all organizations
   Future<Either<Failure, List<OrganizationModel>>> getAllOrganizations();
+
+  /// Get sent invitations
+  Future<Either<Failure, SentInvitationsModel>> getSentInvitations();
 }
 
 /// This class is responsible for implementing the HomeService
@@ -203,6 +207,21 @@ class HomeServiceImpl implements HomeService {
   Future<Either<Failure, List<OrganizationModel>>> getAllOrganizations() async {
     try {
       final result = await homeRepository.getAllOrganizations();
+
+      return result.fold(Left.new, Right.new);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was a problem with HomeServiceImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, SentInvitationsModel>> getSentInvitations() async {
+    try {
+      final result = await homeRepository.getSentInvitations();
 
       return result.fold(Left.new, Right.new);
     } catch (e) {

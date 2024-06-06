@@ -474,6 +474,15 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
                                 return;
                               }
 
+                              if (transportation.value.isEmpty) {
+                                FailureWidget.build(
+                                  title: 'Something went wrong!',
+                                  message: 'Select a transportation.',
+                                  context: context,
+                                );
+                                return;
+                              }
+
                               ref.read(travelsControllerProvider.notifier).setTravelName(name: eventName.text);
                               ref.read(travelsControllerProvider.notifier).setTravelLocation(location: locationController.text);
                               ref

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/home/controllers/home.controller.dart';
 import 'package:team_aid/features/teams/entities/invitation_parsed.model.dart';
@@ -19,6 +20,7 @@ class _MyInvitationsWidgetState extends ConsumerState<MyInvitationsWidget> {
   @override
   Widget build(BuildContext context) {
     final invitations = ref.watch(homeControllerProvider).invitations;
+    final sentInvitations = ref.watch(homeControllerProvider).sentInvitations;
 
     return invitations.when(
       data: (data) {
@@ -34,12 +36,14 @@ class _MyInvitationsWidgetState extends ConsumerState<MyInvitationsWidget> {
             });
           }).toList();
 
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                ListView.builder(
                   itemCount: flatInvitations.length,
+                  shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  physics: const NeverScrollableScrollPhysics(), // This ListView should not scroll separately
                   itemBuilder: (context, index) {
                     final invitation = flatInvitations[index];
                     return Column(
@@ -50,8 +54,105 @@ class _MyInvitationsWidgetState extends ConsumerState<MyInvitationsWidget> {
                     );
                   },
                 ),
-              ),
-            ],
+                sentInvitations.when(
+                  data: (data) {
+                    if (data.noRegisteredUsers.isNotEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ListView.builder(
+                          itemCount: data.noRegisteredUsers.length,
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          physics: const NeverScrollableScrollPhysics(), // This ListView should not scroll separately
+                          itemBuilder: (context, index) {
+                            final user = data.noRegisteredUsers[index];
+                            return Column(
+                              children: [
+                                TAContainer(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Iconsax.user,
+                                            color: TAColors.purple,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                TATypography.paragraph(
+                                                  text: user.email,
+                                                  color: TAColors.textColor,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                                TATypography.subparagraph(
+                                                  text: 'User with no account yet.',
+                                                  color: TAColors.grey1,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const Divider(),
+                                      const SizedBox(height: 10),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: TATypography.paragraph(
+                                          text: user.teamId.teamName.toUpperCase(),
+                                          color: TAColors.purple,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            TATypography.paragraph(
+                                              text: 'Sport ',
+                                              color: TAColors.color1,
+                                            ),
+                                            TATypography.paragraph(
+                                              text: user.teamId.sport,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: TATypography.paragraph(
+                                          text: 'User not registered yet.',
+                                          fontWeight: FontWeight.w700,
+                                          color: TAColors.purple,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
+                  error: (_, __) => const SizedBox(),
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(
+                      color: TAColors.purple,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
         } else {
           return Padding(

@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:team_aid/core/entities/organization.model.dart';
 
+import 'package:team_aid/core/entities/organization.model.dart';
+import 'package:team_aid/core/entities/sent_invitations.model.dart';
 import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/features/home/entities/invitation.model.dart';
 
@@ -11,10 +12,11 @@ class HomeScreenState {
   /// Constructor
   const HomeScreenState({
     required this.userTeams,
-    required this.invitations,
     required this.allTeams,
     required this.organizationTeams,
+    required this.invitations,
     required this.allOrganizations,
+    required this.sentInvitations,
   });
 
   /// The function returns a new instance of HomeScreenState with updated userTeams value if provided,
@@ -37,13 +39,15 @@ class HomeScreenState {
     AsyncValue<List<TeamModel>>? organizationTeams,
     AsyncValue<List<InvitationModel>>? invitations,
     AsyncValue<List<OrganizationModel>>? allOrganizations,
+    AsyncValue<SentInvitationsModel>? sentInvitations,
   }) {
     return HomeScreenState(
-      allTeams: allTeams ?? this.allTeams,
       userTeams: userTeams ?? this.userTeams,
-      invitations: invitations ?? this.invitations,
+      allTeams: allTeams ?? this.allTeams,
       organizationTeams: organizationTeams ?? this.organizationTeams,
+      invitations: invitations ?? this.invitations,
       allOrganizations: allOrganizations ?? this.allOrganizations,
+      sentInvitations: sentInvitations ?? this.sentInvitations,
     );
   }
 
@@ -61,4 +65,7 @@ class HomeScreenState {
 
   /// All organizations on the DB
   final AsyncValue<List<OrganizationModel>> allOrganizations;
+
+  /// The sent invitations
+  final AsyncValue<SentInvitationsModel> sentInvitations;
 }

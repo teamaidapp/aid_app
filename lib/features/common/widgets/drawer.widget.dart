@@ -66,14 +66,14 @@ class DrawerWidget extends HookConsumerWidget {
                           );
                         },
                       ),
-                    const SizedBox(height: 30),
-                    _DrawerOptionWidget(
-                      icon: Iconsax.profile_circle,
-                      title: 'Collaborators',
-                      onTap: () {
-                        context.pushNamed(AppRoutes.collaborators);
-                      },
-                    ),
+                    // const SizedBox(height: 30),
+                    // _DrawerOptionWidget(
+                    //   icon: Iconsax.profile_circle,
+                    //   title: 'Collaborators',
+                    //   onTap: () {
+                    //     context.pushNamed(AppRoutes.collaborators);
+                    //   },
+                    // ),
                     if (role == Role.player.name || role == Role.coach.name) const SizedBox(height: 30),
                     if (role == Role.player.name || role == Role.coach.name)
                       _DrawerOptionWidget(

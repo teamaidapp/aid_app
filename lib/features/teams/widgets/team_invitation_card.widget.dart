@@ -185,6 +185,9 @@ class TeamInvitationCardWidget extends HookConsumerWidget {
                     if (res.ok && context.mounted) {
                       await ref.read(homeControllerProvider.notifier).getInvitations(isCoach: true);
                       await ref.read(homeControllerProvider.notifier).getData();
+                      await ref.read(homeControllerProvider.notifier).getUserTeams();
+                      await ref.read(homeControllerProvider.notifier).getInvitations(isCoach: true);
+                      await ref.read(homeControllerProvider.notifier).getSentInvitations();
                       if (context.mounted) {
                         unawaited(
                           SuccessWidget.build(

@@ -8,6 +8,7 @@ import 'package:http/http.dart';
 import 'package:team_aid/core/constants.dart';
 import 'package:team_aid/core/entities/failure.dart';
 import 'package:team_aid/core/entities/organization.model.dart';
+import 'package:team_aid/core/entities/sent_invitations.model.dart';
 import 'package:team_aid/core/entities/success.dart';
 import 'package:team_aid/core/entities/team.model.dart';
 import 'package:team_aid/features/home/entities/invitation.model.dart';
@@ -39,6 +40,9 @@ abstract class HomeRepository {
 
   /// Get all organizations
   Future<Either<Failure, List<OrganizationModel>>> getAllOrganizations();
+
+  /// Get sent invitations
+  Future<Either<Failure, SentInvitationsModel>> getSentInvitations();
 }
 
 /// This class is responsible for implementing the HomeRepository
@@ -211,6 +215,33 @@ class HomeRepositoryImpl implements HomeRepository {
         organizations.add(organization);
       }
       return Right(organizations);
+    } catch (e) {
+      return Left(
+        Failure(
+          message: 'There was an error with HomeRepositoryImpl',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, SentInvitationsModel>> getSentInvitations() async {
+    try {
+      final token = await secureStorage.read(key: TAConstants.accessToken);
+      final url = Uri.parse(
+        '${dotenv.env['API_URL']}/teams/sent-invitations',
+      );
+      final res = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      final data = (jsonDecode(res.body) as Map)['data'] as Map<String, dynamic>;
+
+      final sentInvitations = SentInvitationsModel.fromMap(data);
+      return Right(sentInvitations);
     } catch (e) {
       return Left(
         Failure(

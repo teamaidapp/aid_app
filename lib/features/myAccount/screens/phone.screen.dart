@@ -186,6 +186,8 @@ class PhoneScreen extends HookConsumerWidget {
                             child: TAPrimaryButton(
                               text: 'SAVE',
                               height: 50,
+                              isLoading: isLoading.value,
+                              isDisabled: isLoading.value,
                               mainAxisAlignment: MainAxisAlignment.center,
                               onTap: () async {
                                 if (phoneController.text.isEmpty) {
@@ -197,14 +199,14 @@ class PhoneScreen extends HookConsumerWidget {
                                   return;
                                 }
 
-                                if (!isValidPhoneNumber(phoneController.text.trim())) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Please enter a valid phone number'),
-                                    ),
-                                  );
-                                  return;
-                                }
+                                // if (!isValidPhoneNumber(phoneController.text.trim())) {
+                                //   ScaffoldMessenger.of(context).showSnackBar(
+                                //     const SnackBar(
+                                //       content: Text('Please enter a valid phone number'),
+                                //     ),
+                                //   );
+                                //   return;
+                                // }
 
                                 final user = UserModel(
                                   firstName: '',

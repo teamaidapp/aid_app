@@ -12,6 +12,7 @@ final homeControllerProvider = StateNotifierProvider.autoDispose<HomeController,
       invitations: AsyncValue.loading(),
       organizationTeams: AsyncValue.data([]),
       allOrganizations: AsyncValue.loading(),
+      sentInvitations: AsyncValue.loading(),
     ),
     ref,
     ref.watch(homeServiceProvider),
@@ -185,6 +186,30 @@ class HomeController extends StateNotifier<HomeScreenState> {
     } catch (e) {
       return response = response.copyWith(
         message: 'There was a problem with HomeService',
+      );
+    }
+  }
+
+  /// The function `getSentInvitations` retrieves sent invitations from the `_homeService` and returns a
+  /// response indicating success or failure.
+  ///
+  /// Returns:
+  ///  a `Future<ResponseFailureModel>`.
+  Future<ResponseFailureModel> getSentInvitations() async {
+    var response = ResponseFailureModel.defaultFailureResponse();
+    try {
+      final result = await _homeService.getSentInvitations();
+
+      return result.fold(
+        (failure) => response = response.copyWith(message: failure.message),
+        (success) {
+          state = state.copyWith(sentInvitations: AsyncValue.data(success));
+          return response = response.copyWith(ok: true);
+        },
+      );
+    } catch (e) {
+      return response = response.copyWith(
+        message: 'There was a problem getting the sent invitations',
       );
     }
   }

@@ -320,6 +320,7 @@ class _AddPlayerWidget extends HookConsumerWidget {
                 await ref.read(homeControllerProvider.notifier).getInvitations(
                       isCoach: false,
                     );
+                await ref.read(homeControllerProvider.notifier).getSentInvitations();
                 if (!context.mounted) return;
                 await SuccessWidget.build(
                   title: 'Success',
