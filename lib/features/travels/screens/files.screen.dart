@@ -177,6 +177,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                             return TAPrimaryButton(
                               text: 'SAVE',
                               isLoading: isLoading.value,
+                              isDisabled: isLoading.value,
                               mainAxisAlignment: MainAxisAlignment.center,
                               onTap: () async {
                                 final filesIds = <TravelFile>[];

@@ -4,6 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:team_aid/core/extensions.dart';
+import 'package:team_aid/core/functions.dart';
 import 'package:team_aid/core/routes.dart';
 import 'package:team_aid/design_system/design_system.dart';
 import 'package:team_aid/features/calendar/entities/event.model.dart';
@@ -299,6 +300,46 @@ class EventDetailsScreen extends StatelessWidget {
                     ],
                   ),
                   const Divider(color: TAColors.color1),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      const Icon(Iconsax.building_4),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TATypography.subparagraph(
+                              text: 'Location',
+                              color: TAColors.grey1,
+                            ),
+                            TATypography.paragraph(
+                              text: event.event.locationDescription,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          openLink('https://www.google.com/maps/place/?q=place_id:${event.event.location}');
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: TAColors.purple,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          child: const Icon(
+                            Iconsax.location,
+                            color: TAColors.purple,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 10),
                   Row(
                     children: [

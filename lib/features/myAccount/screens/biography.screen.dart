@@ -182,6 +182,7 @@ class BiographyScreen extends HookConsumerWidget {
                               text: 'SAVE',
                               height: 50,
                               isLoading: isLoading.value,
+                              isDisabled: isLoading.value,
                               mainAxisAlignment: MainAxisAlignment.center,
                               onTap: () async {
                                 if (biographyController.text.isEmpty) {

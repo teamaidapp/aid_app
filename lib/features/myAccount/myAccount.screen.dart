@@ -301,6 +301,8 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                             child: TAPrimaryButton(
                               text: 'SAVE',
                               height: 50,
+                              isDisabled: isLoading.value,
+                              isLoading: isLoading.value,
                               mainAxisAlignment: MainAxisAlignment.center,
                               onTap: () async {
                                 if (nameController.text == originalName.value) {

@@ -97,6 +97,7 @@ class EventClass {
     required this.createdAt,
     required this.guests,
     required this.files,
+    required this.locationDescription,
     this.userCreator,
   });
 
@@ -113,6 +114,7 @@ class EventClass {
       createdAt: DateTime.parse(map['createdAt'] as String),
       userCreator: UserCreator2.fromMap(map['userCreator'] as Map<String, dynamic>),
       guests: guest?.map((e) => Guest.fromMap(e as Map<String, dynamic>)).toList() ?? [],
+      locationDescription: map['locationDescription'] as String? ?? '',
       files: files
               ?.map<FileT>(
                 (x) => FileT.fromMap(x as Map<String, dynamic>),
@@ -142,6 +144,9 @@ class EventClass {
 
   /// The location of the event.
   final String location;
+
+  /// The location description of the event.
+  final String locationDescription;
 
   /// The date and time when the event was created.
   final DateTime createdAt;
