@@ -1269,6 +1269,7 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                                 return TAPrimaryButton(
                                   text: 'SAVE',
                                   isLoading: isLoading.value,
+                                  isDisabled: isLoading.value,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   onTap: () async {
                                     if (eventName.text.isEmpty) {
