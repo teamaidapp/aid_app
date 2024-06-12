@@ -951,39 +951,6 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                         children: [
                           Expanded(
                             child: TADropdown(
-                              label: 'Day',
-                              selectedValue: TADropdownModel(
-                                item: _currentDay.toString(),
-                                id: _currentDay.toString(),
-                              ),
-                              items: List.generate(
-                                days.length,
-                                (index) {
-                                  final item = days[index];
-                                  return TADropdownModel(
-                                    item: item.day.toString(),
-                                    id: item.day.toString(),
-                                  );
-                                },
-                              ),
-                              placeholder: '',
-                              onChange: (v) {
-                                if (v != null) {
-                                  setState(() {
-                                    _currentDay = int.parse(v.item);
-                                    _fromDate = DateTime(
-                                      _currentSelectedYear,
-                                      _currentSelectedMonth,
-                                      _currentDay,
-                                    );
-                                  });
-                                }
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: TADropdown(
                               label: 'Month',
                               selectedValue: TADropdownModel(
                                 item: _currentSelectedMonth.toString(),
@@ -1019,6 +986,39 @@ class _CreateScheduleWidgetState extends ConsumerState<_CreateScheduleWidget> {
                                           year: _currentSelectedYear,
                                         ),
                                       );
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: TADropdown(
+                              label: 'Day',
+                              selectedValue: TADropdownModel(
+                                item: _currentDay.toString(),
+                                id: _currentDay.toString(),
+                              ),
+                              items: List.generate(
+                                days.length,
+                                (index) {
+                                  final item = days[index];
+                                  return TADropdownModel(
+                                    item: item.day.toString(),
+                                    id: item.day.toString(),
+                                  );
+                                },
+                              ),
+                              placeholder: '',
+                              onChange: (v) {
+                                if (v != null) {
+                                  setState(() {
+                                    _currentDay = int.parse(v.item);
+                                    _fromDate = DateTime(
+                                      _currentSelectedYear,
+                                      _currentSelectedMonth,
+                                      _currentDay,
+                                    );
                                   });
                                 }
                               },
