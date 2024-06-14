@@ -101,7 +101,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
               ),
               child: chats.when(
                 data: (data) {
-                  final list = filteredChats.isEmpty || _query.isEmpty ? data : filteredChats;
+                  final list = filteredChats.isEmpty || _query.isEmpty ? filteredChats : data;
                   return Column(
                     children: [
                       const SizedBox(height: 20),
@@ -130,7 +130,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                                 text: 'NEW',
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 onTap: () {
-                                  context.push(AppRoutes.replyMessage, extra: null);
+                                  context.push(AppRoutes.replyMessage);
                                 },
                               ),
                             ),
@@ -175,7 +175,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                               )
                             : Center(
                                 child: TATypography.paragraph(
-                                  text: 'No messages',
+                                  text: 'No messages from the team',
                                   color: TAColors.textColor,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -372,7 +372,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
 
         filteredChats = data
             .where(
-              (item) => item.team.teamName.contains(query.toLowerCase()),
+              (item) => item.team.teamName.toLowerCase().contains(query.toLowerCase()),
             )
             .toList();
       },
