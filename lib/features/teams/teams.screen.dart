@@ -149,7 +149,7 @@ class _TeamsScreenState extends ConsumerState<TeamsScreen> {
           prefsProvider.when(
             data: (prefs) {
               final role = prefs.getString(TAConstants.role);
-              if (role == Role.coach.name) {
+              if (role == Role.admin.name) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TAPrimaryButton(
