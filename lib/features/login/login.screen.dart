@@ -209,7 +209,7 @@ class _LoginPage extends HookWidget {
                 }
                 isLoading.value = true;
                 final res = await ref.read(loginControllerProvider.notifier).login(
-                      email: emailController.text,
+                      email: emailController.text.trim(),
                       password: passwordController.text,
                     );
                 isLoading.value = false;

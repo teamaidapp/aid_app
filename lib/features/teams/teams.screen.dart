@@ -200,7 +200,7 @@ class TeamsListWidget extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Center(
                 child: TATypography.paragraph(
-                  text: 'No teams added yet, please add a team to get started.',
+                  text: 'Your teams will appear here once you create or join a team.',
                   color: TAColors.purple,
                   fontWeight: FontWeight.w700,
                 ),

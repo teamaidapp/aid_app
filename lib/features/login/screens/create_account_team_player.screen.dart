@@ -354,7 +354,7 @@ class CreateAccountTeamPlayerScreen extends StatelessWidget {
                                   final user = UserModel(
                                     firstName: firstNameController.text,
                                     lastName: lastNameController.text,
-                                    email: emailController.text.toLowerCase(),
+                                    email: emailController.text.toLowerCase().trim(),
                                     phoneNumber: phone,
                                     password: passwordController.text,
                                     sportId: sport.value,
